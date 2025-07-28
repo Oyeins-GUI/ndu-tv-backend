@@ -1,4 +1,9 @@
-import { ConsoleLogger, Injectable, LoggerService, Scope } from '@nestjs/common';
+import {
+  ConsoleLogger,
+  Injectable,
+  LoggerService,
+  Scope,
+} from '@nestjs/common';
 import * as winston from 'winston';
 import 'winston-daily-rotate-file';
 
@@ -49,7 +54,10 @@ export class CustomLogger extends ConsoleLogger implements LoggerService {
   }
 
   error(message: any, trace?: string, context?: string) {
-    this.winstonLogger.error(message, { trace, context: context || this.context });
+    this.winstonLogger.error(message, {
+      trace,
+      context: context || this.context,
+    });
   }
 
   warn(message: any, context?: string) {
@@ -67,5 +75,16 @@ export class CustomLogger extends ConsoleLogger implements LoggerService {
   // You can also override setContext if you need custom logic there, but it's optional
   setContext(context: string) {
     super.setContext(context);
+  }
+
+  logServiceError(
+    method: string,
+    error: unknown,
+    context: Record<string, any> = {},
+  ) {
+    const message = `[${method}] ${error instanceof Error ? error.message : String(error)}`;
+    const trace = error instanceof Error ? error.stack : undefined;
+
+    this.error(message, trace, JSON.stringify(context));
   }
 }

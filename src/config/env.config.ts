@@ -71,6 +71,30 @@ class EnvConfig {
 
   @IsString()
   API_VERSION: string;
+
+  @IsString()
+  MAIL_MAILER: string;
+
+  @IsString()
+  MAIL_HOST: string;
+
+  @IsNumber()
+  MAIL_PORT: number;
+
+  @IsString()
+  MAIL_USERNAME: string;
+
+  @IsString()
+  MAIL_PASSWORD: string;
+
+  @IsString()
+  MAIL_ENCRYPTION: string;
+
+  @IsString()
+  MAIL_FROM_ADDRESS: string;
+
+  @IsString()
+  MAIL_FROM_NAME: string;
 }
 
 const env = plainToInstance(EnvConfig, process.env, {

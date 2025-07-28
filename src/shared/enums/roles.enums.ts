@@ -1,0 +1,6 @@
+export enum Role {
+  SUPER_ADMIN,
+  CENTRAL_EXEC,
+  FACULTY_EXEC,
+  DEPARTMENT_EXEC,
+}

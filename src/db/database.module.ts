@@ -15,6 +15,8 @@ import { env } from '../config';
       synchronize: true,
       define: {
         underscored: true,
+        paranoid: true,
+        timestamps: true,
       },
       dialectOptions: {
         ...(process.env.NODE_ENV === 'development'
