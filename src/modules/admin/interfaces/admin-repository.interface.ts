@@ -77,6 +77,7 @@ export type AdminRelations =
 export type CreateAdminInput = {
   name: string;
   email: string;
+  executive_id: string;
   matric_number: string;
   password?: string;
   role_id: string;

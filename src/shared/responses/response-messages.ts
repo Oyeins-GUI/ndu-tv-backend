@@ -5,22 +5,49 @@ export const RESPONSE_MESSAGES = {
   Error: 'An error occurred',
 
   Admin: {
-    Success: {},
-    Failiure: {},
+    Success: {
+      Created: 'Admin created successfully',
+      Updated: 'Admin updated successfully',
+    },
+    Failiure: { NotFound: ' Admin not found' },
   },
 
   Department: {
     Success: {},
-    Failure: {},
+    Failure: { NotFound: 'Department not found' },
   },
 
   Faculty: {
     Success: {},
-    Failure: {},
+    Failure: {
+      NotFound: 'Faculty not found',
+    },
   },
 
-  Position: {
+  SugPosition: {
     Success: {},
-    Failure: {},
+    Failure: { NotFound: 'SUG  Position not found' },
+  },
+
+  SugExecutive: {
+    Success: {
+      Created: 'SUG Executive(s) created successfully',
+      Updated: 'SUG Executive(s) updated successfully',
+    },
+    Failure: {
+      NotFound: 'SUG Executive not found',
+    },
+  },
+  AcademicSession: {
+    Success: {},
+    Failure: {
+      NotFound: 'Academic Session not found',
+    },
+  },
+  Role: {
+    Success: {},
+    Failure: {
+      NotFound: 'Role not found',
+    },
   },
 } as const;

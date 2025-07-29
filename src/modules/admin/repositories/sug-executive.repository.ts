@@ -7,18 +7,30 @@ import {
   SugExecutiveRelations,
   UpdateSugExecutiveInput,
 } from '../interfaces/sug-executive-repository.interface';
-import { FindOptions, IncludeOptions, WhereOptions } from 'sequelize';
+import {
+  FindOptions,
+  IncludeOptions,
+  InstanceUpdateOptions,
+  WhereOptions,
+} from 'sequelize';
 import { Department } from '../../../db/models/departments.model';
 import { Faculty } from '../../../db/models/faculties.model';
 import { SugPosition } from '../../../db/models/sug-positions.model';
 import { getExcludedFields } from '../../../shared/helpers/repository.helper';
 import { FiltersOrOperators } from '../../../shared/types/repositories.types';
 import { AcademicSession } from '../../../db/models/academic-sessions.model';
+import { Admin } from '../../../db/models/admins.model';
+import { Sequelize } from 'sequelize-typescript';
 
 export class SugExecutiveRepository implements ISugExecutiveRepository {
   constructor(
     @InjectModel(SugExecutive)
     private readonly sugExecutiveModel: typeof SugExecutive,
+
+    @InjectModel(Admin)
+    private readonly adminModel: typeof Admin,
+
+    private readonly seqeulize: Sequelize,
   ) {}
 
   private readonly EXCLUDE_FIELDS: Array<keyof SugExecutive> = [
@@ -76,7 +88,21 @@ export class SugExecutiveRepository implements ISugExecutiveRepository {
     model: SugExecutive,
     data: UpdateSugExecutiveInput,
   ): Promise<SugExecutive> {
-    return model.update(data);
+    return this.seqeulize.transaction(async (t) => {
+      const executive = await model.update(data, { transaction: t });
+
+      const admin = await this.adminModel.findOne({
+        where: {
+          executive_id: executive.id,
+        },
+        transaction: t,
+      });
+
+      if (admin) {
+        admin.update({ ...executive }, { transaction: t });
+      }
+      return executive;
+    });
   }
 
   public async findByPk(

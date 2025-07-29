@@ -73,6 +73,9 @@ class EnvConfig {
   API_VERSION: string;
 
   @IsString()
+  FRONTEND_URL: string;
+
+  @IsString()
   MAIL_MAILER: string;
 
   @IsString()

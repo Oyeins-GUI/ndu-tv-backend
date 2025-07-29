@@ -5,7 +5,9 @@ import {
   DataType,
   Default,
   ForeignKey,
+  Index,
   Table,
+  Unique,
 } from 'sequelize-typescript';
 import { BaseModel } from './base.model';
 import { Faculty } from './faculties.model';
@@ -30,8 +32,26 @@ export class SugExecutive extends BaseModel {
   public name: string;
 
   @AllowNull(false)
+  @Unique
+  @Column(DataType.STRING(100))
+  public email: string;
+
+  @AllowNull(false)
+  @Unique
+  @Index
+  @Column(DataType.STRING(20))
+  public phone_number: string;
+
+  @AllowNull(false)
+  @Unique
+  @Index
   @Column(DataType.STRING(100))
   public matric_number: string;
+
+  @AllowNull(false)
+  @Unique
+  @Column(DataType.STRING(100))
+  public image_url: string;
 
   @ForeignKey(() => SugPosition)
   @AllowNull(false)

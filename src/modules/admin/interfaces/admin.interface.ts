@@ -1,5 +1,9 @@
 import { AdminDto } from '../dtos/admin.dto';
-import { CreateAdminInput } from './admin-repository.interface';
+import { SugExecutiveDto } from '../dtos/common.dto';
+import {
+  CreateSugExecutiveInput,
+  UpdateSugExecutiveInput,
+} from './sug-executive-repository.interface';
 
 export interface IAdminService {
   /**
@@ -7,18 +11,28 @@ export interface IAdminService {
    * @param data- Data to add
    * @returns {AdminDto} - The newly added admin
    */
-  addAdmin(data: CreateAdminInput): Promise<AdminDto>;
+  addAdmin(data: AddAdminInput): Promise<AdminDto>;
 
   /**
-   * Adds a new Admin (Executive)
+   * Adds a new Executive
    * @param data- Data to add
-   * @returns {AdminDto} - The newly added admin
+   * @returns {SugExecutiveDto} - The newly added executive
    */
-  addExecutive(data: CreateAdminInput): Promise<AdminDto>;
+  addExecutive(data: CreateSugExecutiveInput): Promise<SugExecutiveDto>;
+
+  /**
+   * Updates an SUG Executive data
+   * @param executive_id - ID of the execuvitve data
+   * @param data - Data to update
+   * @returns {SugExecutiveDto}- The newly updated sug executive
+   */
+  updateExecutive(
+    executive_id: string,
+    data: UpdateSugExecutiveInput,
+  ): Promise<SugExecutiveDto>;
 }
 
 export type AddAdminInput = {
-  sug_executive_id: string;
-  email: string;
+  executive_id: string;
   role_id: string;
 };

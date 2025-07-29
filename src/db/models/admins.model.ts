@@ -10,21 +10,15 @@ import {
   Unique,
 } from 'sequelize-typescript';
 import { BaseModel } from './base.model';
-import { Department } from './departments.model';
-import { Faculty } from './faculties.model';
 import { Role } from './roles.model';
+import { SugExecutive } from './sug-executives.model';
 import { SugPosition } from './sug-positions.model';
+import { Faculty } from './faculties.model';
+import { Department } from './departments.model';
 import { SCOPE } from '../../shared/enums';
 
 @Table({
   tableName: 'admins',
-  indexes: [
-    {
-      name: 'unique_scope_position',
-      unique: true,
-      fields: ['scope', 'position_id'],
-    },
-  ],
 })
 export class Admin extends BaseModel {
   @AllowNull(false)
@@ -35,13 +29,13 @@ export class Admin extends BaseModel {
   @Unique
   @Index
   @Column(DataType.STRING(100))
-  public email: string;
+  public matric_number: string;
 
   @AllowNull(false)
   @Unique
   @Index
   @Column(DataType.STRING(100))
-  public matric_number: string;
+  public email: string;
 
   @AllowNull(true)
   @Column(DataType.STRING)
@@ -54,6 +48,15 @@ export class Admin extends BaseModel {
 
   @BelongsTo(() => Role, 'role_id')
   public role: Role;
+
+  @ForeignKey(() => SugExecutive)
+  @AllowNull(false)
+  @Unique
+  @Column(DataType.UUID)
+  public executive_id: string;
+
+  @BelongsTo(() => SugExecutive, 'executive_id')
+  public executive: SugExecutive;
 
   @ForeignKey(() => SugPosition)
   @AllowNull(false)
@@ -80,6 +83,11 @@ export class Admin extends BaseModel {
   public department: Department;
 
   @AllowNull(false)
+  @Default(SCOPE.DEPARTMENT)
+  @Column(DataType.ENUM(...Object.keys(SCOPE)))
+  public scope: SCOPE;
+
+  @AllowNull(false)
   @Default(false)
   @Column(DataType.BOOLEAN)
   public is_verified: boolean;
@@ -97,9 +105,4 @@ export class Admin extends BaseModel {
   @AllowNull(true)
   @Column(DataType.DATE)
   public last_login_at: Date | null;
-
-  @AllowNull(false)
-  @Default(SCOPE.DEPARTMENT)
-  @Column(DataType.ENUM(...Object.keys(SCOPE)))
-  public scope: SCOPE;
 }

@@ -1,14 +1,15 @@
-import { Admin } from '../../../db/models/admins.model';
-import { SCOPE } from '../../../shared/enums';
+import { SugExecutive } from '../../../db/models/sug-executives.model';
 
-export class AdminDto {
+export class SugExecutiveDto {
   public name: string;
 
   public email: string;
 
   public matric_number: string;
 
-  public role: string;
+  public phone_number: string;
+
+  public session: string;
 
   public position: string;
 
@@ -18,17 +19,15 @@ export class AdminDto {
 
   public scope: string;
 
-  public is_active: boolean;
+  public image_url: string;
 
-  public last_login_at: string | Date | null;
-
-  constructor(model: Admin) {
+  constructor(model: SugExecutive) {
     this.name = model.name;
     this.email = model.email;
     this.matric_number = model.matric_number;
-    this.is_active = model.is_active;
-    this.last_login_at = model.last_login_at;
-    this.role = model.role.role.toString();
+    this.phone_number = model.phone_number;
+    this.image_url = model.image_url;
+
     this.scope = model.scope.toString();
 
     if (model.department) this.deparment = model.department.department;
@@ -36,5 +35,7 @@ export class AdminDto {
     if (model.faculty) this.faculty = model.faculty.faculty;
 
     if (model.position) this.position = model.position.position;
+
+    if (model.session) this.session = model.session.session;
   }
 }

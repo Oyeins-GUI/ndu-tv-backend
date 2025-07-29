@@ -69,12 +69,15 @@ export interface ISugExecutiveRepository {
 
 export type CreateSugExecutiveInput = {
   name: string;
+  email: string;
   matric_number: string;
   position_id: string;
   session_id: string;
   faculty_id: string;
   department_id: string;
+  phone_number: string;
   scope: SCOPE;
+  image_url: string;
 };
 
 export type UpdateSugExecutiveInput = AtLeastOne<CreateSugExecutiveInput>;
