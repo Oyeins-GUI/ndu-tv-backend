@@ -4,6 +4,15 @@ export const RESPONSE_MESSAGES = {
   Default: 'OK',
   Error: 'An error occurred',
 
+  Auth: {
+    Success: {
+      Login: 'Loggged in successfully',
+    },
+    Faliure: {
+      InvalidCredential: 'Invalid credentials',
+    },
+  },
+
   Admin: {
     Success: {
       Created: 'Admin created successfully',

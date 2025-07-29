@@ -19,7 +19,7 @@ services:
       context: .
     container_name: ndu-tv-server
     ports:
-      - '3100:3000'
+      - '4000:4000'
     env_file:
       - .env
     depends_on:
@@ -27,3 +27,5 @@ services:
     networks:
       - ndu-tv-net
     restart: unless-stopped
+    volumes:
+      - .:/usr/src/app

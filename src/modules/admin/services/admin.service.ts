@@ -49,7 +49,10 @@ export class AdminService implements IAdminService {
     private readonly emailService: IEmailService,
 
     private readonly jwtService: JwtService,
-  ) {}
+  ) {
+    this.logger.setContext(AdminService.name);
+  }
+
   public async addExecutive(data: CreateSugExecutiveInput): Promise<any> {
     try {
       const [department, session, faculty, position] = await Promise.all([

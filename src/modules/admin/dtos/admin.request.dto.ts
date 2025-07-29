@@ -98,14 +98,20 @@ export class CreateAdminRequestBody {
   @IsNotEmpty()
   public executive_id: string;
 
-  @ApiProperty({ description: 'Admin role ID' })
+  @ApiProperty({
+    example: '4d1d1b20-5a4c-4df7-b6c4-bb6e7f3c3011',
+    description: 'Admin role ID',
+  })
   @IsString()
   @IsNotEmpty()
   public role_id: string;
 }
 
 export class UpdateAdminRequestBody {
-  @ApiProperty({ description: 'New admin role ID' })
+  @ApiProperty({
+    example: '4d1d1b20-5a4c-4df7-b6c4-bb6e7f3c3011',
+    description: 'New admin role ID',
+  })
   @IsString()
   @IsNotEmpty()
   public role_id: string;

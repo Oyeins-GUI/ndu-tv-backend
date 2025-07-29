@@ -54,6 +54,13 @@ export interface IAdminRepository {
   ): Promise<Admin[]>;
 
   /**
+   * Will be used for mainly login
+   * @param identifier finds a verified and active adming by identifier (matric number or email)
+   * @returns {Admin |null}
+   */
+  findActiveVerifiedByIdentifier(identifier: string): Promise<Admin | null>;
+
+  /**
    * Deletes an admin
    * @param model - Admin instance to delete
    * @returns {void}- returns void

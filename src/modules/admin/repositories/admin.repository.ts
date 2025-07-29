@@ -9,7 +9,7 @@ import {
   UpdateAdminInput,
 } from '../interfaces/admin-repository.interface';
 import { getExcludedFields } from '../../../shared/helpers/repository.helper';
-import { FindOptions, IncludeOptions, WhereOptions } from 'sequelize';
+import { FindOptions, IncludeOptions, Op, WhereOptions } from 'sequelize';
 import { Department } from '../../../db/models/departments.model';
 import { Faculty } from '../../../db/models/faculties.model';
 import { SugPosition } from '../../../db/models/sug-positions.model';
@@ -132,6 +132,33 @@ export class AdminRepository implements IAdminRepository {
       include,
     };
     return this.adminModel.findAll(query);
+  }
+
+  public async findActiveVerifiedByIdentifier(
+    identifier: string,
+  ): Promise<Admin | null> {
+    return this.findBy(
+      {
+        [Op.or]: [
+          {
+            email: identifier,
+            is_active: true,
+            is_verified: true,
+            must_set_password: false,
+          },
+          {
+            matric_number: identifier,
+            is_active: true,
+            is_verified: true,
+            must_set_password: false,
+          },
+        ],
+      },
+      {
+        include_fields: ['password'],
+        relations: ['all'],
+      },
+    );
   }
 
   public async delete(model: Admin): Promise<void> {

@@ -71,7 +71,7 @@ export class SugExecutive extends BaseModel {
 
   @AllowNull(false)
   @Default(SCOPE.DEPARTMENT)
-  @Column(DataType.ENUM(...Object.keys(SCOPE)))
+  @Column(DataType.ENUM(...Object.values(SCOPE)))
   public scope: SCOPE;
 
   @ForeignKey(() => Faculty)

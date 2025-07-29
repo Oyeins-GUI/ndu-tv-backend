@@ -11,12 +11,17 @@ export class RedisCacheService implements IRedisCacheService {
 
   constructor(private readonly logger: CustomLogger) {
     this.logger.setContext(RedisCacheService.name);
+    this.logger.debug(`redis://${env.REDIS_HOST}:${env.REDIS_PORT}`);
     this.client = createClient({
       url: `redis://${env.REDIS_HOST}:${env.REDIS_PORT}`,
     });
-    this.client.on('error', (err) => logger.error('Redis Client Error', err));
+    this.client.on('error', (err) => {
+      logger.error('Redis Client Error', err);
+      throw new Error(err);
+    });
     this.client.connect().catch((err) => {
       logger.error('Failed to connect to Redis:', err);
+      throw err;
     });
   }
 

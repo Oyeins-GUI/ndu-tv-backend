@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as path from 'node:path';
 import * as fs from 'fs';
-import { API_PREFIX } from './config';
+import { API_PREFIX, env } from './config';
 import setUpSwagger from './config/swagger.config';
 import { CustomLogger } from './lib/logger/logger.service';
 import helmet from 'helmet';
@@ -14,7 +14,7 @@ import { setUpRateLimiting } from './config/rate-limit.config';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
-    logger: new CustomLogger('Ndu-TV API'),
+    logger: new CustomLogger('NDU-TV API'),
   });
 
   const logsDirectory = path.join(__dirname, '..', 'logs');
@@ -57,6 +57,8 @@ async function bootstrap() {
 
   setUpRateLimiting(app);
 
-  await app.listen(process.env.PORT ?? 3100);
+  await app.listen(env.PORT ?? 4000);
+
+  console.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();
