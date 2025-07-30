@@ -6,10 +6,17 @@ export const RESPONSE_MESSAGES = {
 
   Auth: {
     Success: {
-      Login: 'Loggged in successfully',
+      Login: 'User Loggged in successfully',
+      Logout: 'User Logged out successfully',
+      SentPasswordSetLink:
+        'If this email and matric number combination exists in our system, a password setup link has been sent to your email.',
+      PasswordSet:
+        'Password successfully set! Your admin account is now activated and ready to use.',
     },
-    Faliure: {
+    Failure: {
       InvalidCredential: 'Invalid credentials',
+      EmptyOrInvalidToken: 'Empty, Invalid or Expired token',
+      PasswordSet: 'Admin account already activated',
     },
   },
 
@@ -22,12 +29,22 @@ export const RESPONSE_MESSAGES = {
   },
 
   Department: {
-    Success: {},
+    Success: {
+      Created: 'Department successfully created',
+      Retrieved: 'Department(s) successfully retrieved',
+      Updated: 'Department successfully updated',
+      Deleted: 'Department successfully deleted',
+    },
     Failure: { NotFound: 'Department not found' },
   },
 
   Faculty: {
-    Success: {},
+    Success: {
+      Created: 'Faculty successfully created',
+      Retrieved: 'Faculties successfully retrieved',
+      Updated: 'Faculty successfully updated',
+      Deleted: 'Faculty successfully deleted',
+    },
     Failure: {
       NotFound: 'Faculty not found',
     },

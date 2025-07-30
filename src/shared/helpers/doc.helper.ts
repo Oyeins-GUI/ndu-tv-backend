@@ -15,6 +15,8 @@ import {
   ApiUnprocessableEntityResponse,
   ApiNoContentResponse,
   ApiAcceptedResponse,
+  ApiTags,
+  ApiQuery,
 } from '@nestjs/swagger';
 
 import { ERROR_CODES } from '../exceptions/error-codes';
@@ -46,6 +48,15 @@ interface CustomErrorMessage {
   details?: any;
 }
 
+interface QueryParamConfig {
+  name: string;
+  required?: boolean;
+  description?: string;
+  example?: any;
+  type?: 'string' | 'number' | 'boolean' | 'array';
+  enum?: any[];
+}
+
 // More comprehensive options interface
 interface StandardDocsOptions {
   summary: string;
@@ -58,6 +69,7 @@ interface StandardDocsOptions {
   excludeErrors?: ErrorType[]; // Allow excluding specific errors
   customResponses?: any[]; // Allow additional custom responses
   deprecated?: boolean;
+  queryParams?: QueryParamConfig[];
   tags?: string[];
   errorMessages?: {
     [ErrorType.BAD_REQUEST]?: CustomErrorMessage;
@@ -168,6 +180,7 @@ export function StandardDocs(options: StandardDocsOptions) {
     deprecated = false,
     tags = [],
     errorMessages = {},
+    queryParams,
   } = options;
 
   const message = successMessage || getDefaultSuccessMessage(status);
@@ -180,6 +193,7 @@ export function StandardDocs(options: StandardDocsOptions) {
 
   // Build decorators array
   const decorators = [
+    ApiTags(...tags),
     ApiOperation({
       summary,
       description: description || summary,
@@ -187,6 +201,19 @@ export function StandardDocs(options: StandardDocsOptions) {
       tags: tags.length > 0 ? tags : undefined,
     }),
   ];
+
+  queryParams?.forEach((param) => {
+    decorators.push(
+      ApiQuery({
+        name: param.name,
+        required: param.required ?? true,
+        description: param.description,
+        example: param.example,
+        type: param.type,
+        enum: param.enum,
+      }),
+    );
+  });
 
   // Add authentication decorators
   if (auth) {

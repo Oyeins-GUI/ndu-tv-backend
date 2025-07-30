@@ -17,5 +17,5 @@ export class Faculty extends BaseModel {
   public faculty: string;
 
   @HasMany(() => Department)
-  public depatments: Department[];
+  public departments: Department[];
 }

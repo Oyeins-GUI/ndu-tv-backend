@@ -40,6 +40,25 @@ export class NotFoundException extends AppException<unknown | undefined> {
   }
 }
 
+export class UnauthorizedException extends AppException<unknown | undefined> {
+  constructor({
+    details,
+    reason = 'Unauthorized',
+  }: {
+    details?: unknown;
+    reason: string;
+  }) {
+    super(
+      {
+        code: ERROR_CODES.UNAUTHORIZED,
+        reason,
+        details,
+      },
+      HttpStatus.UNAUTHORIZED,
+    );
+  }
+}
+
 export class BadRequestException extends AppException<unknown | undefined> {
   constructor({
     details,

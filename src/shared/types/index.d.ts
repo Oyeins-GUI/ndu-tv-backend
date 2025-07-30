@@ -1,7 +1,7 @@
-// import { AuthenticatedRequest } from '../../auth/interfaces/auth.interface';
+import { AuthenticatedRequest } from '../../auth/interfaces/auth.interface';
 
-// declare global {
-//   namespace Express {
-//     interface Request extends AuthenticatedRequest {}
-//   }
-// }
+declare global {
+  namespace Express {
+    interface Request extends AuthenticatedRequest {}
+  }
+}

@@ -1,7 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ApiResponse } from './api-response';
 
-export class SuccessResponseBody<T = null> extends ApiResponse<T> {
+export class SuccessResponseBody<T = null | undefined> extends ApiResponse<
+  T | undefined
+> {
   @ApiProperty({
     example: 'Operation successful',
     description: 'A general success message for the operation.',
@@ -10,9 +12,9 @@ export class SuccessResponseBody<T = null> extends ApiResponse<T> {
 
   public override data: T;
 
-  constructor(data: T, message?: string) {
+  constructor({ data, message }: { data?: T; message?: string }) {
     super(message);
     this.message = message;
-    this.data = data;
+    if (data) this.data = data;
   }
 }

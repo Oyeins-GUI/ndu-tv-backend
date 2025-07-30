@@ -11,6 +11,8 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { RedisCacheService } from './lib/redis/redis.service';
 import { AdminModule } from './modules/admin/admin.module';
 import { AuthModlue } from './auth/auth.module';
+import { AuthGuard } from './auth/gaurds/auth.guard';
+import { TokenValidationService } from './auth/services/token-validation.service';
 
 @Module({
   imports: [
@@ -31,10 +33,17 @@ import { AuthModlue } from './auth/auth.module';
     RedisCacheService,
     { provide: 'IRedisCacheService', useExisting: RedisCacheService },
     AppService,
+    TokenValidationService,
+    { provide: 'ITokenValidationService', useExisting: TokenValidationService },
     GlobalExceptionFilter,
     {
       provide: 'APP_FILTER',
       useExisting: GlobalExceptionFilter,
+    },
+    AuthGuard,
+    {
+      provide: 'APP_GUARD',
+      useExisting: AuthGuard,
     },
   ],
 })

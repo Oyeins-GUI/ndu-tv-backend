@@ -1,7 +1,11 @@
 export const TEMPLATE_NAMES = {
-  verifyAdmin: 'verify-admin',
+  activateAccount: 'activate-account',
+  resetPassword: 'reset-password',
+  changePassword: 'change-password',
 } as const;
 
 export const TEMPLATE_SUBJECTS = {
-  verifyAdmin: 'Verify your admin account',
+  activateAccount: 'Activate your NDU TV account',
+  resetPassword: 'Reset your NDU TV password',
+  changePassword: 'Confirm your password change',
 } as const;

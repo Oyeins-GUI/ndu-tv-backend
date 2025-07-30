@@ -17,6 +17,9 @@ import { SugExecutiveRepository } from './repositories/sug-executive.repository'
 import { AdminController } from './controllers/admin.controller';
 import { Role } from '../../db/models/roles.model';
 import { AdminService } from './services/admin.service';
+import { RedisCacheService } from '../../lib/redis/redis.service';
+import { DepartmentController } from './controllers/department.controller';
+import { FacultyController } from './controllers/faculty.controller';
 
 @Module({
   imports: [
@@ -56,6 +59,9 @@ import { AdminService } from './services/admin.service';
     SugPositionRepository,
     { provide: 'ISugPositionRepository', useExisting: SugPositionRepository },
 
+    RedisCacheService,
+    { provide: 'IRedisCacheService', useExisting: RedisCacheService },
+
     EmailService,
     { provide: 'IEmailService', useExisting: EmailService },
 
@@ -63,7 +69,7 @@ import { AdminService } from './services/admin.service';
     { provide: 'IAdminService', useExisting: AdminService },
   ],
 
-  controllers: [AdminController],
+  controllers: [AdminController, DepartmentController, FacultyController],
 
   exports: [
     SequelizeModule,

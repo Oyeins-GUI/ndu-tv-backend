@@ -91,7 +91,6 @@ export type CreateAdminInput = {
   position_id: string;
   faculty_id: string;
   department_id: string;
-  is_active: boolean;
   scope: SCOPE;
   must_set_password: boolean;
 };

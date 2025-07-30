@@ -63,10 +63,10 @@ export type FacultyFindOptions = {
   relations?: FacultyRelations[];
 };
 
-export type FacultyRelations = 'department' | 'all';
+export type FacultyRelations = 'departments' | 'all';
 
 export type CreateFacultyInput = {
-  facutly: string;
+  faculty: string;
 };
 
 export type UpdateFacultyInput = CreateFacultyInput;

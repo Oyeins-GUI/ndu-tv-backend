@@ -88,16 +88,6 @@ export class Admin extends BaseModel {
   public scope: SCOPE;
 
   @AllowNull(false)
-  @Default(false)
-  @Column(DataType.BOOLEAN)
-  public is_verified: boolean;
-
-  @AllowNull(false)
-  @Default(false)
-  @Column(DataType.BOOLEAN)
-  public is_active: boolean;
-
-  @AllowNull(false)
   @Default(true)
   @Column(DataType.BOOLEAN)
   public must_set_password: boolean;

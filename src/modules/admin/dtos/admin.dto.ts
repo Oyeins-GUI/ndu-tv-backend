@@ -18,15 +18,12 @@ export class AdminDto {
 
   public scope: string;
 
-  public is_active: boolean;
-
   public last_login_at: string | Date | null;
 
   constructor(model: Admin) {
     this.name = model.name;
     this.email = model.email;
     this.matric_number = model.matric_number;
-    this.is_active = model.is_active;
     this.last_login_at = model.last_login_at;
     this.role = model.role.role.toString();
     this.scope = model.scope.toString();
@@ -36,5 +33,9 @@ export class AdminDto {
     if (model.faculty) this.faculty = model.faculty.faculty;
 
     if (model.position) this.position = model.position.position;
+  }
+
+  static fromEntities(models: Admin[]): AdminDto[] {
+    return models.map((model) => new AdminDto(model));
   }
 }

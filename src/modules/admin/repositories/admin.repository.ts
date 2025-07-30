@@ -142,14 +142,10 @@ export class AdminRepository implements IAdminRepository {
         [Op.or]: [
           {
             email: identifier,
-            is_active: true,
-            is_verified: true,
             must_set_password: false,
           },
           {
             matric_number: identifier,
-            is_active: true,
-            is_verified: true,
             must_set_password: false,
           },
         ],

@@ -15,6 +15,23 @@ export interface IAuthService {
    * @returns {void}
    */
   logout(session_id: string): Promise<void>;
+
+  /**
+   * Initiate set-password flow for a new admin.
+   * Sends email with token or code.
+   * @param email - email of the admin
+   * @param matric_no - mattric number of the admin
+   * @returns {void}
+   */
+  initiateSetPassword(email: string, matric_no: string): Promise<void>;
+
+  /**
+   * Completes a set password, and logs in the admin
+   * @param token - token to validate
+   * @param password - new password to set
+   * @returns {LoginDto}- returns authenticated admin
+   */
+  setPassword(token: string, password: string): Promise<LoginDto>;
 }
 
 export type AuthTokens = {
@@ -33,7 +50,7 @@ export type AuthenticatedRequest = {
 };
 
 export type SessionData = {
-  admin_id: string;
+  user_id: string;
   access_token: string;
   refresh_token: string;
 };

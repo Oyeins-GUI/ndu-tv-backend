@@ -27,6 +27,7 @@ export class CreateSugExecutiveRequestBody {
   @Matches(/^UG\/\d{2}\/\d{4}$/, {
     message: 'Matric number must match UG/00/0000 format',
   })
+  @IsNotEmpty()
   public matric_number: string;
 
   @ApiProperty({
@@ -69,6 +70,7 @@ export class CreateSugExecutiveRequestBody {
   @Matches(/^\+234[789][01]\d{8}$/, {
     message: 'Phone number must be a valid Nigerian number in +234 format',
   })
+  @IsNotEmpty()
   public phone_number: string;
 
   @ApiProperty({ enum: SCOPE, example: SCOPE.FACULTY })

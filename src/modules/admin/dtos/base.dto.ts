@@ -102,3 +102,53 @@ export class SugExecutiveResponseBody {
   })
   public image_url: string;
 }
+
+export class DepartmentResponseBody {
+  @ApiProperty({
+    description: 'Department ID',
+    example: '550e8400-e29b-41d4-a716-446655440001',
+  })
+  public id: string;
+
+  @ApiProperty({
+    description: 'Department name',
+    example: 'Computer Science',
+  })
+  public department: string;
+
+  @ApiProperty({
+    description: 'Department options/programs',
+    example: ['Software Engineering', 'Cybersecurity', 'Data Science'],
+    type: [String],
+    nullable: true,
+  })
+  public options?: string[] | null;
+
+  @ApiProperty({
+    description: 'Faculty name',
+    example: 'Faculty of Science',
+  })
+  public faculty: string;
+}
+
+export class FacultyResponseBody {
+  @ApiProperty({
+    description: 'Faculty ID',
+    example: '550e8400-e29b-41d4-a716-446655440001',
+  })
+  public id: string;
+
+  @ApiProperty({
+    description: 'Faculty name',
+    example: 'Faculty of Science',
+  })
+  public faculty: string;
+
+  @ApiProperty({
+    description: 'Departments under this faculty',
+    example: ['Computer Science', 'Mathematics', 'Physics'],
+    required: false,
+    type: [String],
+  })
+  public departments?: string[];
+}

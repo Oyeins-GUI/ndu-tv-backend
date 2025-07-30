@@ -23,13 +23,13 @@ export class FacultyRepository implements IFacultyRepository {
   ];
 
   private computeRelations(relations: FacultyRelations[]): IncludeOptions[] {
-    const allRelations: FacultyRelations[] = ['department'];
+    const allRelations: FacultyRelations[] = ['departments'];
     const toInclude = relations.includes('all') ? allRelations : relations;
     const include: IncludeOptions[] = [];
-    if (toInclude.includes('department')) {
+    if (toInclude.includes('departments')) {
       include.push({
         model: Department,
-        as: 'department',
+        as: 'departments',
       });
     }
     return include;

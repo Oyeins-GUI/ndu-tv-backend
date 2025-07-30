@@ -8,13 +8,28 @@ import {
   IAuthService,
   SessionData,
 } from '../interfaces/auth.interface';
-import { InvalidCredentialsException } from '../../shared/exceptions';
+import {
+  BadRequestException,
+  InvalidCredentialsException,
+  NotFoundException,
+  UnauthorizedException,
+} from '../../shared/exceptions';
 import * as bcrypt from 'bcrypt';
 import { JWT_CONSTANTS, SESSION_CONSTANTS } from '../constants';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from '../dtos/auth.dto';
 import { IRedisCacheService } from '../../lib/redis/redis.interface';
 import { AdminDto } from '../../modules/admin/dtos/admin.dto';
+import {
+  getSessionKey,
+  getTokenKey,
+  getUserSessionSetKey,
+} from '../auth.utils';
+import { RESPONSE_MESSAGES } from '../../shared/responses/response-messages';
+import { env } from '../../config';
+import { IEmailService } from '../../lib/email/email.interface';
+import { TEMPLATE_NAMES, TEMPLATE_SUBJECTS } from '../../lib/email/templates';
+import { generateRandomToken } from '../../lib/utils';
 
 export class AuthService implements IAuthService {
   constructor(
@@ -24,16 +39,10 @@ export class AuthService implements IAuthService {
     @Inject('IRedisCacheService')
     private readonly redisCacheService: IRedisCacheService,
     private readonly jwtService: JwtService,
+    @Inject('IEmailService')
+    private readonly emailService: IEmailService,
   ) {
     this.logger.setContext(AuthService.name);
-  }
-
-  private getSessionKey(session_id: string): string {
-    return `session:${session_id}`;
-  }
-
-  private getUserSessionSetKey(user_id: string): string {
-    return `admin-sessions:${user_id}`;
   }
 
   private async generateTokens(
@@ -78,14 +87,14 @@ export class AuthService implements IAuthService {
 
       const tokens = await this.generateTokens(payload);
 
-      const session_id = uuidv4();
+      const sessionId = uuidv4();
 
-      const sessionKey = this.getSessionKey(session_id);
+      const sessionKey = getSessionKey(sessionId);
 
-      const setKey = this.getUserSessionSetKey(admin.id);
+      const setKey = getUserSessionSetKey(admin.id);
 
       const sessionPayload: SessionData = {
-        admin_id: admin.id,
+        user_id: admin.id,
         access_token: tokens.access_token,
         refresh_token: tokens.refresh_token,
       };
@@ -98,33 +107,187 @@ export class AuthService implements IAuthService {
 
       await this.redisCacheService.addToSet(
         setKey,
-        session_id,
+        sessionId,
         SESSION_CONSTANTS.defaultTTL * 2,
       );
 
-      return new LoginDto(new AdminDto(admin), tokens, session_id);
+      return new LoginDto(new AdminDto(admin), tokens, sessionId);
     } catch (error) {
       this.logger.logServiceError(this.login.name, error, { identifier });
       throw error;
     }
   }
+  getUserSessionSetKey(id: string) {
+    throw new Error('Method not implemented.');
+  }
 
   public async logout(session_id: string): Promise<void> {
     try {
-      const sessionKey = this.getSessionKey(session_id);
+      const sessionKey = getSessionKey(session_id);
       const session =
         await this.redisCacheService.getTypedHashFields<SessionData>(
           sessionKey,
         );
       if (session) {
         await this.redisCacheService.removeFromSet(
-          this.getUserSessionSetKey(session.admin_id),
+          getUserSessionSetKey(session.user_id),
           session_id,
         );
       }
       await this.redisCacheService.delete(sessionKey);
     } catch (error) {
       this.logger.logServiceError(this.logout.name, error);
+      throw error;
+    }
+  }
+
+  public async initiateSetPassword(
+    email: string,
+    matric_no: string,
+  ): Promise<void> {
+    try {
+      const admin = await this.adminRepository.findBy(
+        {
+          email,
+          matric_number: matric_no,
+        },
+        {
+          relations: ['all'],
+        },
+      );
+
+      // if (!admin)
+      //   throw new NotFoundException({
+      //     reason: RESPONSE_MESSAGES.Admin.Failiure.NotFound,
+      //   });
+
+      if (!admin) return;
+
+      if (admin.must_set_password || admin.password)
+        throw new BadRequestException({
+          reason: RESPONSE_MESSAGES.Auth.Failure.PasswordSet,
+        });
+
+      const payload: { id: string } = {
+        id: admin.id,
+      };
+
+      const token = await this.jwtService.signAsync(payload, {
+        secret: JWT_CONSTANTS.accessSecret,
+        expiresIn: JWT_CONSTANTS.accessExpiry,
+      });
+
+      const randomToken = generateRandomToken();
+
+      const tokenKey = getTokenKey('activate-account', randomToken);
+
+      const ttl = 60 * 60 * 24 * 7; //7 days for token expiry
+
+      await this.redisCacheService.setString(tokenKey, token, ttl);
+
+      await this.emailService.sendMail({
+        template: TEMPLATE_NAMES.activateAccount,
+        to: admin.email,
+        subject: TEMPLATE_SUBJECTS.activateAccount,
+        context: {
+          name: admin.name,
+          role: admin.role.role,
+          department: admin.department.department,
+          faculty: admin.faculty.faculty,
+          action_url: `${env.FRONTEND_URL}/verify/?token=${randomToken}`,
+          year: new Date().getFullYear(),
+        },
+      });
+    } catch (error) {
+      this.logger.logServiceError(this.initiateSetPassword.name, error, {
+        email,
+        matric_no,
+      });
+      throw error;
+    }
+  }
+
+  public async setPassword(token: string, password: string): Promise<LoginDto> {
+    try {
+      const jwtToken = await this.redisCacheService.getStringValue(token);
+
+      if (!jwtToken)
+        throw new UnauthorizedException({
+          reason: RESPONSE_MESSAGES.Auth.Failure.EmptyOrInvalidToken,
+        });
+
+      const adminPayload = await this.jwtService.verifyAsync<{ id: string }>(
+        jwtToken,
+        {
+          secret: JWT_CONSTANTS.accessSecret,
+        },
+      );
+
+      const admin = await this.adminRepository.findByPk(adminPayload.id, {
+        relations: ['all'],
+      });
+
+      if (!admin)
+        throw new NotFoundException({
+          reason: RESPONSE_MESSAGES.Admin.Failiure.NotFound,
+        });
+
+      const salt = await bcrypt.genSalt(10);
+
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      const udpatedAdmin = await this.adminRepository.updateByModel(admin, {
+        password: hashedPassword,
+        must_set_password: false,
+      });
+
+      const payload: AuthTokenPayload = {
+        id: udpatedAdmin.id,
+        email: udpatedAdmin.email,
+      };
+
+      const tokens = await this.generateTokens(payload);
+
+      const sessionId = uuidv4();
+
+      const sessionKey = getSessionKey(sessionId);
+
+      const setKey = getUserSessionSetKey(admin.id);
+
+      const sessionPayload: SessionData = {
+        user_id: admin.id,
+        access_token: tokens.access_token,
+        refresh_token: tokens.refresh_token,
+      };
+
+      await this.redisCacheService.setHash<SessionData>(
+        sessionKey,
+        sessionPayload,
+        SESSION_CONSTANTS.defaultTTL,
+      );
+
+      await this.redisCacheService.addToSet(
+        setKey,
+        sessionId,
+        SESSION_CONSTANTS.defaultTTL * 2,
+      );
+
+      await this.redisCacheService.delete(token);
+
+      return new LoginDto(new AdminDto(admin), tokens, sessionId);
+    } catch (error) {
+      this.logger.logServiceError(this.setPassword.name, error, {
+        token,
+      });
+
+      if (
+        error.name == 'TokenExpiredError' ||
+        error.name == 'JsonWebTokenError'
+      ) {
+        throw new UnauthorizedException({
+          reason: RESPONSE_MESSAGES.Auth.Failure.EmptyOrInvalidToken,
+        });
+      }
       throw error;
     }
   }

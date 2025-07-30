@@ -1,13 +1,23 @@
-import { Body, Controller, Inject, Post, Res } from '@nestjs/common';
+import { Body, Controller, Inject, Post, Req, Res } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthTokens, IAuthService } from '../interfaces/auth.interface';
 import { env } from '../../config';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { COOKIE_CONSTANTS } from '../constants';
-import { LoginRequestBody } from '../dtos/auth.request.dto';
+import {
+  LoginRequestBody,
+  PasswordConfirmRequestBody,
+  SetPasswordInitRequestBody,
+} from '../dtos/auth.request.dto';
 import { AdminApiResponse } from '../../modules/admin/dtos/admin.reponse.dto';
 import { RESPONSE_MESSAGES } from '../../shared/responses/response-messages';
-import { LoginEndpoint } from '../decorators/auth.decorator';
+import {
+  InitSetPasswordEndpoint,
+  LoginEndpoint,
+  LogoutEndpoint,
+  SetPasswordConfirmEndpoint,
+} from '../decorators/auth.decorator';
+import { SuccessResponseBody } from '../../shared/responses/success-response';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -66,6 +76,59 @@ export class AuthController {
     );
 
     res.json(result);
+    return result;
+  }
+
+  @Post('logout')
+  @LogoutEndpoint()
+  public async logout(
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<SuccessResponseBody> {
+    const data = await this.authService.logout(req.session_id);
+
+    res.clearCookie(COOKIE_CONSTANTS.sessionId);
+    res.clearCookie(COOKIE_CONSTANTS.accessToken);
+    res.clearCookie(COOKIE_CONSTANTS.refreshToken);
+
+    const result = new SuccessResponseBody({
+      message: RESPONSE_MESSAGES.Auth.Success.Logout,
+    });
+
+    res.json(result);
+    return result;
+  }
+
+  @Post('password/set/init')
+  @InitSetPasswordEndpoint()
+  public async initSetPassword(
+    @Body() body: SetPasswordInitRequestBody,
+  ): Promise<SuccessResponseBody> {
+    await this.authService.initiateSetPassword(body.email, body.matric_number);
+    return new SuccessResponseBody({
+      message: RESPONSE_MESSAGES.Auth.Success.SentPasswordSetLink,
+    });
+  }
+
+  @Post('password/set/confirm')
+  @SetPasswordConfirmEndpoint()
+  public async setPassword(
+    @Res() res: Response,
+    @Body() body: PasswordConfirmRequestBody,
+  ): Promise<AdminApiResponse> {
+    const data = await this.authService.setPassword(body.token, body.password);
+
+    const maxAge = COOKIE_CONSTANTS.defaultMaxAge;
+
+    this.setAuthCookies(res, data.tokens, data.session_id, maxAge);
+
+    const result = new AdminApiResponse(
+      data.admin,
+      RESPONSE_MESSAGES.Auth.Success.PasswordSet,
+    );
+
+    res.json(result);
+
     return result;
   }
 }

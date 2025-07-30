@@ -1,5 +1,8 @@
 import { Department } from '../../../db/models/departments.model';
-import { FiltersOrOperators } from '../../../shared/types/repositories.types';
+import {
+  AtLeastOne,
+  FiltersOrOperators,
+} from '../../../shared/types/repositories.types';
 
 export interface IDepartmentRepository {
   /**
@@ -72,7 +75,9 @@ export type DepartmentFindOptions = {
 export type DepartmentRelations = 'faculty' | 'all';
 
 export type CreateDepartmentInput = {
+  faculty_id: string;
   department: string;
+  options?: string[] | null;
 };
 
-export type UpdateDepartmentInput = CreateDepartmentInput;
+export type UpdateDepartmentInput = AtLeastOne<CreateDepartmentInput>;
