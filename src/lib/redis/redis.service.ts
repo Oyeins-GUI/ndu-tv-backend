@@ -12,9 +12,9 @@ export class RedisCacheService implements IRedisCacheService, OnModuleInit {
   constructor(private readonly logger: CustomLogger) {
     this.logger.setContext(RedisCacheService.name);
     this.logger.debug(`redis://${env.REDIS_HOST}:${env.REDIS_PORT}`);
-    this.logger.debug(`redis://${env.REDIS_URL}`);
+    this.logger.debug(env.REDIS_URL);
     this.client = createClient({
-      url: `redis://${env.REDIS_URL}`,
+      url: env.REDIS_URL,
       socket: {
         reconnectStrategy: (retries) => {
           if (retries > 3) {
@@ -27,6 +27,7 @@ export class RedisCacheService implements IRedisCacheService, OnModuleInit {
     });
     this.client.on('error', (err) => {
       logger.error('Redis Client Error', err);
+      throw new Error(err);
     });
   }
 
