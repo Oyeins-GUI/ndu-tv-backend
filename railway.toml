@@ -1,6 +1,7 @@
 [build]
 builder = "nixpacks"
-buildCommand = "pnpm install && pnpm run build:prod"
+buildCommand = "pnpm install && pnpm run build:prod && pnpm prune --prod"
+
 
 [build.env]
 NIXPACKS_NO_CACHE = "1"
