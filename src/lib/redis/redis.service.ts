@@ -15,6 +15,15 @@ export class RedisCacheService implements IRedisCacheService, OnModuleInit {
     this.logger.debug(`redis://${env.REDIS_URL}`);
     this.client = createClient({
       url: `redis://${env.REDIS_URL}`,
+      socket: {
+        reconnectStrategy: (retries) => {
+          if (retries > 3) {
+            this.logger.error('❌ Max Redis retries reached, exiting...');
+            return new Error('Max retries reached');
+          }
+          return Math.min(retries * 100, 3000);
+        },
+      },
     });
     this.client.on('error', (err) => {
       logger.error('Redis Client Error', err);
