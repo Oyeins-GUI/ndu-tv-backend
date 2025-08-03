@@ -2,13 +2,7 @@ import * as dotenv from 'dotenv';
 import * as path from 'node:path';
 import * as fs from 'fs';
 import { plainToInstance } from 'class-transformer';
-import {
-  validateSync,
-  IsEnum,
-  IsNumber,
-  IsString,
-  IsUrl,
-} from 'class-validator';
+import { validateSync, IsEnum, IsNumber, IsString } from 'class-validator';
 
 const envPath = path.resolve(process.cwd(), '.env');
 const envDevPath = path.resolve(process.cwd(), '.env.development');
@@ -45,7 +39,7 @@ class EnvConfig {
   @IsString()
   DB_PASSWORD: string;
 
-  @IsUrl({ require_tld: false })
+  @IsString()
   REDIS_URL: string;
 
   @IsString()
