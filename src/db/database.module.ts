@@ -23,11 +23,12 @@ import { env } from '../config';
           ? {}
           : {
               ssl: {
-                require: false,
+                require: true,
                 rejectUnauthorized: false,
               },
             }),
       },
+      retry: { max: 2 },
     }),
   ],
 })
