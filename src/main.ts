@@ -62,6 +62,16 @@ import { setUpRateLimiting } from './config/rate-limit.config';
 //   console.log(`Application is running on: ${await app.getUrl()}`);
 // }
 
+process.on('uncaughtException', (err) => {
+  console.error('💥 Uncaught Exception:', err);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('💥 Unhandled Rejection:', reason);
+  process.exit(1);
+});
+
 async function bootstrap() {
   try {
     const app = await NestFactory.create(AppModule, {

@@ -5,12 +5,12 @@ buildCommand = "pnpm install && pnpm run build:prod && pnpm prune --prod"
 
 [build.env]
 NIXPACKS_NO_CACHE = "1"
-NODE_ENV = "development"
+NODE_ENV = "staging"
 NODE_OPTIONS = "--max-old-space-size=4096"
 
 [deploy]
 startCommand = "pnpm run start:prod"
 
 [deploy.env]
-NODE_ENV = "development"
+NODE_ENV = "staging"
 NODE_OPTIONS = "--max-old-space-size=900"
