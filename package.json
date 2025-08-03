@@ -8,6 +8,7 @@
   "scripts": {
     "build": "nest build",
     "build:prod": "nest build -c tsconfig.prod.json",
+    "start:prod:trace": "NODE_OPTIONS='--trace-uncaught --trace-warnings' pnpm run start:prod",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
