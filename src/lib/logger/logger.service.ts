@@ -54,6 +54,10 @@ export class CustomLogger extends ConsoleLogger implements LoggerService {
   }
 
   error(message: any, trace?: string, context?: string) {
+    console.error('🔥 ERROR MESSAGE:', message);
+    console.error('🔥 ERROR TRACE:', trace);
+    console.error('🔥 ERROR CONTEXT:', context);
+
     this.winstonLogger.error(message, {
       trace,
       context: context || this.context,
