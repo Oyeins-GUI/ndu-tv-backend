@@ -18,17 +18,6 @@ import { env } from '../config';
         paranoid: true,
         timestamps: true,
       },
-      dialectOptions: {
-        ...(process.env.NODE_ENV === 'development'
-          ? {}
-          : {
-              ssl: {
-                require: true,
-                rejectUnauthorized: false,
-              },
-            }),
-      },
-      retry: { max: 2 },
     }),
   ],
 })
