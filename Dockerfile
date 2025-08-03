@@ -1,0 +1,52 @@
+# FROM node:22.16.0-alpine
+
+# WORKDIR /usr/src/app
+
+# # COPY package*.json ./
+
+# # RUN npm install -g pnpm
+
+# # RUN pnpm install 
+
+# # COPY . .
+
+# # EXPOSE 3100
+
+
+# COPY package.json pnpm-lock.yaml ./
+
+# RUN npm install -g pnpm && pnpm install --frozen-lockfile
+
+# COPY . .
+
+# EXPOSE 3100
+
+# CMD ["pnpm", "run", "start:dev"]
+
+# -------------------
+# Base image (shared setup)
+# -------------------
+FROM node:22.16.0-alpine AS base
+WORKDIR /usr/src/app
+COPY package.json pnpm-lock.yaml ./
+RUN npm install -g pnpm
+
+# -------------------
+# Production runtime (small, pruned)
+# -------------------
+FROM base AS production
+ENV NODE_ENV=production
+RUN pnpm install --frozen-lockfile && pnpm prune --prod
+COPY . .
+EXPOSE 3100
+CMD ["pnpm", "run", "start:prod"]
+
+# -------------------
+# Development runtime (hot reload)
+# -------------------
+FROM base AS development
+ENV NODE_ENV=development
+RUN pnpm install --frozen-lockfile
+COPY . .
+EXPOSE 3100
+CMD ["pnpm", "run", "start:dev"]
