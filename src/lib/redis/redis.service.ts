@@ -1,28 +1,34 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { createClient, RedisClientType } from 'redis';
 import { IRedisCacheService } from './redis.interface';
 import { CustomLogger } from '../logger/logger.service';
 import { env } from '../../config';
 
 @Injectable()
-export class RedisCacheService implements IRedisCacheService {
+export class RedisCacheService implements IRedisCacheService, OnModuleInit {
   private readonly client: RedisClientType;
   private readonly DEFAULT_TTL = 60 * 60 * 24; // default ttl for redis
 
   constructor(private readonly logger: CustomLogger) {
     this.logger.setContext(RedisCacheService.name);
     this.logger.debug(`redis://${env.REDIS_HOST}:${env.REDIS_PORT}`);
+    this.logger.debug(`redis://${env.REDIS_URL}`);
     this.client = createClient({
-      url: `redis://${env.REDIS_HOST}:${env.REDIS_PORT}`,
+      url: `redis://${env.REDIS_URL}`,
     });
     this.client.on('error', (err) => {
       logger.error('Redis Client Error', err);
-      throw new Error(err);
     });
-    this.client.connect().catch((err) => {
-      logger.error('Failed to connect to Redis:', err);
-      throw err;
-    });
+  }
+
+  async onModuleInit() {
+    try {
+      await this.client.connect();
+      this.logger.debug('✅ Connected to Redis successfully');
+    } catch (err) {
+      this.logger.error('❌ Failed to connect to Redis:', err);
+      throw new Error(`Redis connection failed: ${err.message}`);
+    }
   }
 
   public async delete(target: string | string[]): Promise<number> {
