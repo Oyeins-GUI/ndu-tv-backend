@@ -48,6 +48,7 @@ FROM base AS production
 ENV NODE_ENV=production
 RUN pnpm install --frozen-lockfile && pnpm prune --prod
 COPY . .
+RUN pnpm run build:prod
 EXPOSE 3100
 CMD ["pnpm", "run", "start:prod"]
 
