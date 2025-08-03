@@ -19,8 +19,5 @@ buildCommand = "docker build --target production -t ndutv ."
 [build.env]
 NODE_OPTIONS = "--max-old-space-size=4096"
 
-[deploy]
-startCommand = "pnpm run start:prod"
-
 [deploy.env]
 NODE_OPTIONS = "--max-old-space-size=900"
