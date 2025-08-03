@@ -16,7 +16,7 @@ import { TokenValidationService } from './auth/services/token-validation.service
 
 @Module({
   imports: [
-    // DatabaseModule,
+    DatabaseModule,
     LoggerModule,
     EventEmitterModule.forRoot(),
     ThrottlerModule.forRoot({
