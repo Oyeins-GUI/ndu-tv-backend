@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CustomLogger } from '../../lib/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { IAdminRepository } from '../../modules/admin/interfaces/admin-repository.interface';
@@ -31,6 +31,7 @@ import { IEmailService } from '../../lib/email/email.interface';
 import { TEMPLATE_NAMES, TEMPLATE_SUBJECTS } from '../../lib/email/templates';
 import { generateRandomToken } from '../../lib/utils';
 
+@Injectable()
 export class AuthService implements IAuthService {
   constructor(
     private readonly logger: CustomLogger,
