@@ -114,7 +114,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         reason,
         ...(details !== undefined ? { details } : {}),
       },
-      ...(env.NODE_ENV === 'development' && {
+      ...((env.NODE_ENV === 'development' || env.NODE_ENV === 'staging') && {
         timestamp: new Date().toISOString(),
         path: request.url,
         method: request.method,
