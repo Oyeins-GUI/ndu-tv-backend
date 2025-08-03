@@ -79,7 +79,7 @@ async function bootstrap() {
       logger: new CustomLogger('NDU-TV API'),
     });
 
-    const logsDirectory = path.join(__dirname, '..', 'logs');
+    const logsDirectory = path.resolve(process.cwd(), 'logs');
     if (!fs.existsSync(logsDirectory)) {
       fs.mkdirSync(logsDirectory);
       console.log(`Created logs directory: ${logsDirectory}`);
