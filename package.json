@@ -101,6 +101,6 @@
     "testEnvironment": "node"
   },
   "engines": {
-    "node": "23.x"
+    "node": ">=22.0.0"
   }
 }
