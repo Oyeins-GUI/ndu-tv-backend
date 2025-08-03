@@ -18,6 +18,9 @@ import { env } from '../config';
         paranoid: true,
         timestamps: true,
       },
+      retry: {
+        max: 1,
+      },
     }),
   ],
 })
