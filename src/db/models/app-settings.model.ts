@@ -12,7 +12,7 @@ import { BaseModel } from './base.model';
 import { AcademicSession } from './academic-sessions.model';
 
 @Table({
-  tableName: 'app-settings',
+  tableName: 'app_settings',
 })
 export class AppSettings extends BaseModel {
   @ForeignKey(() => AcademicSession)

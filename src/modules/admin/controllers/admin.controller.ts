@@ -8,7 +8,9 @@ import {
   Post,
   Req,
 } from '@nestjs/common';
-import { IAdminService } from '../interfaces/admin.interface';
+import { IAcademicService } from '../services/interfaces/academic.interface';
+import { IExecutiveService } from '../services/interfaces/executive.interface';
+import { IAdminManagementService } from '../services/interfaces/admin-management.interface';
 import {
   CreateAdminRequestBody,
   CreateSugExecutiveRequestBody,
@@ -40,13 +42,19 @@ import {
   DepartmentApiResponse,
   FacultyApiResponse,
 } from '../dtos/common.response.dto';
-import { UpdateDepartmentInput } from '../interfaces/department-repository.interface';
 
 @Controller('admin')
 @ApiTags('Admin')
 export class AdminController {
   constructor(
-    @Inject('IAdminService') private readonly adminService: IAdminService,
+    @Inject('IAcademicService')
+    private readonly academicService: IAcademicService,
+
+    @Inject('IExecutiveService')
+    private readonly executiveService: IExecutiveService,
+
+    @Inject('IAdminManagementService')
+    private readonly adminManagementService: IAdminManagementService,
   ) {}
 
   @Post('executive')
@@ -54,7 +62,7 @@ export class AdminController {
   public async createExecutive(
     @Body() body: CreateSugExecutiveRequestBody,
   ): Promise<SugExecutiveApiResponse> {
-    const result = await this.adminService.addExecutive(body);
+    const result = await this.executiveService.addExecutive(body);
     return new SugExecutiveApiResponse(result);
   }
 
@@ -63,7 +71,7 @@ export class AdminController {
   public async createAdmin(
     @Body() body: CreateAdminRequestBody,
   ): Promise<AdminApiResponse> {
-    const result = await this.adminService.addAdmin(body);
+    const result = await this.adminManagementService.addAdmin(body);
     return new AdminApiResponse(result);
   }
 
@@ -72,7 +80,7 @@ export class AdminController {
   public async createDepartment(
     @Body() body: CreateDepartmentRequestBody,
   ): Promise<DepartmentApiResponse> {
-    const result = await this.adminService.addDepartment(body);
+    const result = await this.academicService.addDepartment(body);
     return new DepartmentApiResponse(result);
   }
 
@@ -82,19 +90,16 @@ export class AdminController {
     @Param('id') id: string,
     @Body() body: UpdateDepartmentRequestBody,
   ): Promise<DepartmentApiResponse> {
-    const result = await this.adminService.updateDepartment(
-      id,
-      body as UpdateDepartmentInput,
-    );
+    const result = await this.academicService.updateDepartment(id, body);
     return new DepartmentApiResponse(result);
   }
 
-  @Delete('department:id')
+  @Delete('department/:id')
   @DeleteDepartmentEndpoint()
   public async deleteDepartment(
     @Param('id') id: string,
   ): Promise<SuccessResponseBody> {
-    await this.adminService.deleteDepartment(id);
+    await this.academicService.deleteDepartment(id);
     return new SuccessResponseBody({
       message: RESPONSE_MESSAGES.Department.Success.Deleted,
     });
@@ -105,7 +110,7 @@ export class AdminController {
   public async createFaculty(
     @Body() body: CreateFacultyRequestBody,
   ): Promise<FacultyApiResponse> {
-    const result = await this.adminService.addFaculty(body);
+    const result = await this.academicService.addFaculty(body);
     return new FacultyApiResponse(result);
   }
 
@@ -115,7 +120,7 @@ export class AdminController {
     @Param('id') id: string,
     @Body() body: CreateFacultyRequestBody,
   ): Promise<FacultyApiResponse> {
-    const result = await this.adminService.updateFaculty(id, body);
+    const result = await this.academicService.updateFaculty(id, body);
     return new FacultyApiResponse(result);
   }
 
@@ -124,7 +129,7 @@ export class AdminController {
   public async deleteFaculty(
     @Param('id') id: string,
   ): Promise<SuccessResponseBody> {
-    await this.adminService.deleteFaculty(id);
+    await this.academicService.deleteFaculty(id);
     return new SuccessResponseBody({
       message: RESPONSE_MESSAGES.Faculty.Success.Deleted,
     });

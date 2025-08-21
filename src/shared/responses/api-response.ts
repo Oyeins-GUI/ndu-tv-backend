@@ -1,7 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export abstract class ApiResponse<T> {
-  @ApiProperty({ example: true, description: 'Indicates if the request was successful' })
+  @ApiProperty({
+    example: true,
+    description: 'Indicates if the request was successful',
+  })
   success = true;
 
   @ApiProperty({ required: false, description: 'Response message' })
@@ -15,51 +18,82 @@ export abstract class ApiResponse<T> {
 }
 
 class PaginationMeta {
-  @ApiProperty({ example: 100, description: 'Total number of items' })
-  total_items: number;
-
   @ApiProperty({ example: 2, description: 'Current page number' })
   current_page: number;
 
   @ApiProperty({ example: 10, description: 'Items per page' })
   limit: number;
 
-  @ApiProperty({ example: 10, description: 'Total number of pages' })
-  total_pages: number;
+  @ApiProperty({
+    example: true,
+    type: 'boolean',
+    description: 'If there is a next page',
+    required: false,
+  })
+  has_next_page?: boolean;
 
-  @ApiProperty({ example: 3, description: 'Next page number', required: false, nullable: true })
-  next_page?: number | null;
-
-  @ApiProperty({ example: 1, description: 'Previous page number', required: false, nullable: true })
-  prev_page?: number | null;
+  @ApiProperty({
+    example: false,
+    type: 'boolean',
+    description: 'If there is a previous page',
+    required: false,
+  })
+  has_prev_page?: boolean;
 }
 
 export abstract class PaginatedResponse<T> extends ApiResponse<T[]> {
-  @ApiProperty({ type: [Object], description: 'Array of data items' })
-  data: T[];
+  public data: T[];
 
   @ApiProperty({ type: PaginationMeta, description: 'Pagination metadata' })
-  pagination: PaginationMeta;
+  public pagination: PaginationMeta;
 
-  constructor(
-    data: T[],
-    total_items: number,
-    current_page: number,
-    limit: number,
-    message?: string,
-  ) {
+  constructor({
+    data,
+    page,
+    limit,
+    message,
+  }: {
+    data: T[];
+    page: number;
+    limit: number;
+    message?: string;
+  }) {
     super(message);
+
+    if (data.length > limit) {
+      data.pop();
+    }
+
     this.data = data;
 
-    const total_pages = Math.ceil(total_items / limit);
-
     this.pagination = {
-      total_items,
-      current_page,
+      current_page: page,
       limit,
-      total_pages,
-      next_page: current_page < total_pages ? current_page + 1 : null,
-      prev_page: current_page > 1 ? current_page - 1 : null,
+      has_next_page: data.length > limit,
+      has_prev_page: page > 1,
     };
   }
+}
+
+export function calculatePaginationOffset(page: number, limit: number) {
+  return (page - 1) * limit;
+}
+
+export function calculatePaginationLimit(limit: number) {
+  return limit + 1;
+}
+
+export function createPaginatedResponseDto<T>(
+  itemType: new () => T,
+  description?: string,
+) {
+  class PaginatedResponseBody extends PaginatedResponse<T> {
+    @ApiProperty({
+      description: description ?? 'Paginated data',
+      type: [itemType],
+    })
+    declare public data: T[];
+  }
+
+  return PaginatedResponseBody;
 }

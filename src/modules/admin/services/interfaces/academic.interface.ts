@@ -1,50 +1,17 @@
-import { AdminDto } from '../dtos/admin.dto';
-import { DepartmentDto, FacultyDto, SugExecutiveDto } from '../dtos/common.dto';
+import { DepartmentDto, FacultyDto } from '../../dtos/common.dto';
 import {
-  CreateDepartmentInput,
-  UpdateDepartmentInput,
-} from './department-repository.interface';
-import {
-  CreateFacultyInput,
-  UpdateFacultyInput,
-} from './faculty-repository.interface';
-import {
-  CreateSugExecutiveInput,
-  UpdateSugExecutiveInput,
-} from './sug-executive-repository.interface';
+  CreateDepartmentRequestBody,
+  CreateFacultyRequestBody,
+  UpdateDepartmentRequestBody,
+} from '../../dtos/common.request.dto';
 
-export interface IAdminService {
-  /**
-   * Adds a new Admin (Executive)
-   * @param data- Data to add
-   * @returns {AdminDto} - The newly added admin
-   */
-  addAdmin(data: AddAdminInput): Promise<AdminDto>;
-
-  /**
-   * Adds a new Executive
-   * @param data- Data to add
-   * @returns {SugExecutiveDto} - The newly added executive
-   */
-  addExecutive(data: CreateSugExecutiveInput): Promise<SugExecutiveDto>;
-
-  /**
-   * Updates an SUG Executive data
-   * @param executive_id - ID of the execuvitve data
-   * @param data - Data to update
-   * @returns {SugExecutiveDto}- The newly updated sug executive
-   */
-  updateExecutive(
-    executive_id: string,
-    data: UpdateSugExecutiveInput,
-  ): Promise<SugExecutiveDto>;
-
+export interface IAcademicService {
   /**
    * Adds a new Department
    * @param data - Data to add
    * @returns {DepartmentDto} - The newly added department
    */
-  addDepartment(data: CreateDepartmentInput): Promise<DepartmentDto>;
+  addDepartment(data: CreateDepartmentRequestBody): Promise<DepartmentDto>;
 
   /**
    * Updates an existing Department
@@ -54,8 +21,9 @@ export interface IAdminService {
    */
   updateDepartment(
     id: string,
-    data: UpdateDepartmentInput,
+    data: UpdateDepartmentRequestBody,
   ): Promise<DepartmentDto>;
+
   /**
    * Gets all Departments with optional faculty filter
    * @param faculty_id - Optional faculty ID to filter by
@@ -75,7 +43,7 @@ export interface IAdminService {
    * @param data - Data to add
    * @returns {FacultyDto} - The newly added faculty
    */
-  addFaculty(data: CreateFacultyInput): Promise<FacultyDto>;
+  addFaculty(data: CreateFacultyRequestBody): Promise<FacultyDto>;
 
   /**
    * Updates an existing Faculty
@@ -83,7 +51,10 @@ export interface IAdminService {
    * @param data - Data to update
    * @returns {FacultyDto} - The updated faculty
    */
-  updateFaculty(id: string, data: UpdateFacultyInput): Promise<FacultyDto>;
+  updateFaculty(
+    id: string,
+    data: CreateFacultyRequestBody,
+  ): Promise<FacultyDto>;
 
   /**
    * Gets all Faculties
@@ -105,8 +76,3 @@ export interface IAdminService {
    */
   getFaculty(id: string): Promise<FacultyDto>;
 }
-
-export type AddAdminInput = {
-  executive_id: string;
-  role_id: string;
-};

@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CustomLogger } from '../../lib/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { IAdminRepository } from '../../modules/admin/interfaces/admin-repository.interface';
+import { IAdminRepository } from '../../modules/admin/repositories/interfaces/admin-repository.interface';
 import {
   AuthTokenPayload,
   AuthTokens,
