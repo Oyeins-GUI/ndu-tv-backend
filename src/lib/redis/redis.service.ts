@@ -11,7 +11,6 @@ export class RedisCacheService implements IRedisCacheService, OnModuleInit {
 
   constructor(private readonly logger: CustomLogger) {
     this.logger.setContext(RedisCacheService.name);
-    this.logger.debug(`redis://${env.REDIS_HOST}:${env.REDIS_PORT}`);
     this.logger.debug(env.REDIS_URL);
     this.client = createClient({
       url: env.REDIS_URL,
