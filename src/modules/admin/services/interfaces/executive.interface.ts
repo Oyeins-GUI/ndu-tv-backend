@@ -12,6 +12,13 @@ export interface IExecutiveService {
    */
   addExecutive(data: CreateSugExecutiveRequestBody): Promise<SugExecutiveDto>;
 
+  // /**
+  //  * Adds a new Executive
+  //  * @param data- Data to add
+  //  * @returns {SugExecutiveDto} - The newly added executive
+  //  */
+  // addSugPostion(data: CreateSugExecutiveRequestBody): Promise<SugPostionDto>;
+
   /**
    * Updates an SUG Executive data
    * @param executive_id - ID of the execuvitve data
