@@ -98,6 +98,20 @@ export function GetDepartmentsEndpoint() {
   );
 }
 
+export function GetDepartmentEndpoint() {
+  return applyDecorators(
+    Public(),
+    StandardDocs({
+      summary: 'Get a department by its id',
+      auth: false,
+      includeErrors: [ErrorType.INTERNAL_SERVER_ERROR],
+      successMessage: RESPONSE_MESSAGES.Department.Success.Retrieved,
+      status: HttpStatus.OK,
+      type: DepartmentApiResponse,
+    }),
+  );
+}
+
 export function UpdateDepartmentEndpoint() {
   return applyDecorators(
     StandardDocs({
@@ -166,6 +180,24 @@ export function GetFacultiesEndpoint() {
       successMessage: RESPONSE_MESSAGES.Faculty.Success.Retrieved,
       status: HttpStatus.OK,
       type: FacultiesApiResponse,
+    }),
+  );
+}
+
+export function GetFacultyEndpoint() {
+  return applyDecorators(
+    Public(),
+    StandardDocs({
+      summary: 'Gets a single Faculty by its ID',
+      includeErrors: [
+        ErrorType.UNAUTHORIZED,
+        ErrorType.FORBIDDEN,
+        ErrorType.INTERNAL_SERVER_ERROR,
+      ],
+      auth: false,
+      successMessage: RESPONSE_MESSAGES.Faculty.Success.Retrieved,
+      status: HttpStatus.OK,
+      type: FacultyApiResponse,
     }),
   );
 }

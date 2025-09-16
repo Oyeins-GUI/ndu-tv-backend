@@ -1,11 +1,17 @@
-import { Controller, Inject, Get, Query } from '@nestjs/common';
+import { Controller, Inject, Get, Query, Param } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { GetDepartmentsEndpoint } from '../decorators/admin.decorator';
-import { DepartmentsApiResponse } from '../dtos/common.response.dto';
+import {
+  GetDepartmentEndpoint,
+  GetDepartmentsEndpoint,
+} from '../decorators/admin.decorator';
+import {
+  DepartmentApiResponse,
+  DepartmentsApiResponse,
+} from '../dtos/common.response.dto';
 import { IAcademicService } from '../services/interfaces/academic.interface';
 
 @ApiTags('Department')
-@Controller('department')
+@Controller('departments')
 export class DepartmentController {
   constructor(
     @Inject('IAcademicService')
@@ -19,5 +25,14 @@ export class DepartmentController {
   ): Promise<DepartmentsApiResponse> {
     const result = await this.academicService.getDepartments(faculty_id);
     return new DepartmentsApiResponse(result);
+  }
+
+  @Get(':id')
+  @GetDepartmentEndpoint()
+  public async getDepartment(
+    @Param('id') department_id: string,
+  ): Promise<DepartmentApiResponse> {
+    const result = await this.academicService.getDepartment(department_id);
+    return new DepartmentApiResponse(result);
   }
 }

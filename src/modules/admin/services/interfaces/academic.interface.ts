@@ -25,6 +25,13 @@ export interface IAcademicService {
   ): Promise<DepartmentDto>;
 
   /**
+   * Gets a department by its id
+   * @param department_id - ID of department to get
+   * @returns - The Department instance if found
+   */
+  getDepartment(department_id: string): Promise<DepartmentDto>;
+
+  /**
    * Gets all Departments with optional faculty filter
    * @param faculty_id - Optional faculty ID to filter by
    * @returns {DepartmentDto[]} - List of departments (filtered by faculty if provided)
@@ -55,6 +62,13 @@ export interface IAcademicService {
     id: string,
     data: CreateFacultyRequestBody,
   ): Promise<FacultyDto>;
+
+  /**
+   * Gets a Faculty by its ID
+   * @param faculty_id - ID of the Faculty to get
+   * @returns - Faculty instance if found
+   */
+  getFaculty(faculty_id: string): Promise<FacultyDto>;
 
   /**
    * Gets all Faculties

@@ -1,4 +1,4 @@
-import { Inject, NotFoundException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { CustomLogger } from '../../../lib/logger/logger.service';
 import { RESPONSE_MESSAGES } from '../../../shared/responses/response-messages';
 import { DepartmentDto, FacultyDto } from '../dtos/common.dto';
@@ -13,6 +13,7 @@ import {
   UpdateDepartmentInput,
 } from '../repositories/interfaces/department-repository.interface';
 import { IFacultyRepository } from '../repositories/interfaces/faculty-repository.interface';
+import { NotFoundException } from '../../../shared/exceptions';
 
 export class AcademicService implements IAcademicService {
   constructor(
@@ -72,6 +73,24 @@ export class AcademicService implements IAcademicService {
       return new DepartmentDto(updated);
     } catch (error) {
       this.logger.logServiceError(this.updateDepartment.name, error, { data });
+      throw error;
+    }
+  }
+
+  public async getDepartment(department_id: string): Promise<DepartmentDto> {
+    try {
+      const deparment = await this.departmentRepository.findById(department_id);
+
+      if (!deparment)
+        throw new NotFoundException({
+          reason: RESPONSE_MESSAGES.Department.Failure.NotFound,
+          details: {
+            department_id,
+          },
+        });
+      return new DepartmentDto(deparment);
+    } catch (error) {
+      this.logger.logServiceError(this.getDepartment.name, error);
       throw error;
     }
   }

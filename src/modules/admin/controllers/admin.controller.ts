@@ -57,7 +57,7 @@ export class AdminController {
     private readonly adminManagementService: IAdminManagementService,
   ) {}
 
-  @Post('executive')
+  @Post('executives')
   @CreateSugExecutiveEndpoint()
   public async createExecutive(
     @Body() body: CreateSugExecutiveRequestBody,
@@ -75,7 +75,7 @@ export class AdminController {
     return new AdminApiResponse(result);
   }
 
-  @Post('department')
+  @Post('departments')
   @CreateDepartmentEndpoint()
   public async createDepartment(
     @Body() body: CreateDepartmentRequestBody,
@@ -84,7 +84,7 @@ export class AdminController {
     return new DepartmentApiResponse(result);
   }
 
-  @Patch('department/:id')
+  @Patch('departments/:id')
   @UpdateDepartmentEndpoint()
   public async updateDepartment(
     @Param('id') id: string,
@@ -94,7 +94,7 @@ export class AdminController {
     return new DepartmentApiResponse(result);
   }
 
-  @Delete('department/:id')
+  @Delete('departments/:id')
   @DeleteDepartmentEndpoint()
   public async deleteDepartment(
     @Param('id') id: string,
@@ -105,7 +105,7 @@ export class AdminController {
     });
   }
 
-  @Post('faculty')
+  @Post('faculties')
   @CreateFacultyEndpoint()
   public async createFaculty(
     @Body() body: CreateFacultyRequestBody,
@@ -114,7 +114,7 @@ export class AdminController {
     return new FacultyApiResponse(result);
   }
 
-  @Patch('faculty/:id')
+  @Patch('faculties/:id')
   @UpdateFacultyEndpoint()
   public async updateFaculty(
     @Param('id') id: string,
@@ -124,7 +124,7 @@ export class AdminController {
     return new FacultyApiResponse(result);
   }
 
-  @Delete('faculty/:id')
+  @Delete('faculties/:id')
   @DeleteFacultyEndpoint()
   public async deleteFaculty(
     @Param('id') id: string,
