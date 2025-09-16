@@ -16,7 +16,6 @@ import { RoleRepository } from './repositories/role.repository';
 import { SugExecutiveRepository } from './repositories/sug-executive.repository';
 import { AdminController } from './controllers/admin.controller';
 import { Role } from '../../db/models/roles.model';
-import { AdminService } from './services/admin.service';
 import { RedisCacheService } from '../../lib/redis/redis.service';
 import { DepartmentController } from './controllers/department.controller';
 import { FacultyController } from './controllers/faculty.controller';
@@ -64,9 +63,6 @@ import { FacultyController } from './controllers/faculty.controller';
 
     EmailService,
     { provide: 'IEmailService', useExisting: EmailService },
-
-    AdminService,
-    { provide: 'IAdminService', useExisting: AdminService },
   ],
 
   controllers: [AdminController, DepartmentController, FacultyController],

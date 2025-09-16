@@ -224,7 +224,7 @@ export class AuthService implements IAuthService {
         },
       );
 
-      const admin = await this.adminRepository.findByPk(adminPayload.id, {
+      const admin = await this.adminRepository.findById(adminPayload.id, {
         relations: ['all'],
       });
 

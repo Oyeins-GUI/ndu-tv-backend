@@ -44,10 +44,10 @@ export class ExecutiveService implements IExecutiveService {
   ): Promise<SugExecutiveDto> {
     try {
       const [department, session, faculty, position] = await Promise.all([
-        this.departmentRepository.findByPk(data.department_id),
-        this.academicSessionRepository.findByPk(data.session_id),
-        this.facultyRepository.findByPk(data.faculty_id),
-        this.sugPositionRepository.findByPk(data.position_id),
+        this.departmentRepository.findById(data.department_id),
+        this.academicSessionRepository.findById(data.session_id),
+        this.facultyRepository.findById(data.faculty_id),
+        this.sugPositionRepository.findById(data.position_id),
       ]);
 
       if (!faculty || !department || !session || !position) {
@@ -77,7 +77,7 @@ export class ExecutiveService implements IExecutiveService {
   ): Promise<SugExecutiveDto> {
     try {
       const executive =
-        await this.sugExecutiveRepository.findByPk(executive_id);
+        await this.sugExecutiveRepository.findById(executive_id);
 
       if (!executive)
         throw new NotFoundException({
