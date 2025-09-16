@@ -19,6 +19,9 @@ import { Role } from '../../db/models/roles.model';
 import { RedisCacheService } from '../../lib/redis/redis.service';
 import { DepartmentController } from './controllers/department.controller';
 import { FacultyController } from './controllers/faculty.controller';
+import { AcademicService } from './services/academic.service';
+import { ExecutiveService } from './services/executive.service';
+import { AdminManagementService } from './services/admin-management.service';
 
 @Module({
   imports: [
@@ -53,6 +56,21 @@ import { FacultyController } from './controllers/faculty.controller';
     {
       provide: 'IAcademicSessionRepository',
       useExisting: AcademicSessionRepository,
+    },
+
+    AcademicService,
+    {
+      provide: 'IAcademicService',
+      useExisting: AcademicService,
+    },
+
+    ExecutiveService,
+    { provide: 'IExecutiveService', useExisting: ExecutiveService },
+
+    AdminManagementService,
+    {
+      provide: 'IAdminManagementService',
+      useExisting: AdminManagementService,
     },
 
     SugPositionRepository,

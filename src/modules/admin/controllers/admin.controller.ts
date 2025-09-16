@@ -15,7 +15,7 @@ import {
   CreateAdminRequestBody,
   CreateSugExecutiveRequestBody,
 } from '../dtos/admin.request.dto';
-import { Request } from 'express';
+
 import {
   AdminApiResponse,
   SugExecutiveApiResponse,
