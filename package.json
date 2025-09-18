@@ -2,7 +2,7 @@
   "name": "ndu-tv--server",
   "version": "1.0.0",
   "description": "",
-  "author": "",
+  "author": "Lankimian",
   "private": true,
   "license": "ISC",
   "scripts": {
@@ -55,7 +55,7 @@
     "sequelize": "^6.37.7",
     "sequelize-typescript": "^2.1.6",
     "swagger-ui-express": "^5.0.1",
-    "migration": "^3.8.2",
+    "umzug": "^3.8.2",
     "uuid": "^11.1.0",
     "winston": "^3.17.0",
     "winston-daily-rotate-file": "^5.0.0"
