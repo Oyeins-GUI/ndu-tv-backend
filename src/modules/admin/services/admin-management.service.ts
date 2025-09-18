@@ -21,6 +21,8 @@ import {
   AddAdminInput,
   IAdminManagementService,
 } from './interfaces/admin-management.interface';
+import { Role as RoleEnum } from '../../../shared/enums';
+import { RoleDto } from '../dtos/common.dto';
 
 export class AdminManagementService implements IAdminManagementService {
   constructor(
@@ -43,6 +45,20 @@ export class AdminManagementService implements IAdminManagementService {
     private readonly jwtService: JwtService,
   ) {
     this.logger.setContext(AdminManagementService.name);
+  }
+
+  public async getRoles(): Promise<RoleDto[]> {
+    try {
+      const roles = await this.roleRepository.findManyBy({});
+
+      const filteredRoles = roles.filter(
+        (role) => role.role !== RoleEnum.SUPER_ADMIN,
+      );
+      return RoleDto.fromEntities(filteredRoles);
+    } catch (error) {
+      this.logger.logServiceError(this.getRoles.name, error);
+      throw error;
+    }
   }
 
   public async addAdmin(data: AddAdminInput): Promise<AdminDto> {

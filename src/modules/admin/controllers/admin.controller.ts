@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Inject,
   Param,
   Patch,
@@ -42,6 +43,7 @@ import {
   DepartmentApiResponse,
   FacultyApiResponse,
 } from '../dtos/common.response.dto';
+import { RoleDto } from '../dtos/common.dto';
 
 @Controller('admin')
 @ApiTags('Admin')
@@ -132,6 +134,16 @@ export class AdminController {
     await this.academicService.deleteFaculty(id);
     return new SuccessResponseBody({
       message: RESPONSE_MESSAGES.Faculty.Success.Deleted,
+    });
+  }
+
+  @Get('roles')
+  @DeleteFacultyEndpoint()
+  public async getRoles(): Promise<SuccessResponseBody<RoleDto[]>> {
+    const roles = await this.adminManagementService.getRoles();
+    return new SuccessResponseBody({
+      message: RESPONSE_MESSAGES.Role.Success.Retrieved,
+      data: roles,
     });
   }
 }

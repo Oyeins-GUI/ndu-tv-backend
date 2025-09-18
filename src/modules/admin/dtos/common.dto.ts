@@ -1,6 +1,8 @@
 import { Department } from '../../../db/models/departments.model';
 import { Faculty } from '../../../db/models/faculties.model';
+import { Role } from '../../../db/models/roles.model';
 import { SugExecutive } from '../../../db/models/sug-executives.model';
+import { Role as RoleEnum } from '../../../shared/enums';
 
 export class SugExecutiveDto {
   public name: string;
@@ -82,5 +84,21 @@ export class FacultyDto {
 
   static fromEntities(models: Faculty[]): FacultyDto[] {
     return models.map((model) => new FacultyDto(model));
+  }
+}
+
+export class RoleDto {
+  public id: string;
+  public role: RoleEnum | string;
+  public description: string;
+
+  constructor(model: Role) {
+    this.id = model.id;
+    this.role = model.role;
+    this.description = model.description;
+  }
+
+  static fromEntities(models: Role[]): RoleDto[] {
+    return models.map((model) => new RoleDto(model));
   }
 }

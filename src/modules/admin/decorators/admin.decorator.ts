@@ -13,6 +13,7 @@ import {
 } from '../dtos/common.response.dto';
 import { SuccessResponseBody } from '../../../shared/responses/success-response';
 import { Public } from '../../../shared/decorators/public.decorator';
+import { RoleDto } from '../dtos/common.dto';
 
 export function CreateSugExecutiveEndpoint() {
   return applyDecorators(
@@ -233,6 +234,22 @@ export function DeleteFacultyEndpoint() {
       successMessage: RESPONSE_MESSAGES.Faculty.Success.Deleted,
       status: HttpStatus.NO_CONTENT,
       type: SuccessResponseBody,
+    }),
+  );
+}
+
+export function GetRolesEndpoint() {
+  return applyDecorators(
+    StandardDocs({
+      summary: 'Gets Roles',
+      includeErrors: [
+        ErrorType.UNAUTHORIZED,
+        ErrorType.FORBIDDEN,
+        ErrorType.INTERNAL_SERVER_ERROR,
+      ],
+      successMessage: RESPONSE_MESSAGES.Role.Success.Retrieved,
+      status: HttpStatus.OK,
+      type: SuccessResponseBody<RoleDto[]>,
     }),
   );
 }
