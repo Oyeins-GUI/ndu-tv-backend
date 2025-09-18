@@ -1,8 +1,7 @@
 import { Sequelize } from 'sequelize';
 import { Umzug, SequelizeStorage } from 'umzug';
 import * as dotenv from 'dotenv';
-import * as fs from 'fs';
-import { env } from './src/config';
+import * as fs from 'node:fs';
 
 dotenv.config();
 
@@ -18,22 +17,22 @@ const sequelize = new Sequelize({
           },
         }),
   },
-  host: env.DB_HOST,
-  port: env.PORT,
-  username: env.DB_USER,
-  password: env.DB_PASSWORD,
-  database: env.DB_NAME,
+  host: process.env.DB_HOST as string,
+  port: Number(process.env.DB_PORT),
+  username: process.env.DB_USER as string,
+  password: process.env.DB_PASSWORD as string,
+  database: process.env.DB_NAME as string,
 });
 
-const umzug = new Umzug({
-  migrations: { glob: './src/database/migrations/*.ts' },
+const migration = new Umzug({
+  migrations: { glob: './src/db/migrations/*.ts' },
   context: sequelize.getQueryInterface(),
   storage: new SequelizeStorage({ sequelize }),
   logger: console,
 });
 
 const seeder = new Umzug({
-  migrations: { glob: './src/database/seeders/*.ts' },
+  migrations: { glob: './src/db/seeders/*.ts' },
   context: sequelize.getQueryInterface(),
   storage: new SequelizeStorage({ sequelize }),
   logger: console,
@@ -42,13 +41,13 @@ const seeder = new Umzug({
 const task = (process.argv[2] || '').trim();
 const migrationFile = process.argv[3]; // Add an argument for the specific file
 
-const migrationPath = `./src/database/migrations/${migrationFile}`;
-const seederPath = `./src/database/seeders/${migrationFile}`;
+const migrationPath = `./src/db/migrations/${migrationFile}`;
+const seederPath = `./src/db/seeders/${migrationFile}`;
 
 // Function to run specific migration file
 async function runSpecificMigration(file: string) {
   try {
-    const result = await umzug.up({ to: file });
+    const result = await migration.up({ to: file });
     console.log(`Migration ${file} ran successfully!`, result);
   } catch (error) {
     console.error(`Error running specific migration ${file}:`, error);
@@ -63,20 +62,21 @@ async function run() {
       if (fs.existsSync(migrationPath)) {
         await runSpecificMigration(migrationFile);
       } else if (fs.existsSync(seederPath)) {
-        await seeder.up({ to: migrationFile });
+        const result = await seeder.up({ to: migrationFile });
+        console.log(`Seeder ${migrationFile} ran successfully!`, result);
       }
     } else {
       switch (task) {
         case 'up':
-          await umzug.up();
+          await migration.up();
           console.log('Migrations up successful!');
           break;
         case 'down':
-          await umzug.down();
+          await migration.down();
           console.log('Migrations down successful!');
           break;
         case 'reset':
-          await umzug.down({ to: '0' as const });
+          await migration.down({ to: '0' as const });
           console.log('Migrations reset successful!');
           break;
         case 'seed-up':

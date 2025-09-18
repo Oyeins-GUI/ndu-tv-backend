@@ -7,7 +7,7 @@ import { Role as RoleEnum } from '../../shared/enums';
 })
 export class Role extends BaseModel {
   @AllowNull(false)
-  @Column(DataType.ENUM(...Object.keys(RoleEnum)))
+  @Column(DataType.ENUM(...Object.values(RoleEnum)))
   public role: RoleEnum;
 
   @AllowNull(false)

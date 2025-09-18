@@ -19,7 +19,15 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "migrate:up": "ts-node migration-runner.ts up",
+    "migrate:down": "ts-node migration-runner.ts down",
+    "migrate:reset": "ts-node migration-runner.ts reset",
+    "migrate:file": "ts-node migration-runner.ts up",
+    "seed:up": "ts-node migration-runner.ts seed-up",
+    "seed:down": "ts-node migration-runner.ts seed-down",
+    "seed:reset": "ts-node migration-runner.ts seed-reset",
+    "seed:file": "ts-node migration-runner.ts seed-up"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -47,7 +55,7 @@
     "sequelize": "^6.37.7",
     "sequelize-typescript": "^2.1.6",
     "swagger-ui-express": "^5.0.1",
-    "umzug": "^3.8.2",
+    "migration": "^3.8.2",
     "uuid": "^11.1.0",
     "winston": "^3.17.0",
     "winston-daily-rotate-file": "^5.0.0"
