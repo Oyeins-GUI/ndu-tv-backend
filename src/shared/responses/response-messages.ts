@@ -72,7 +72,7 @@ export const RESPONSE_MESSAGES = {
   },
   Role: {
     Success: {
-      Retrived: 'Role(s) retrieved successfully',
+      Retrieved: 'Role(s) retrieved successfully',
     },
     Failure: {
       NotFound: 'Role not found',
