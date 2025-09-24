@@ -34,10 +34,22 @@ async function bootstrap() {
     console.log(`Created logs directory: ${logsDirectory}`);
   }
 
+  // app.enableCors({
+  //   origin: '*',
+  //   methods: '*',
+  //   allowedHeaders: '*',
+  // });
+
+  // In main.ts
   app.enableCors({
-    origin: '*',
-    methods: '*',
-    allowedHeaders: '*',
+    origin: [
+      'https://ndutv-frontend-production.up.railway.app',
+      'http://localhost:3000', // for local development
+      'http://localhost:5173', // if using Vite
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
   });
 
   app.useGlobalPipes(
