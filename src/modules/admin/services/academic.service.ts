@@ -1,7 +1,11 @@
 import { Inject } from '@nestjs/common';
 import { CustomLogger } from '../../../lib/logger/logger.service';
 import { RESPONSE_MESSAGES } from '../../../shared/responses/response-messages';
-import { DepartmentDto, FacultyDto } from '../dtos/common.dto';
+import {
+  AcademicSessionDto,
+  DepartmentDto,
+  FacultyDto,
+} from '../dtos/common.dto';
 import {
   CreateDepartmentRequestBody,
   CreateFacultyRequestBody,
@@ -14,6 +18,7 @@ import {
 } from '../repositories/interfaces/department-repository.interface';
 import { IFacultyRepository } from '../repositories/interfaces/faculty-repository.interface';
 import { NotFoundException } from '../../../shared/exceptions';
+import { IAcademicSessionRepository } from '../repositories/interfaces/academic-session-repository.interface';
 
 export class AcademicService implements IAcademicService {
   constructor(
@@ -24,6 +29,9 @@ export class AcademicService implements IAcademicService {
 
     @Inject('IFacultyRepository')
     private readonly facultyRepository: IFacultyRepository,
+
+    @Inject('IAcademicSessionRepository')
+    private readonly academicSessionRepository: IAcademicSessionRepository,
   ) {
     this.logger.setContext(AcademicService.name);
   }
@@ -204,9 +212,21 @@ export class AcademicService implements IAcademicService {
         },
       );
 
-      return FacultyDto.fromEntities(faculties);
+      const filteredFaculities = faculties.filter((f) => f.faculty !== 'Admin');
+
+      return FacultyDto.fromEntities(filteredFaculities);
     } catch (error) {
       this.logger.logServiceError(this.getFaculties.name, error);
+      throw error;
+    }
+  }
+
+  public async getAcademicSessions(): Promise<AcademicSessionDto[]> {
+    try {
+      const sessions = await this.academicSessionRepository.findManyBy({});
+      return AcademicSessionDto.fromEntities(sessions);
+    } catch (error) {
+      this.logger.logServiceError(this.getAcademicSessions.name, error);
       throw error;
     }
   }

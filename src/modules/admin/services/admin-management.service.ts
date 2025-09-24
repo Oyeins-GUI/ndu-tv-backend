@@ -132,4 +132,20 @@ export class AdminManagementService implements IAdminManagementService {
       throw error;
     }
   }
+
+  public async removeAdmin(admin_id: string): Promise<void> {
+    try {
+      const admin = await this.adminRepository.findById(admin_id);
+
+      if (!admin)
+        throw new NotFoundException({
+          reason: RESPONSE_MESSAGES.Admin.Failiure.NotFound,
+        });
+
+      await this.adminRepository.delete(admin);
+    } catch (error) {
+      this.logger.logServiceError(this.removeAdmin.name, error);
+      throw error;
+    }
+  }
 }

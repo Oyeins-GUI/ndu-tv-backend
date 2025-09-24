@@ -10,6 +10,12 @@ export interface IAdminManagementService {
   addAdmin(data: AddAdminInput): Promise<AdminDto>;
 
   /**
+   * Removes an admin
+   * @param admin_id: ID of the Admin to remove
+   */
+  removeAdmin(admin_id: string): Promise<void>;
+
+  /**
    * Gets Roles
    */
   getRoles(): Promise<RoleDto[]>;

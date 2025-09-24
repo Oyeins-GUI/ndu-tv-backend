@@ -4,6 +4,7 @@ import {
   DataType,
   HasMany,
   Table,
+  Unique,
 } from 'sequelize-typescript';
 import { BaseModel } from './base.model';
 import { Department } from './departments.model';
@@ -13,9 +14,10 @@ import { Department } from './departments.model';
 })
 export class Faculty extends BaseModel {
   @AllowNull(false)
+  @Unique
   @Column(DataType.STRING(100))
-  public faculty: string;
+  declare faculty: string;
 
   @HasMany(() => Department)
-  public departments: Department[];
+  declare departments: Department[];
 }

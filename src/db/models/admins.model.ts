@@ -23,76 +23,76 @@ import { SCOPE } from '../../shared/enums';
 export class Admin extends BaseModel {
   @AllowNull(false)
   @Column(DataType.STRING(100))
-  public name: string;
+  declare name: string;
 
   @AllowNull(false)
   @Unique
   @Index
   @Column(DataType.STRING(100))
-  public matric_number: string;
+  declare matric_number: string;
 
   @AllowNull(false)
   @Unique
   @Index
   @Column(DataType.STRING(100))
-  public email: string;
+  declare email: string;
 
   @AllowNull(true)
   @Column(DataType.STRING)
-  public password: string | null;
+  declare password: string | null;
 
   @ForeignKey(() => Role)
   @AllowNull(false)
   @Column(DataType.UUID)
-  public role_id: string;
+  declare role_id: string;
 
   @BelongsTo(() => Role, 'role_id')
-  public role: Role;
+  declare role: Role;
 
   @ForeignKey(() => SugExecutive)
   @AllowNull(false)
   @Unique
   @Column(DataType.UUID)
-  public executive_id: string;
+  declare executive_id: string;
 
   @BelongsTo(() => SugExecutive, 'executive_id')
-  public executive: SugExecutive;
+  declare executive: SugExecutive;
 
   @ForeignKey(() => SugPosition)
   @AllowNull(false)
   @Column(DataType.UUID)
-  public position_id: string;
+  declare position_id: string;
 
   @BelongsTo(() => SugPosition, 'position_id')
-  public position: SugPosition;
+  declare position: SugPosition;
 
   @ForeignKey(() => Faculty)
   @AllowNull(false)
   @Column(DataType.UUID)
-  public faculty_id: string;
+  declare faculty_id: string;
 
   @BelongsTo(() => Faculty, 'faculty_id')
-  public faculty: Faculty;
+  declare faculty: Faculty;
 
   @ForeignKey(() => Department)
   @AllowNull(false)
   @Column(DataType.UUID)
-  public department_id: string;
+  declare department_id: string;
 
   @BelongsTo(() => Department, 'department_id')
-  public department: Department;
+  declare department: Department;
 
   @AllowNull(false)
   @Default(SCOPE.DEPARTMENT)
   @Column(DataType.ENUM(...Object.values(SCOPE)))
-  public scope: SCOPE;
+  declare scope: SCOPE;
 
   @AllowNull(false)
   @Default(true)
   @Column(DataType.BOOLEAN)
-  public must_set_password: boolean;
+  declare must_set_password: boolean;
 
   @AllowNull(true)
   @Column(DataType.DATE)
-  public last_login_at: Date | null;
+  declare last_login_at: Date | null;
 }

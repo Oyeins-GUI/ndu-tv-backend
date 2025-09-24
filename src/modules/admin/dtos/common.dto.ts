@@ -1,7 +1,9 @@
+import { AcademicSession } from '../../../db/models/academic-sessions.model';
 import { Department } from '../../../db/models/departments.model';
 import { Faculty } from '../../../db/models/faculties.model';
 import { Role } from '../../../db/models/roles.model';
 import { SugExecutive } from '../../../db/models/sug-executives.model';
+import { SugPosition } from '../../../db/models/sug-positions.model';
 import { Role as RoleEnum } from '../../../shared/enums';
 
 export class SugExecutiveDto {
@@ -100,5 +102,39 @@ export class RoleDto {
 
   static fromEntities(models: Role[]): RoleDto[] {
     return models.map((model) => new RoleDto(model));
+  }
+}
+
+export class AcademicSessionDto {
+  public id: string;
+  public session: string;
+  public is_current_session: boolean;
+
+  constructor(model: AcademicSession) {
+    this.id = model.id;
+    this.session = model.session;
+    this.is_current_session = model.is_current_session;
+  }
+
+  static fromEntities(models: AcademicSession[]): AcademicSessionDto[] {
+    return models.map((model) => new AcademicSessionDto(model));
+  }
+}
+
+export class SugPostionDto {
+  public id: string;
+  public position: string;
+  public title: string;
+  public description: string;
+
+  constructor(model: SugPosition) {
+    this.id = model.id;
+    this.position = model.position;
+    this.title = model.title;
+    this.description = model.description;
+  }
+
+  static fromEntities(models: SugPosition[]): SugPostionDto[] {
+    return models.map((model) => new SugPostionDto(model));
   }
 }

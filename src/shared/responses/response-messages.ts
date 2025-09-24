@@ -24,6 +24,7 @@ export const RESPONSE_MESSAGES = {
     Success: {
       Created: 'Admin created successfully',
       Updated: 'Admin updated successfully',
+      Deleted: 'Admin deleted successfully',
     },
     Failiure: { NotFound: ' Admin not found' },
   },
@@ -51,7 +52,11 @@ export const RESPONSE_MESSAGES = {
   },
 
   SugPosition: {
-    Success: {},
+    Success: {
+      Retrieved: 'SUG Postion(s) retrieved successfully',
+      Created: 'SUG Postion(s) created successfully',
+      Updated: 'SUG Postion(s) updated successfully',
+    },
     Failure: { NotFound: 'SUG  Position not found' },
   },
 
@@ -59,13 +64,24 @@ export const RESPONSE_MESSAGES = {
     Success: {
       Created: 'SUG Executive(s) created successfully',
       Updated: 'SUG Executive(s) updated successfully',
+      Retrieved: 'SUG Executive(s) retrieved succesfully',
+      Deleted: 'SUG Executive sucessfully deleteted',
     },
     Failure: {
       NotFound: 'SUG Executive not found',
+      AlreadyExisting: 'Sug Executive Already Exists',
+      FacultyIdNotProvided:
+        'Faculty ID is required to get executives of scope Faculty',
+      DepartmentIdNotProvided:
+        'Department ID is required to get executives of scope Department',
+      IsAnAdmin:
+        'SUG Executive is a current admin, remove from admin before removing as executive',
     },
   },
   AcademicSession: {
-    Success: {},
+    Success: {
+      Retrieved: 'Academic Session(s) retrieved successfully',
+    },
     Failure: {
       NotFound: 'Academic Session not found',
     },

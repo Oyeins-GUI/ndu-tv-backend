@@ -13,10 +13,10 @@ import { BaseModel } from './base.model';
 export class AcademicSession extends BaseModel {
   @AllowNull(false)
   @Column(DataType.STRING(50))
-  public session: string;
+  declare session: string;
 
   @AllowNull(false)
   @Default(false)
   @Column(DataType.BOOLEAN)
-  public is_current_session: boolean;
+  declare is_current_session: boolean;
 }

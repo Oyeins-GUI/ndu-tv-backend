@@ -15,17 +15,17 @@ import { Faculty } from './faculties.model';
 export class Department extends BaseModel {
   @AllowNull(false)
   @Column(DataType.STRING(100))
-  public department: string;
+  declare department: string;
 
   @AllowNull(true)
   @Column(DataType.ARRAY(DataType.STRING(100)))
-  public options: string[] | null;
+  declare options: string[] | null;
 
   @ForeignKey(() => Faculty)
   @AllowNull(false)
   @Column(DataType.UUID)
-  public faculty_id: string;
+  declare faculty_id: string;
 
   @BelongsTo(() => Faculty, 'faculty_id')
-  public faculty: Faculty;
+  declare faculty: Faculty;
 }

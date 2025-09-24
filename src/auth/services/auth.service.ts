@@ -77,6 +77,9 @@ export class AuthService implements IAuthService {
 
       if (!admin) throw new InvalidCredentialsException();
 
+      this.logger.debug(admin.password, 'Admin from login method');
+      this.logger.debug(password, 'Password from login method');
+
       const result = await bcrypt.compare(password, admin.password!);
 
       if (!result) throw new InvalidCredentialsException();

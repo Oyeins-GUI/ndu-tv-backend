@@ -7,6 +7,7 @@ import {
   Validate,
   IsNotEmpty,
   Matches,
+  IsOptional,
 } from 'class-validator';
 import { SCOPE } from '../../../shared/enums';
 import { AtLeastOneFieldValidator } from '../../../shared/validators/at-least-one-field.validator';
@@ -86,6 +87,16 @@ export class CreateSugExecutiveRequestBody {
   @IsNotEmpty()
   public image_url: string;
 }
+
+// export class GetSugExecutivesQuery {
+//   @IsUUID()
+//   @IsOptional()
+//   public facutly_id?: string;
+
+//   @IsUUID()
+//   @IsOptional()
+//   public department_id?: string;
+// }
 
 export class UpdateSugExecutiveRequestBody extends PartialType(
   CreateSugExecutiveRequestBody,

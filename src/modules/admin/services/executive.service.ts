@@ -4,11 +4,17 @@ import {
   ISugExecutiveRepository,
   UpdateSugExecutiveInput,
 } from '../repositories/interfaces/sug-executive-repository.interface';
-import { NotFoundException } from '../../../shared/exceptions';
+import {
+  BadRequestException,
+  NotFoundException,
+} from '../../../shared/exceptions';
 import { RESPONSE_MESSAGES } from '../../../shared/responses/response-messages';
 import { IAcademicSessionRepository } from '../repositories/interfaces/academic-session-repository.interface';
-import { ISugPositionRepository } from '../repositories/interfaces/position-repository.interface';
-import { SugExecutiveDto, FacultyDto } from '../dtos/common.dto';
+import {
+  ISugPositionRepository,
+  UpdateSugPositionInput,
+} from '../repositories/interfaces/position-repository.interface';
+import { SugExecutiveDto, FacultyDto, SugPostionDto } from '../dtos/common.dto';
 import { IFacultyRepository } from '../repositories/interfaces/faculty-repository.interface';
 import { IDepartmentRepository } from '../repositories/interfaces/department-repository.interface';
 import { IExecutiveService } from './interfaces/executive.interface';
@@ -16,6 +22,9 @@ import {
   CreateSugExecutiveRequestBody,
   UpdateSugExecutiveRequestBody,
 } from '../dtos/admin.request.dto';
+import { SCOPE } from '../../../shared/enums';
+import { CreateSugPositionRequestBody } from '../dtos/common.request.dto';
+import { IAdminRepository } from '../repositories/interfaces/admin-repository.interface';
 
 export class ExecutiveService implements IExecutiveService {
   constructor(
@@ -32,6 +41,9 @@ export class ExecutiveService implements IExecutiveService {
 
     @Inject('IAcademicSessionRepository')
     private readonly academicSessionRepository: IAcademicSessionRepository,
+
+    @Inject('IAdminRepository')
+    private readonly adminRepository: IAdminRepository,
 
     @Inject('ISugPositionRepository')
     private readonly sugPositionRepository: ISugPositionRepository,
@@ -62,11 +74,171 @@ export class ExecutiveService implements IExecutiveService {
         });
       }
 
+      const isExecutiveExisting = await this.sugExecutiveRepository.findBy({
+        scope: data.scope,
+        session_id: data.session_id,
+        position_id: data.position_id,
+      });
+
+      if (isExecutiveExisting)
+        throw new BadRequestException({
+          reason: RESPONSE_MESSAGES.SugExecutive.Failure.AlreadyExisting,
+        });
+
       const executive = await this.sugExecutiveRepository.create(data);
 
       return new SugExecutiveDto(executive);
     } catch (error) {
       this.logger.logServiceError(this.addExecutive.name, error, { data });
+      throw error;
+    }
+  }
+
+  public async getExecutives({
+    scope,
+    faculty_id,
+    department_id,
+  }: {
+    scope: SCOPE;
+    faculty_id?: string;
+    department_id?: string;
+  }): Promise<SugExecutiveDto[]> {
+    try {
+      switch (scope) {
+        case SCOPE.CENTRAL:
+          const centralExecutives =
+            await this.sugExecutiveRepository.findManyBy({
+              scope: SCOPE.CENTRAL,
+            });
+          return SugExecutiveDto.fromEntities(centralExecutives);
+
+        case SCOPE.FACULTY:
+          if (!faculty_id)
+            throw new BadRequestException({
+              reason:
+                RESPONSE_MESSAGES.SugExecutive.Failure.FacultyIdNotProvided,
+            });
+          const faculty = await this.facultyRepository.findById(faculty_id);
+          if (!faculty)
+            throw new NotFoundException({
+              reason: RESPONSE_MESSAGES.Faculty.Failure.NotFound,
+            });
+          const facultyExecutives =
+            await this.sugExecutiveRepository.findManyBy({
+              scope: SCOPE.FACULTY,
+              faculty_id,
+            });
+          return SugExecutiveDto.fromEntities(facultyExecutives);
+
+        case SCOPE.DEPARTMENT:
+          if (!department_id)
+            throw new BadRequestException({
+              reason:
+                RESPONSE_MESSAGES.SugExecutive.Failure.FacultyIdNotProvided,
+            });
+          const department =
+            await this.facultyRepository.findById(department_id);
+          if (!department)
+            throw new NotFoundException({
+              reason: RESPONSE_MESSAGES.Faculty.Failure.NotFound,
+            });
+          const departmentExecutives =
+            await this.sugExecutiveRepository.findManyBy({
+              scope: SCOPE.FACULTY,
+              department_id,
+            });
+          return SugExecutiveDto.fromEntities(departmentExecutives);
+      }
+    } catch (error) {
+      this.logger.logServiceError(this.getExecutives.name, error);
+      throw error;
+    }
+  }
+
+  public async getExecutive(executive_id: string): Promise<SugExecutiveDto> {
+    try {
+      const executive =
+        await this.sugExecutiveRepository.findById(executive_id);
+
+      if (!executive)
+        throw new NotFoundException({
+          reason: RESPONSE_MESSAGES.SugExecutive.Failure.NotFound,
+        });
+
+      return new SugExecutiveDto(executive);
+    } catch (error) {
+      this.logger.logServiceError(this.getExecutive.name, error);
+      throw error;
+    }
+  }
+
+  public async getSugPostions(): Promise<SugPostionDto[]> {
+    try {
+      const sugPositions = await this.sugPositionRepository.findManyBy({});
+
+      return SugPostionDto.fromEntities(sugPositions);
+    } catch (error) {
+      this.logger.logServiceError(this.getSugPostions.name, error);
+      throw error;
+    }
+  }
+
+  public async addSugPostion(
+    data: CreateSugPositionRequestBody,
+  ): Promise<SugPostionDto> {
+    try {
+      const sugPosition = await this.sugPositionRepository.create(data);
+      return new SugPostionDto(sugPosition);
+    } catch (error) {
+      this.logger.logServiceError(this.addSugPostion.name, error);
+      throw error;
+    }
+  }
+
+  public async updateSugPostion(
+    sug_position_id: string,
+    data: UpdateSugExecutiveRequestBody,
+  ): Promise<SugPostionDto> {
+    try {
+      const sugPosition =
+        await this.sugPositionRepository.findById(sug_position_id);
+
+      if (!sugPosition)
+        throw new NotFoundException({
+          reason: RESPONSE_MESSAGES.SugPosition.Failure.NotFound,
+        });
+
+      const updatedSugPostion = await this.sugPositionRepository.updateByModel(
+        sugPosition,
+        data as unknown as UpdateSugPositionInput,
+      );
+      return new SugPostionDto(updatedSugPostion);
+    } catch (error) {
+      this.logger.logServiceError(this.updateSugPostion.name, error);
+      throw error;
+    }
+  }
+
+  public async deleteExecutive(executive_id: string): Promise<void> {
+    try {
+      const sugExecutive =
+        await this.sugExecutiveRepository.findById(executive_id);
+
+      if (!sugExecutive)
+        throw new NotFoundException({
+          reason: RESPONSE_MESSAGES.SugExecutive.Failure.NotFound,
+        });
+
+      const isAdmin = await this.adminRepository.findBy({ executive_id });
+
+      if (isAdmin)
+        throw new BadRequestException({
+          reason: RESPONSE_MESSAGES.SugExecutive.Failure.IsAnAdmin,
+        });
+
+      await this.sugExecutiveRepository.delete(sugExecutive);
+    } catch (error) {
+      this.logger.logServiceError(this.deleteExecutive.name, error);
       throw error;
     }
   }

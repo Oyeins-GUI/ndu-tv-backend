@@ -5,6 +5,8 @@ import {
   IsOptional,
   IsArray,
   Validate,
+  IsAlpha,
+  IsUppercase,
 } from 'class-validator';
 import { AtLeastOneFieldValidator } from '../../../shared/validators/at-least-one-field.validator';
 
@@ -52,4 +54,38 @@ export class CreateFacultyRequestBody {
   @IsString()
   @IsNotEmpty()
   public faculty: string;
+}
+
+export class CreateSugPositionRequestBody {
+  @ApiProperty({
+    description: 'Sug Position abbrevetion',
+    example: 'PRO',
+  })
+  @IsString()
+  @IsNotEmpty()
+  @IsUppercase()
+  public position: string;
+
+  @ApiProperty({
+    description: 'Sug Position full name',
+    example: 'President',
+  })
+  @IsString()
+  @IsNotEmpty()
+  public title: string;
+
+  @ApiProperty({
+    description: 'Sug Position full duties',
+    example: 'President oversees the entire union',
+  })
+  @IsString()
+  @IsNotEmpty()
+  public description: string;
+}
+
+export class UpdateSugPositionRequestBody extends PartialType(
+  CreateSugPositionRequestBody,
+) {
+  @Validate(AtLeastOneFieldValidator)
+  public __self__: any;
 }

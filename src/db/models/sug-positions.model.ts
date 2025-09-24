@@ -5,13 +5,13 @@ import { BaseModel } from './base.model';
 export class SugPosition extends BaseModel {
   @AllowNull(false)
   @Column(DataType.STRING(20))
-  public position: string; // e.g., 'PRO', 'PRES', 'VP'
+  declare position: string; // e.g., 'PRO', 'PRES', 'VP'
 
   @AllowNull(false)
   @Column(DataType.STRING(100))
-  public title: string; // Full name of the position
+  declare title: string; // Full name of the position
 
   @AllowNull(false)
   @Column(DataType.STRING(500))
-  public description: string; // Role explanation
+  declare description: string; // Role explanation
 }

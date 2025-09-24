@@ -15,21 +15,32 @@ import { IAdminManagementService } from '../services/interfaces/admin-management
 import {
   CreateAdminRequestBody,
   CreateSugExecutiveRequestBody,
+  UpdateSugExecutiveRequestBody,
 } from '../dtos/admin.request.dto';
 
 import {
   AdminApiResponse,
   SugExecutiveApiResponse,
+  SugExecutivesApiResponse,
 } from '../dtos/admin.reponse.dto';
 import {
   CreateAdminEndpoint,
   CreateDepartmentEndpoint,
   CreateFacultyEndpoint,
   CreateSugExecutiveEndpoint,
+  CreateSugPositionEndpoint,
   DeleteDepartmentEndpoint,
   DeleteFacultyEndpoint,
+  DeleteSugExecutiveEndpoint,
+  GetRolesEndpoint,
+  GetSessionsEndpoint,
+  GetSugExecutivesEndpoint,
+  GetSugPositionsEndpoint,
+  RemoveAdminEndpoint,
   UpdateDepartmentEndpoint,
   UpdateFacultyEndpoint,
+  UpdateSugExecutiveEndpoint,
+  UpdateSugPositionEndpoint,
 } from '../decorators/admin.decorator';
 import { ApiTags } from '@nestjs/swagger';
 import { RESPONSE_MESSAGES } from '../../../shared/responses/response-messages';
@@ -37,13 +48,16 @@ import { SuccessResponseBody } from '../../../shared/responses/success-response'
 import {
   CreateDepartmentRequestBody,
   CreateFacultyRequestBody,
+  CreateSugPositionRequestBody,
   UpdateDepartmentRequestBody,
+  UpdateSugPositionRequestBody,
 } from '../dtos/common.request.dto';
 import {
   DepartmentApiResponse,
   FacultyApiResponse,
 } from '../dtos/common.response.dto';
-import { RoleDto } from '../dtos/common.dto';
+import { AcademicSessionDto, RoleDto, SugPostionDto } from '../dtos/common.dto';
+import { SCOPE } from '../../../shared/enums';
 
 @Controller('admin')
 @ApiTags('Admin')
@@ -59,12 +73,69 @@ export class AdminController {
     private readonly adminManagementService: IAdminManagementService,
   ) {}
 
+  @Get('executives/central')
+  @GetSugExecutivesEndpoint()
+  public async getCentralExecutives(): Promise<SugExecutivesApiResponse> {
+    const result = await this.executiveService.getExecutives({
+      scope: SCOPE.CENTRAL,
+    });
+    return new SugExecutivesApiResponse(result);
+  }
+
+  @Get('executives/faculty/:id')
+  @GetSugExecutivesEndpoint()
+  public async getFacultyExecutives(
+    @Param('id') faculty_id: string,
+  ): Promise<SugExecutivesApiResponse> {
+    const result = await this.executiveService.getExecutives({
+      scope: SCOPE.FACULTY,
+      faculty_id,
+    });
+    return new SugExecutivesApiResponse(result);
+  }
+
+  @Get('executives/department/:id')
+  @GetSugExecutivesEndpoint()
+  public async getDepartmentExecutives(
+    @Param('id') department_id: string,
+  ): Promise<SugExecutivesApiResponse> {
+    const result = await this.executiveService.getExecutives({
+      scope: SCOPE.FACULTY,
+      department_id,
+    });
+    return new SugExecutivesApiResponse(result);
+  }
+
   @Post('executives')
   @CreateSugExecutiveEndpoint()
   public async createExecutive(
     @Body() body: CreateSugExecutiveRequestBody,
   ): Promise<SugExecutiveApiResponse> {
     const result = await this.executiveService.addExecutive(body);
+    return new SugExecutiveApiResponse(result);
+  }
+
+  @Delete('executives/:id')
+  @DeleteSugExecutiveEndpoint()
+  public async deleteExecutive(
+    @Param('id') executive_id: string,
+  ): Promise<SuccessResponseBody> {
+    await this.executiveService.deleteExecutive(executive_id);
+    return new SuccessResponseBody({
+      message: RESPONSE_MESSAGES.SugExecutive.Success.Deleted,
+    });
+  }
+
+  @Patch('executives/:id')
+  @UpdateSugExecutiveEndpoint()
+  public async updateExecutive(
+    @Param('id') executive_id: string,
+    @Body() body: UpdateSugExecutiveRequestBody,
+  ): Promise<SugExecutiveApiResponse> {
+    const result = await this.executiveService.updateExecutive(
+      executive_id,
+      body,
+    );
     return new SugExecutiveApiResponse(result);
   }
 
@@ -75,6 +146,17 @@ export class AdminController {
   ): Promise<AdminApiResponse> {
     const result = await this.adminManagementService.addAdmin(body);
     return new AdminApiResponse(result);
+  }
+
+  @Delete(':id')
+  @RemoveAdminEndpoint()
+  public async removeAdmin(
+    @Param('id') admin_id: string,
+  ): Promise<SuccessResponseBody> {
+    await this.adminManagementService.removeAdmin(admin_id);
+    return new SuccessResponseBody({
+      message: RESPONSE_MESSAGES.Admin.Success.Deleted,
+    });
   }
 
   @Post('departments')
@@ -138,12 +220,64 @@ export class AdminController {
   }
 
   @Get('roles')
-  @DeleteFacultyEndpoint()
+  @GetRolesEndpoint()
   public async getRoles(): Promise<SuccessResponseBody<RoleDto[]>> {
     const roles = await this.adminManagementService.getRoles();
     return new SuccessResponseBody({
       message: RESPONSE_MESSAGES.Role.Success.Retrieved,
       data: roles,
+    });
+  }
+
+  @Get('acadmic-sessions')
+  @GetSessionsEndpoint()
+  public async getAcademicSessions(): Promise<
+    SuccessResponseBody<AcademicSessionDto[]>
+  > {
+    const sessions = await this.academicService.getAcademicSessions();
+    return new SuccessResponseBody({
+      message: RESPONSE_MESSAGES.AcademicSession.Success.Retrieved,
+      data: sessions,
+    });
+  }
+
+  @Get('sug-positions')
+  @GetSugPositionsEndpoint()
+  public async getSugPositions(): Promise<
+    SuccessResponseBody<SugPostionDto[]>
+  > {
+    const positions = await this.executiveService.getSugPostions();
+    return new SuccessResponseBody({
+      message: RESPONSE_MESSAGES.SugPosition.Success.Retrieved,
+      data: positions,
+    });
+  }
+
+  @Post('sug-positions')
+  @CreateSugPositionEndpoint()
+  public async createSugPosition(
+    @Body() body: CreateSugPositionRequestBody,
+  ): Promise<SuccessResponseBody<SugPostionDto>> {
+    const position = await this.executiveService.addSugPostion(body);
+    return new SuccessResponseBody({
+      message: RESPONSE_MESSAGES.SugPosition.Success.Retrieved,
+      data: position,
+    });
+  }
+
+  @Patch('sug-positions/:id')
+  @UpdateSugPositionEndpoint()
+  public async updateSugPosition(
+    @Param('id') sug_position_id: string,
+    @Body() body: UpdateSugPositionRequestBody,
+  ): Promise<SuccessResponseBody<SugPostionDto>> {
+    const position = await this.executiveService.updateSugPostion(
+      sug_position_id,
+      body,
+    );
+    return new SuccessResponseBody({
+      message: RESPONSE_MESSAGES.SugPosition.Success.Updated,
+      data: position,
     });
   }
 }

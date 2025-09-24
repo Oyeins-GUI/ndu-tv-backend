@@ -1,9 +1,10 @@
-import { applyDecorators, HttpStatus } from '@nestjs/common';
+import { applyDecorators, HttpCode, HttpStatus } from '@nestjs/common';
 import { ErrorType, StandardDocs } from '../../../shared/helpers/doc.helper';
 import { RESPONSE_MESSAGES } from '../../../shared/responses/response-messages';
 import {
   AdminApiResponse,
   SugExecutiveApiResponse,
+  SugExecutivesApiResponse,
 } from '../dtos/admin.reponse.dto';
 import {
   DepartmentApiResponse,
@@ -13,7 +14,7 @@ import {
 } from '../dtos/common.response.dto';
 import { SuccessResponseBody } from '../../../shared/responses/success-response';
 import { Public } from '../../../shared/decorators/public.decorator';
-import { RoleDto } from '../dtos/common.dto';
+import { AcademicSessionDto, RoleDto, SugPostionDto } from '../dtos/common.dto';
 
 export function CreateSugExecutiveEndpoint() {
   return applyDecorators(
@@ -34,6 +35,57 @@ export function CreateSugExecutiveEndpoint() {
   );
 }
 
+export function GetSugExecutivesEndpoint() {
+  return applyDecorators(
+    StandardDocs({
+      summary:
+        'Gets SUG Executives (Depending on the scope, central, faculty, deparment)',
+      includeErrors: [
+        ErrorType.BAD_REQUEST,
+        ErrorType.UNAUTHORIZED,
+        ErrorType.FORBIDDEN,
+      ],
+      successMessage: RESPONSE_MESSAGES.SugExecutive.Success.Retrieved,
+      status: HttpStatus.OK,
+      type: SugExecutivesApiResponse,
+    }),
+  );
+}
+
+export function UpdateSugExecutiveEndpoint() {
+  return applyDecorators(
+    StandardDocs({
+      summary: 'Updates an SUG Executives',
+      includeErrors: [
+        ErrorType.BAD_REQUEST,
+        ErrorType.UNAUTHORIZED,
+        ErrorType.FORBIDDEN,
+      ],
+      successMessage: RESPONSE_MESSAGES.SugExecutive.Success.Updated,
+      status: HttpStatus.OK,
+      type: SugExecutivesApiResponse,
+    }),
+  );
+}
+
+export function DeleteSugExecutiveEndpoint() {
+  return applyDecorators(
+    HttpCode(HttpStatus.NO_CONTENT),
+    StandardDocs({
+      summary: 'Deltes an SUG Executive',
+      includeErrors: [
+        ErrorType.BAD_REQUEST,
+        ErrorType.UNAUTHORIZED,
+        ErrorType.FORBIDDEN,
+        ErrorType.NOT_FOUND,
+      ],
+      successMessage: RESPONSE_MESSAGES.SugExecutive.Success.Deleted,
+      status: HttpStatus.NO_CONTENT,
+      type: SuccessResponseBody,
+    }),
+  );
+}
+
 export function CreateAdminEndpoint() {
   return applyDecorators(
     StandardDocs({
@@ -49,6 +101,24 @@ export function CreateAdminEndpoint() {
       successMessage: RESPONSE_MESSAGES.Admin.Success.Created,
       status: HttpStatus.CREATED,
       type: AdminApiResponse,
+    }),
+  );
+}
+
+export function RemoveAdminEndpoint() {
+  return applyDecorators(
+    HttpCode(HttpStatus.NO_CONTENT),
+    StandardDocs({
+      summary: 'Add an admin',
+      includeErrors: [
+        ErrorType.BAD_REQUEST,
+        ErrorType.UNAUTHORIZED,
+        ErrorType.INTERNAL_SERVER_ERROR,
+        ErrorType.NOT_FOUND,
+      ],
+      successMessage: RESPONSE_MESSAGES.Admin.Success.Deleted,
+      status: HttpStatus.NO_CONTENT,
+      type: SuccessResponseBody,
     }),
   );
 }
@@ -250,6 +320,56 @@ export function GetRolesEndpoint() {
       successMessage: RESPONSE_MESSAGES.Role.Success.Retrieved,
       status: HttpStatus.OK,
       type: SuccessResponseBody<RoleDto[]>,
+    }),
+  );
+}
+
+export function GetSessionsEndpoint() {
+  return applyDecorators(
+    StandardDocs({
+      summary: 'Gets academic sessions',
+      includeErrors: [ErrorType.INTERNAL_SERVER_ERROR],
+      successMessage: RESPONSE_MESSAGES.AcademicSession.Success.Retrieved,
+      status: HttpStatus.OK,
+      type: SuccessResponseBody<AcademicSessionDto[]>,
+    }),
+  );
+}
+
+export function GetSugPositionsEndpoint() {
+  return applyDecorators(
+    StandardDocs({
+      summary: 'Gets SUG Positions',
+      includeErrors: [ErrorType.INTERNAL_SERVER_ERROR, ErrorType.UNAUTHORIZED],
+      successMessage: RESPONSE_MESSAGES.SugPosition.Success.Retrieved,
+      status: HttpStatus.OK,
+      type: SuccessResponseBody<SugPostionDto[]>,
+    }),
+  );
+}
+
+export function CreateSugPositionEndpoint() {
+  return applyDecorators(
+    HttpCode(HttpStatus.CREATED),
+    StandardDocs({
+      summary: 'Adds an SUG Position',
+      includeErrors: [ErrorType.INTERNAL_SERVER_ERROR, ErrorType.UNAUTHORIZED],
+      successMessage: RESPONSE_MESSAGES.SugPosition.Success.Created,
+      status: HttpStatus.CREATED,
+      type: SuccessResponseBody<SugPostionDto>,
+    }),
+  );
+}
+
+export function UpdateSugPositionEndpoint() {
+  return applyDecorators(
+    HttpCode(HttpStatus.OK),
+    StandardDocs({
+      summary: 'Updates an SUG Position',
+      includeErrors: [ErrorType.INTERNAL_SERVER_ERROR, ErrorType.UNAUTHORIZED],
+      successMessage: RESPONSE_MESSAGES.SugPosition.Success.Updated,
+      status: HttpStatus.OK,
+      type: SuccessResponseBody<SugPostionDto>,
     }),
   );
 }

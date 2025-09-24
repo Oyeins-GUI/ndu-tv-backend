@@ -1,4 +1,8 @@
-import { DepartmentDto, FacultyDto } from '../../dtos/common.dto';
+import {
+  AcademicSessionDto,
+  DepartmentDto,
+  FacultyDto,
+} from '../../dtos/common.dto';
 import {
   CreateDepartmentRequestBody,
   CreateFacultyRequestBody,
@@ -89,4 +93,11 @@ export interface IAcademicService {
    * @returns {FacultyDto} - The faculty data
    */
   getFaculty(id: string): Promise<FacultyDto>;
+
+  /**
+   * Gets academic session
+   * @returns Academic session
+   */
+
+  getAcademicSessions(): Promise<AcademicSessionDto[]>;
 }

@@ -26,7 +26,7 @@ export function getExcludedFields<T>(
   return includeAllFields
     ? []
     : includeFields.length
-      ? excludeFields.filter((field) => includeFields.includes(field))
+      ? excludeFields.filter((field) => !includeFields.includes(field))
       : excludeFields;
 }
 

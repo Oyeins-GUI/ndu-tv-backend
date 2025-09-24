@@ -29,64 +29,64 @@ import { SCOPE } from '../../shared/enums';
 export class SugExecutive extends BaseModel {
   @AllowNull(false)
   @Column(DataType.STRING(100))
-  public name: string;
+  declare name: string;
 
   @AllowNull(false)
   @Unique
   @Column(DataType.STRING(100))
-  public email: string;
+  declare email: string;
 
   @AllowNull(false)
   @Unique
   @Index
   @Column(DataType.STRING(20))
-  public phone_number: string;
+  declare phone_number: string;
 
   @AllowNull(false)
   @Unique
   @Index
   @Column(DataType.STRING(100))
-  public matric_number: string;
+  declare matric_number: string;
 
   @AllowNull(false)
   @Unique
   @Column(DataType.STRING(100))
-  public image_url: string;
+  declare image_url: string;
 
   @ForeignKey(() => SugPosition)
   @AllowNull(false)
   @Column(DataType.UUID)
-  public position_id: string;
+  declare position_id: string;
 
   @BelongsTo(() => SugPosition, 'position_id')
-  public position: SugPosition;
+  declare position: SugPosition;
 
   @ForeignKey(() => AcademicSession)
   @AllowNull(false)
   @Column(DataType.UUID)
-  public session_id: string;
+  declare session_id: string;
 
   @BelongsTo(() => AcademicSession, 'session_id')
-  public session: AcademicSession;
+  declare session: AcademicSession;
 
   @AllowNull(false)
   @Default(SCOPE.DEPARTMENT)
   @Column(DataType.ENUM(...Object.values(SCOPE)))
-  public scope: SCOPE;
+  declare scope: SCOPE;
 
   @ForeignKey(() => Faculty)
   @AllowNull(false)
   @Column(DataType.UUID)
-  public faculty_id: string;
+  declare faculty_id: string;
 
   @BelongsTo(() => Faculty, 'faculty_id')
-  public faculty: Faculty;
+  declare faculty: Faculty;
 
   @ForeignKey(() => Department)
   @AllowNull(false)
   @Column(DataType.UUID)
-  public department_id: string;
+  declare department_id: string;
 
   @BelongsTo(() => Department, 'department_id')
-  public department: Department;
+  declare department: Department;
 }

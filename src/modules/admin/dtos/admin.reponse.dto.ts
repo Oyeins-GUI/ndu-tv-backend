@@ -26,6 +26,27 @@ export class SugExecutiveApiResponse extends ApiResponse<SugExecutiveDto> {
   }
 }
 
+export class SugExecutivesApiResponse extends ApiResponse<SugExecutiveDto[]> {
+  @ApiProperty({
+    description: 'Executive operation response message',
+    example: RESPONSE_MESSAGES.SugExecutive.Success.Retrieved,
+  })
+  public override message: string =
+    RESPONSE_MESSAGES.SugExecutive.Success.Retrieved;
+
+  @ApiProperty({
+    description: 'Executive data returned from operation',
+    type: [SugExecutiveResponseBody],
+  })
+  public override data: SugExecutiveDto[];
+
+  constructor(data: SugExecutiveDto[], message?: string) {
+    super();
+    this.data = data;
+    if (message) this.message = message;
+  }
+}
+
 export class AdminApiResponse extends ApiResponse<AdminDto> {
   @ApiProperty({
     description: 'Executive operation response message',
