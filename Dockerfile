@@ -1,7 +1,7 @@
 # -------------------
 # Base image (shared setup)
 # -------------------
-FROM node:22.16.0-alpine AS base
+FROM node:22-alpine AS base
 WORKDIR /usr/src/app
 COPY package.json pnpm-lock.yaml ./
 RUN npm install -g pnpm
