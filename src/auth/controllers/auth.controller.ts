@@ -39,7 +39,8 @@ export class AuthController {
     const cookieOptions = {
       httpOnly: true,
       secure: env.NODE_ENV === 'production',
-      sameSite: 'lax' as const,
+      sameSite:
+        env.NODE_ENV === 'production' ? ('none' as const) : ('lax' as const),
     };
 
     res.cookie(COOKIE_CONSTANTS.accessToken, tokens.access_token, {
@@ -84,7 +85,6 @@ export class AuthController {
   @MeEndpoint()
   public async me(@Req() req: Request): Promise<AdminApiResponse> {
     const user = await this.authService.getUser(req.user?.id!);
-
     const result = new AdminApiResponse(
       user,
       RESPONSE_MESSAGES.Auth.Success.LoggedIn,
