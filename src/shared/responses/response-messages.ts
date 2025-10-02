@@ -77,6 +77,8 @@ export const RESPONSE_MESSAGES = {
         'Department ID is required to get executives of scope Department',
       IsAnAdmin:
         'SUG Executive is a current admin, remove from admin before removing as executive',
+      MustBeCurrentSessionExecutive:
+        'Sug exectuive must be current session executive',
     },
   },
   AcademicSession: {

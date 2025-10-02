@@ -128,10 +128,12 @@ export class SugPostionDto {
   public description: string;
 
   constructor(model: SugPosition) {
-    this.id = model.id;
-    this.position = model.position;
-    this.title = model.title;
-    this.description = model.description;
+    if (model.position != 'SUPER') {
+      this.id = model.id;
+      this.position = model.position;
+      this.title = model.title;
+      this.description = model.description;
+    }
   }
 
   static fromEntities(models: SugPosition[]): SugPostionDto[] {

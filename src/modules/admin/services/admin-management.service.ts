@@ -3,7 +3,10 @@ import { CustomLogger } from '../../../lib/logger/logger.service';
 import { IAdminRepository } from '../repositories/interfaces/admin-repository.interface';
 import { AdminDto } from '../dtos/admin.dto';
 import { ISugExecutiveRepository } from '../repositories/interfaces/sug-executive-repository.interface';
-import { NotFoundException } from '../../../shared/exceptions';
+import {
+  BadRequestException,
+  NotFoundException,
+} from '../../../shared/exceptions';
 import { RESPONSE_MESSAGES } from '../../../shared/responses/response-messages';
 import { IRoleRepository } from '../repositories/interfaces/role-repository.interface';
 import { IEmailService } from '../../../lib/email/email.interface';
@@ -23,6 +26,7 @@ import {
 } from './interfaces/admin-management.interface';
 import { Role as RoleEnum } from '../../../shared/enums';
 import { RoleDto } from '../dtos/common.dto';
+import { IAcademicSessionRepository } from '../repositories/interfaces/academic-session-repository.interface';
 
 export class AdminManagementService implements IAdminManagementService {
   constructor(
@@ -41,6 +45,9 @@ export class AdminManagementService implements IAdminManagementService {
 
     @Inject('IRedisCacheService')
     private readonly redisCacheService: IRedisCacheService,
+
+    @Inject('IAcademicSessionRepository')
+    private readonly academicSessionRepository: IAcademicSessionRepository,
 
     private readonly jwtService: JwtService,
   ) {
@@ -65,7 +72,7 @@ export class AdminManagementService implements IAdminManagementService {
     try {
       const [executive, role] = await Promise.all([
         this.sugExecutiveRepository.findById(data.executive_id, {
-          relations: ['department', 'faculty'],
+          relations: ['department', 'faculty', 'session'],
         }),
         this.roleRepository.findById(data.role_id),
       ]);
@@ -85,6 +92,14 @@ export class AdminManagementService implements IAdminManagementService {
           details: {
             executive_id: role,
           },
+        });
+      }
+
+      if (!executive.session.is_current_session) {
+        throw new BadRequestException({
+          reason:
+            RESPONSE_MESSAGES.SugExecutive.Failure
+              .MustBeCurrentSessionExecutive,
         });
       }
 

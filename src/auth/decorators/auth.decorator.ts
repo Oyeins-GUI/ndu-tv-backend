@@ -1,4 +1,4 @@
-import { applyDecorators, HttpStatus } from '@nestjs/common';
+import { applyDecorators, HttpCode, HttpStatus } from '@nestjs/common';
 import { ErrorType, StandardDocs } from '../../shared/helpers/doc.helper';
 import { RESPONSE_MESSAGES } from '../../shared/responses/response-messages';
 import { AdminApiResponse } from '../../modules/admin/dtos/admin.reponse.dto';
@@ -9,6 +9,7 @@ import { RateLimit } from '../../shared/decorators/user-rate-limit.decorator';
 export function LoginEndpoint() {
   return applyDecorators(
     Public(),
+    HttpCode(HttpStatus.OK),
     StandardDocs({
       summary: 'Logs in an admin (user)',
       successMessage: RESPONSE_MESSAGES.Auth.Success.Login,
@@ -34,6 +35,7 @@ export function MeEndpoint() {
 
 export function LogoutEndpoint() {
   return applyDecorators(
+    HttpCode(HttpStatus.OK),
     StandardDocs({
       summary: 'Logs out an admin (user)',
       successMessage: RESPONSE_MESSAGES.Auth.Success.Logout,
