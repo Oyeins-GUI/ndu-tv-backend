@@ -15,6 +15,7 @@ import {
   InitSetPasswordEndpoint,
   LoginEndpoint,
   LogoutEndpoint,
+  MeEndpoint,
   SetPasswordConfirmEndpoint,
 } from '../decorators/auth.decorator';
 import { SuccessResponseBody } from '../../shared/responses/success-response';
@@ -76,6 +77,19 @@ export class AuthController {
     );
 
     res.json(result);
+    return result;
+  }
+
+  @Post('me')
+  @MeEndpoint()
+  public async me(@Res() req: Request): Promise<AdminApiResponse> {
+    const user = await this.authService.getUser(req.user.id!);
+
+    const result = new AdminApiResponse(
+      user,
+      RESPONSE_MESSAGES.Auth.Success.LoggedIn,
+    );
+
     return result;
   }
 

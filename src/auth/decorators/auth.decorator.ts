@@ -20,6 +20,18 @@ export function LoginEndpoint() {
   );
 }
 
+export function MeEndpoint() {
+  return applyDecorators(
+    StandardDocs({
+      summary: 'Checks current user session',
+      successMessage: RESPONSE_MESSAGES.Auth.Success.LoggedIn,
+      includeErrors: [ErrorType.BAD_REQUEST, ErrorType.INTERNAL_SERVER_ERROR],
+      type: AdminApiResponse,
+      status: HttpStatus.OK,
+    }),
+  );
+}
+
 export function LogoutEndpoint() {
   return applyDecorators(
     StandardDocs({

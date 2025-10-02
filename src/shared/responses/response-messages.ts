@@ -6,6 +6,7 @@ export const RESPONSE_MESSAGES = {
 
   Auth: {
     Success: {
+      LoggedIn: 'User session is active',
       Login: 'User Loggged in successfully',
       Logout: 'User Logged out successfully',
       SentPasswordSetLink:

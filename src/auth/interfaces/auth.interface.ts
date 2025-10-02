@@ -1,3 +1,4 @@
+import { AdminDto } from '../../modules/admin/dtos/admin.dto';
 import { LoginDto } from '../dtos/auth.dto';
 
 export interface IAuthService {
@@ -32,6 +33,8 @@ export interface IAuthService {
    * @returns {LoginDto}- returns authenticated admin
    */
   setPassword(token: string, password: string): Promise<LoginDto>;
+
+  getUser(user_id: string): Promise<AdminDto>;
 }
 
 export type AuthTokens = {

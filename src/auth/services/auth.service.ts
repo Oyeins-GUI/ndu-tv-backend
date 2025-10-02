@@ -70,6 +70,17 @@ export class AuthService implements IAuthService {
     return { access_token, refresh_token };
   }
 
+  public async getUser(user_id: string): Promise<AdminDto> {
+    try {
+      const user = await this.adminRepository.findById(user_id);
+
+      return new AdminDto(user!);
+    } catch (error) {
+      this.logger.logServiceError(this.getUser.name, error);
+      throw error;
+    }
+  }
+
   public async login(identifier: string, password: string): Promise<LoginDto> {
     try {
       const admin =
