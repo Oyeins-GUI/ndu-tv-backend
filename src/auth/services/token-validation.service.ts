@@ -31,8 +31,6 @@ export class TokenValidationService implements ITokenValidationService {
     const session =
       await this.redisCacheService.getTypedHashFields<SessionData>(sessionKey);
 
-    console.log('got session from reids', session);
-
     if (!session) return null;
 
     return session;
@@ -50,7 +48,6 @@ export class TokenValidationService implements ITokenValidationService {
       secret,
     });
 
-    console.log('got here from token against session', payload);
     return payload.id === sessionUserId ? payload : null;
   }
 
@@ -60,8 +57,6 @@ export class TokenValidationService implements ITokenValidationService {
       if (!token) return false;
 
       const session = await this.getSessionFromCookies(req);
-
-      console.log('got here from session', session);
 
       if (!session) return false;
 

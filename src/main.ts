@@ -40,6 +40,8 @@ async function bootstrap() {
   //   allowedHeaders: '*',
   // });
 
+  app.getHttpAdapter().getInstance().set('trust proxy', 1);
+
   // In main.ts
   app.enableCors({
     origin: true,
