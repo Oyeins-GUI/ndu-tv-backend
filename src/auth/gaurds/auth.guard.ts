@@ -11,6 +11,7 @@ import { RESPONSE_MESSAGES } from '../../shared/responses/response-messages';
 import { ITokenValidationService } from '../interfaces/token-validation.inteface';
 import { IS_PUBLIC_KEY } from '../../shared/decorators/public.decorator';
 import { UnauthorizedException } from '../../shared/exceptions';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -33,9 +34,9 @@ export class AuthGuard implements CanActivate {
         return true;
       }
 
-      const req = context.switchToHttp().getRequest();
+      const req = context.switchToHttp().getRequest<Request>();
 
-      console.log(req);
+      console.log(req.cookies);
 
       const result = await this.tokenValidationService.validateAccessToken(req);
 
