@@ -82,8 +82,8 @@ export class AuthController {
 
   @Post('me')
   @MeEndpoint()
-  public async me(@Res() req: Request): Promise<AdminApiResponse> {
-    const user = await this.authService.getUser(req.user.id!);
+  public async me(@Req() req: Request): Promise<AdminApiResponse> {
+    const user = await this.authService.getUser(req.user?.id!);
 
     const result = new AdminApiResponse(
       user,
