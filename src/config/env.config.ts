@@ -51,11 +51,11 @@ class EnvConfig {
   @IsString()
   APP_NAME: string;
 
-  @IsString()
-  GF_SECURITY_ADMIN_USER: string;
+  // @IsString()
+  // GF_SECURITY_ADMIN_USER: string;
 
-  @IsString()
-  GF_SECURITY_ADMIN_PASSWORD: string;
+  // @IsString()
+  // GF_SECURITY_ADMIN_PASSWORD: string;
 
   @IsString()
   ACCESS_TOKEN_SECRET: string;

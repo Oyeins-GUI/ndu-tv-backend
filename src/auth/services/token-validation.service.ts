@@ -22,14 +22,28 @@ export class TokenValidationService implements ITokenValidationService {
   private async getSessionFromCookies(
     req: Request,
   ): Promise<SessionData | null> {
+    this.logger.debug('Validation got here method:GetsessionFromCookies');
     const sessionId = req.cookies[COOKIE_CONSTANTS.sessionId];
+
+    this.logger.debug(
+      'Logging session id from getsessio from cookies',
+      sessionId,
+    );
 
     if (!sessionId) return null;
 
     const sessionKey = getSessionKey(sessionId);
 
+    this.logger.debug(
+      'Logging session key from getsessio from cookies',
+      sessionKey,
+    );
+
     const session =
       await this.redisCacheService.getTypedHashFields<SessionData>(sessionKey);
+
+    this.logger.debug('got here after session');
+    console.log(session);
 
     if (!session) return null;
 
@@ -42,6 +56,11 @@ export class TokenValidationService implements ITokenValidationService {
     secret: string,
     sessionUserId: string,
   ): Promise<AuthTokenPayload | null> {
+    this.logger.log(
+      'Validation got here method:validate token agains sesson ',
+      expectedToken,
+    );
+
     if (token !== expectedToken) return null;
 
     const payload = await this.jwtService.verifyAsync<AuthTokenPayload>(token, {
@@ -56,6 +75,7 @@ export class TokenValidationService implements ITokenValidationService {
       if (!token) return false;
 
       const session = await this.getSessionFromCookies(req);
+
       if (!session) return false;
 
       const payload = await this.validateTokenAgainstSession(

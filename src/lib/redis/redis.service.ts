@@ -17,7 +17,6 @@ export class RedisCacheService implements IRedisCacheService, OnModuleInit {
     });
     this.client.on('error', (err) => {
       logger.error('Redis Client Error', err);
-      throw new Error(err);
     });
   }
 

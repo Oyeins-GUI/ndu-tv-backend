@@ -11,7 +11,7 @@ import {
 export class LoginRequestBody {
   @ApiProperty({
     description: 'Email address or matric number of the admin',
-    example: 'admin@example.com',
+    example: 'admin@ndu.edu.ng',
   })
   @IsString()
   @IsNotEmpty()
@@ -19,7 +19,7 @@ export class LoginRequestBody {
 
   @ApiProperty({
     description: 'Plaintext password',
-    example: 'StrongPassword123!',
+    example: 'adminPassword999',
   })
   @IsString()
   @IsNotEmpty()
