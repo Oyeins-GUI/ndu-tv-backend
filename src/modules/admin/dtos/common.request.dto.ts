@@ -7,6 +7,8 @@ import {
   Validate,
   IsAlpha,
   IsUppercase,
+  IsUUID,
+  IsBoolean,
 } from 'class-validator';
 import { AtLeastOneFieldValidator } from '../../../shared/validators/at-least-one-field.validator';
 
@@ -85,6 +87,51 @@ export class CreateSugPositionRequestBody {
 
 export class UpdateSugPositionRequestBody extends PartialType(
   CreateSugPositionRequestBody,
+) {
+  @Validate(AtLeastOneFieldValidator)
+  public __self__: any;
+}
+
+export class PlatformConfigRequestBody {
+  @ApiProperty({
+    description: 'ID of the current session',
+    example: '550e8400-e29b-41d4-a716-446655440001',
+    type: 'string',
+  })
+  @IsUUID()
+  @IsNotEmpty()
+  public current_session_id: string;
+
+  @ApiProperty({
+    description: 'Article publishing status',
+    example: true,
+    type: 'boolean',
+  })
+  @IsBoolean()
+  @IsNotEmpty()
+  public is_publishing_enabled: boolean;
+
+  @ApiProperty({
+    description: 'Platform Name',
+    example: 'ndu-tv',
+    type: 'string',
+  })
+  @IsString()
+  @IsNotEmpty()
+  public platform_name: string;
+
+  @ApiProperty({
+    description: 'Platform tag line',
+    example: 'news source',
+    type: 'string',
+  })
+  @IsString()
+  @IsNotEmpty()
+  public platform_tagline: string;
+}
+
+export class UpdatePlatformConfigRequestBody extends PartialType(
+  PlatformConfigRequestBody,
 ) {
   @Validate(AtLeastOneFieldValidator)
   public __self__: any;

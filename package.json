@@ -20,6 +20,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
+    "migrate:create": "ts-node migration-runner.ts migration-create",
     "migrate:up": "ts-node migration-runner.ts up",
     "migrate:down": "ts-node migration-runner.ts down",
     "migrate:reset": "ts-node migration-runner.ts reset",
@@ -27,7 +28,8 @@
     "seed:up": "ts-node migration-runner.ts seed-up",
     "seed:down": "ts-node migration-runner.ts seed-down",
     "seed:reset": "ts-node migration-runner.ts seed-reset",
-    "seed:file": "ts-node migration-runner.ts seed-up"
+    "seed:file": "ts-node migration-runner.ts seed-up",
+    "seed:create": "ts-node migration-runner.ts seeder-create"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

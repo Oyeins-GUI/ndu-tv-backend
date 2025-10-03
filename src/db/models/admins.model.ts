@@ -92,6 +92,11 @@ export class Admin extends BaseModel {
   @Column(DataType.BOOLEAN)
   declare must_set_password: boolean;
 
+  @AllowNull(false)
+  @Default(true)
+  @Column(DataType.BOOLEAN)
+  declare is_admin_enabled: boolean;
+
   @AllowNull(true)
   @Column(DataType.DATE)
   declare last_login_at: Date | null;

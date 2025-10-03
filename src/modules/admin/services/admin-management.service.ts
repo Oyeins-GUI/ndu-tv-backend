@@ -108,6 +108,7 @@ export class AdminManagementService implements IAdminManagementService {
         must_set_password: true,
         executive_id: executive.id,
         role_id: role.id,
+        is_admin_enabled: true,
       });
 
       const payload = {

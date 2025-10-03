@@ -4,7 +4,6 @@ import { JWT_CONSTANTS } from './constants';
 import { AdminModule } from '../modules/admin/admin.module';
 import { AuthController } from './controllers/auth.controller';
 import { AuthService } from './services/auth.service';
-import { RedisCacheService } from '../lib/redis/redis.service';
 import { EmailService } from '../lib/email/email.service';
 
 @Module({
@@ -19,8 +18,6 @@ import { EmailService } from '../lib/email/email.service';
   providers: [
     AuthService,
     { provide: 'IAuthService', useExisting: AuthService },
-    RedisCacheService,
-    { provide: 'IRedisCacheService', useExisting: RedisCacheService },
     EmailService,
     { provide: 'IEmailService', useExisting: EmailService },
   ],

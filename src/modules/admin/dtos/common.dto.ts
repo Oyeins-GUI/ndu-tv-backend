@@ -1,4 +1,6 @@
+import { Exclude } from 'class-transformer';
 import { AcademicSession } from '../../../db/models/academic-sessions.model';
+import { AppSettings } from '../../../db/models/app-settings.model';
 import { Department } from '../../../db/models/departments.model';
 import { Faculty } from '../../../db/models/faculties.model';
 import { Role } from '../../../db/models/roles.model';
@@ -7,6 +9,8 @@ import { SugPosition } from '../../../db/models/sug-positions.model';
 import { Role as RoleEnum } from '../../../shared/enums';
 
 export class SugExecutiveDto {
+  public id: string;
+
   public name: string;
 
   public email: string;
@@ -28,6 +32,7 @@ export class SugExecutiveDto {
   public image_url: string;
 
   constructor(model: SugExecutive) {
+    this.id = model.id;
     this.name = model.name;
     this.email = model.email;
     this.matric_number = model.matric_number;
@@ -138,5 +143,45 @@ export class SugPostionDto {
 
   static fromEntities(models: SugPosition[]): SugPostionDto[] {
     return models.map((model) => new SugPostionDto(model));
+  }
+}
+
+export class PlatformConfigDto {
+  public current_session_id: string;
+
+  public current_session: string;
+
+  // @Exclude()
+  // public is_app_enabled: boolean;
+
+  // @Exclude()
+  // public is_ad_enabled: boolean;
+
+  public is_publishing_enabled: boolean;
+
+  public platform_name: string;
+
+  public platform_tagline: string;
+
+  constructor(model: AppSettings) {
+    this.current_session_id = model.current_session_id;
+
+    // this.is_ad_enabled = model.is_ad_enabled;
+
+    // this.is_app_enabled = model.is_app_enabled;
+
+    this.is_publishing_enabled = model.is_publishing_enabled;
+
+    this.platform_name = model.platform_name;
+
+    this.platform_tagline = model.platform_tagline;
+
+    if (model.current_session) {
+      this.current_session = model.current_session.session;
+    }
+  }
+
+  static fromEntities(model: AppSettings[]): PlatformConfigDto[] {
+    return model.map((model) => new PlatformConfigDto(model));
   }
 }

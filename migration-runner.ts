@@ -54,10 +54,40 @@ async function runSpecificMigration(file: string) {
   }
 }
 
+async function createMigration(name: string) {
+  try {
+    const result = await migration.create({
+      name: name,
+      folder: './src/db/migrations',
+      prefix: 'DATE',
+    });
+    console.log(`Migration file created successfully`);
+  } catch (error) {
+    console.error(`Error creating migration file:`, error);
+  }
+}
+
+async function createSeeder(name: string) {
+  try {
+    const result = await seeder.create({
+      name: name,
+      folder: './src/db/seeders',
+      prefix: 'NONE',
+    });
+    console.log(`Seeder file created successfully`);
+  } catch (error) {
+    console.error(`Error creating seeder file:`, error);
+  }
+}
+
 // Main function to handle all tasks
 async function run() {
   try {
-    if (migrationFile) {
+    if (
+      migrationFile &&
+      task != 'seeder-create' &&
+      task != 'migration-create'
+    ) {
       // Run a specific migration or seeder file
       if (fs.existsSync(migrationPath)) {
         await runSpecificMigration(migrationFile);
@@ -90,6 +120,12 @@ async function run() {
         case 'seed-reset':
           await seeder.down({ to: '0' as const });
           console.log('Seeder reset successful!');
+          break;
+        case 'seeder-create':
+          await createSeeder(migrationFile);
+          break;
+        case 'migration-create':
+          await createMigration(migrationFile);
           break;
         default:
           console.log('Invalid command');

@@ -1,34 +1,41 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { createClient, RedisClientType } from 'redis';
+import { Inject, Injectable } from '@nestjs/common';
+import { RedisClientType } from 'redis';
 import { IRedisCacheService } from './redis.interface';
 import { CustomLogger } from '../logger/logger.service';
-import { env } from '../../config';
+import { REDIS_CLIENT_PROVIDER } from '../../config/constants';
 
 @Injectable()
-export class RedisCacheService implements IRedisCacheService, OnModuleInit {
-  private readonly client: RedisClientType;
+export class RedisCacheService implements IRedisCacheService {
+  // private readonly client: RedisClientType;
   private readonly DEFAULT_TTL = 60 * 60 * 24; // default ttl for redis
 
-  constructor(private readonly logger: CustomLogger) {
+  constructor(
+    @Inject(REDIS_CLIENT_PROVIDER) private readonly client: RedisClientType,
+    private readonly logger: CustomLogger,
+  ) {
     this.logger.setContext(RedisCacheService.name);
-    this.logger.debug(env.REDIS_URL);
-    this.client = createClient({
-      url: env.REDIS_URL,
-    });
-    this.client.on('error', (err) => {
-      logger.error('Redis Client Error', err);
-    });
   }
 
-  async onModuleInit() {
-    try {
-      await this.client.connect();
-      this.logger.debug('✅ Connected to Redis successfully');
-    } catch (err) {
-      this.logger.error('❌ Failed to connect to Redis:', err);
-      throw new Error(`Redis connection failed: ${err.message}`);
-    }
-  }
+  // constructor(private readonly logger: CustomLogger) {
+  //   this.logger.setContext(RedisCacheService.name);
+  //   this.logger.debug(env.REDIS_URL);
+  //   this.client = createClient({
+  //     url: env.REDIS_URL,
+  //   });
+  //   this.client.on('error', (err) => {
+  //     logger.error('Redis Client Error', err);
+  //   });
+  // }
+
+  // async onModuleInit() {
+  //   try {
+  //     await this.client.connect();
+  //     this.logger.debug('✅ Connected to Redis successfully');
+  //   } catch (err) {
+  //     this.logger.error('❌ Failed to connect to Redis:', err);
+  //     throw new Error(`Redis connection failed: ${err.message}`);
+  //   }
+  // }
 
   public async delete(target: string | string[]): Promise<number> {
     try {

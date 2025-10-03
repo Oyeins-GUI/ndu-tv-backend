@@ -25,6 +25,7 @@ import {
 import { SCOPE } from '../../../shared/enums';
 import { CreateSugPositionRequestBody } from '../dtos/common.request.dto';
 import { IAdminRepository } from '../repositories/interfaces/admin-repository.interface';
+import { SugExecutive } from '../../../db/models/sug-executives.model';
 
 export class ExecutiveService implements IExecutiveService {
   constructor(
@@ -56,7 +57,9 @@ export class ExecutiveService implements IExecutiveService {
   ): Promise<SugExecutiveDto> {
     try {
       const [department, session, faculty, position] = await Promise.all([
-        this.departmentRepository.findById(data.department_id),
+        this.departmentRepository.findById(data.department_id, {
+          relations: ['faculty'],
+        }),
         this.academicSessionRepository.findById(data.session_id),
         this.facultyRepository.findById(data.faculty_id),
         this.sugPositionRepository.findById(data.position_id),
@@ -74,11 +77,36 @@ export class ExecutiveService implements IExecutiveService {
         });
       }
 
-      const isExecutiveExisting = await this.sugExecutiveRepository.findBy({
-        scope: data.scope,
-        session_id: data.session_id,
-        position_id: data.position_id,
-      });
+      if (department.faculty.faculty !== faculty.faculty) {
+        throw new BadRequestException({
+          reason: RESPONSE_MESSAGES.SugExecutive.Failure.DeparmentNotInFaculty,
+        });
+      }
+
+      let isExecutiveExisting: SugExecutive | null = null;
+
+      if (data.scope == SCOPE.CENTRAL)
+        isExecutiveExisting = await this.sugExecutiveRepository.findBy({
+          scope: data.scope,
+          session_id: data.session_id,
+          position_id: data.position_id,
+        });
+
+      if (data.scope == SCOPE.FACULTY)
+        isExecutiveExisting = await this.sugExecutiveRepository.findBy({
+          scope: data.scope,
+          session_id: data.session_id,
+          position_id: data.position_id,
+          faculty_id: data.faculty_id,
+        });
+
+      if (data.scope == SCOPE.DEPARTMENT)
+        isExecutiveExisting = await this.sugExecutiveRepository.findBy({
+          scope: data.scope,
+          session_id: data.session_id,
+          position_id: data.position_id,
+          department_id: data.department_id,
+        });
 
       if (isExecutiveExisting)
         throw new BadRequestException({
@@ -107,9 +135,14 @@ export class ExecutiveService implements IExecutiveService {
       switch (scope) {
         case SCOPE.CENTRAL:
           const centralExecutives =
-            await this.sugExecutiveRepository.findManyBy({
-              scope: SCOPE.CENTRAL,
-            });
+            await this.sugExecutiveRepository.findManyBy(
+              {
+                scope: SCOPE.CENTRAL,
+              },
+              {
+                relations: ['all'],
+              },
+            );
           return SugExecutiveDto.fromEntities(centralExecutives);
 
         case SCOPE.FACULTY:
@@ -118,16 +151,21 @@ export class ExecutiveService implements IExecutiveService {
               reason:
                 RESPONSE_MESSAGES.SugExecutive.Failure.FacultyIdNotProvided,
             });
-          const faculty = await this.facultyRepository.findById(faculty_id);
+          const faculty = await this.facultyRepository.findById(faculty_id, {});
           if (!faculty)
             throw new NotFoundException({
               reason: RESPONSE_MESSAGES.Faculty.Failure.NotFound,
             });
           const facultyExecutives =
-            await this.sugExecutiveRepository.findManyBy({
-              scope: SCOPE.FACULTY,
-              faculty_id,
-            });
+            await this.sugExecutiveRepository.findManyBy(
+              {
+                scope: SCOPE.FACULTY,
+                faculty_id,
+              },
+              {
+                relations: ['all'],
+              },
+            );
           return SugExecutiveDto.fromEntities(facultyExecutives);
 
         case SCOPE.DEPARTMENT:
@@ -143,10 +181,15 @@ export class ExecutiveService implements IExecutiveService {
               reason: RESPONSE_MESSAGES.Faculty.Failure.NotFound,
             });
           const departmentExecutives =
-            await this.sugExecutiveRepository.findManyBy({
-              scope: SCOPE.FACULTY,
-              department_id,
-            });
+            await this.sugExecutiveRepository.findManyBy(
+              {
+                scope: SCOPE.FACULTY,
+                department_id,
+              },
+              {
+                relations: ['all'],
+              },
+            );
           return SugExecutiveDto.fromEntities(departmentExecutives);
       }
     } catch (error) {
@@ -157,8 +200,12 @@ export class ExecutiveService implements IExecutiveService {
 
   public async getExecutive(executive_id: string): Promise<SugExecutiveDto> {
     try {
-      const executive =
-        await this.sugExecutiveRepository.findById(executive_id);
+      const executive = await this.sugExecutiveRepository.findById(
+        executive_id,
+        {
+          relations: ['all'],
+        },
+      );
 
       if (!executive)
         throw new NotFoundException({

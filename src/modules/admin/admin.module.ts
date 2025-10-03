@@ -22,10 +22,16 @@ import { FacultyController } from './controllers/faculty.controller';
 import { AcademicService } from './services/academic.service';
 import { ExecutiveService } from './services/executive.service';
 import { AdminManagementService } from './services/admin-management.service';
+import { AppSettings } from '../../db/models/app-settings.model';
+import { PlatformConfigService } from './services/platform-config.service';
+import { PlatformConfigRepository } from './repositories/platform-config.repository';
+
+//Module appears too large did not think it will grow like this
 
 @Module({
   imports: [
     SequelizeModule.forFeature([
+      AppSettings,
       Admin,
       Department,
       Faculty,
@@ -37,6 +43,16 @@ import { AdminManagementService } from './services/admin-management.service';
   ],
 
   providers: [
+    PlatformConfigRepository,
+    {
+      provide: 'IPlatformConfigRepository',
+      useExisting: PlatformConfigRepository,
+    },
+
+    PlatformConfigService,
+
+    { provide: 'IPlatformConfigService', useExisting: PlatformConfigService },
+
     AdminRepository,
     { provide: 'IAdminRepository', useExisting: AdminRepository },
 
@@ -75,9 +91,6 @@ import { AdminManagementService } from './services/admin-management.service';
 
     SugPositionRepository,
     { provide: 'ISugPositionRepository', useExisting: SugPositionRepository },
-
-    RedisCacheService,
-    { provide: 'IRedisCacheService', useExisting: RedisCacheService },
 
     EmailService,
     { provide: 'IEmailService', useExisting: EmailService },

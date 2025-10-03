@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { SCOPE } from '../../../shared/enums';
+import { AcademicSessionDto } from './common.dto';
 
 export class AdminResponseBody {
   @ApiProperty({ example: 'Jane Doe', description: 'Full name of the admin' })
@@ -38,8 +39,12 @@ export class AdminResponseBody {
   @ApiProperty({ enum: SCOPE, description: 'Scope of access' })
   public scope: string;
 
-  @ApiProperty({ example: true, description: 'Whether the admin is active' })
-  public is_active: boolean;
+  @ApiProperty({
+    example: true,
+    description: 'Whether the admin is active',
+    type: 'boolean',
+  })
+  public is_admin_enabled: boolean;
 
   @ApiProperty({
     example: '2025-07-28T15:00:00Z',
@@ -151,4 +156,49 @@ export class FacultyResponseBody {
     type: [String],
   })
   public departments?: string[];
+}
+
+export class PlatformConfigResponseBody {
+  @ApiProperty({
+    description: 'ID of the current session',
+    example: '550e8400-e29b-41d4-a716-446655440001',
+    type: 'string',
+  })
+  public current_session_id: string;
+
+  @ApiProperty({
+    description: 'current session details',
+    example: '2024/2025',
+  })
+  public current_session: string;
+
+  // @ApiProperty({
+  //   description: 'ID of the current session',
+  //   example: '550e8400-e29b-41d4-a716-446655440001',
+  //   type: 'string',
+  // })
+  // public is_app_enabled: boolean;
+
+  // public is_ad_enabled: boolean;
+
+  @ApiProperty({
+    description: 'Article publishing status',
+    example: true,
+    type: 'boolean',
+  })
+  public is_publishing_enabled: boolean;
+
+  @ApiProperty({
+    description: 'Platform Name',
+    example: 'ndu-tv',
+    type: 'string',
+  })
+  public platform_name: string;
+
+  @ApiProperty({
+    description: 'Platform tag line',
+    example: 'news source',
+    type: 'string',
+  })
+  public platform_tagline: string;
 }

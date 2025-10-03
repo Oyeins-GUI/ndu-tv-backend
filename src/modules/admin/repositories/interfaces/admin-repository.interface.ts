@@ -37,6 +37,7 @@ export type CreateAdminInput = {
   department_id: string;
   scope: SCOPE;
   must_set_password: boolean;
+  is_admin_enabled: boolean;
 };
 
 export type UpdateAdminInput = AtLeastOne<CreateAdminInput>;

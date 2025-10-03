@@ -32,6 +32,7 @@ import {
   DeleteDepartmentEndpoint,
   DeleteFacultyEndpoint,
   DeleteSugExecutiveEndpoint,
+  GetPlatformConfigEndpoint,
   GetRolesEndpoint,
   GetSessionsEndpoint,
   GetSugExecutivesEndpoint,
@@ -39,6 +40,7 @@ import {
   RemoveAdminEndpoint,
   UpdateDepartmentEndpoint,
   UpdateFacultyEndpoint,
+  UpdatePlatformConfigEndpoint,
   UpdateSugExecutiveEndpoint,
   UpdateSugPositionEndpoint,
 } from '../decorators/admin.decorator';
@@ -50,14 +52,18 @@ import {
   CreateFacultyRequestBody,
   CreateSugPositionRequestBody,
   UpdateDepartmentRequestBody,
+  UpdatePlatformConfigRequestBody,
   UpdateSugPositionRequestBody,
 } from '../dtos/common.request.dto';
 import {
   DepartmentApiResponse,
   FacultyApiResponse,
+  PlatformConfigApiResponse,
 } from '../dtos/common.response.dto';
 import { AcademicSessionDto, RoleDto, SugPostionDto } from '../dtos/common.dto';
 import { SCOPE } from '../../../shared/enums';
+
+import { IPlatformConfigService } from '../services/interfaces/platform-config.interface';
 
 @Controller('admin')
 @ApiTags('Admin')
@@ -71,6 +77,9 @@ export class AdminController {
 
     @Inject('IAdminManagementService')
     private readonly adminManagementService: IAdminManagementService,
+
+    @Inject('IPlatformConfigService')
+    private readonly platformConfigService: IPlatformConfigService,
   ) {}
 
   @Get('executives/central')
@@ -263,6 +272,25 @@ export class AdminController {
       message: RESPONSE_MESSAGES.SugPosition.Success.Retrieved,
       data: position,
     });
+  }
+
+  @Patch('platform-config')
+  @UpdatePlatformConfigEndpoint()
+  public async updatePlatformConfig(
+    @Body() body: UpdatePlatformConfigRequestBody,
+  ): Promise<PlatformConfigApiResponse> {
+    const platformConfig =
+      await this.platformConfigService.updateSettings(body);
+
+    return new PlatformConfigApiResponse(platformConfig);
+  }
+
+  @Get('platform-config')
+  @GetPlatformConfigEndpoint()
+  public async getPlatformConfig(): Promise<PlatformConfigApiResponse> {
+    const platformConfig = await this.platformConfigService.getSettings();
+
+    return new PlatformConfigApiResponse(platformConfig);
   }
 
   @Patch('sug-positions/:id')

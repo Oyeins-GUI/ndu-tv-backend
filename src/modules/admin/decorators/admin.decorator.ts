@@ -11,6 +11,7 @@ import {
   DepartmentsApiResponse,
   FacultiesApiResponse,
   FacultyApiResponse,
+  PlatformConfigApiResponse,
 } from '../dtos/common.response.dto';
 import { SuccessResponseBody } from '../../../shared/responses/success-response';
 import { Public } from '../../../shared/decorators/public.decorator';
@@ -370,6 +371,40 @@ export function UpdateSugPositionEndpoint() {
       successMessage: RESPONSE_MESSAGES.SugPosition.Success.Updated,
       status: HttpStatus.OK,
       type: SuccessResponseBody<SugPostionDto>,
+    }),
+  );
+}
+
+export function UpdatePlatformConfigEndpoint() {
+  return applyDecorators(
+    HttpCode(HttpStatus.OK),
+    StandardDocs({
+      summary: 'Update Plaform configuration and info',
+      includeErrors: [
+        ErrorType.INTERNAL_SERVER_ERROR,
+        ErrorType.UNAUTHORIZED,
+        ErrorType.BAD_REQUEST,
+      ],
+      successMessage: RESPONSE_MESSAGES.PlatformConfig.Success.Updated,
+      status: HttpStatus.OK,
+      type: PlatformConfigApiResponse,
+    }),
+  );
+}
+
+export function GetPlatformConfigEndpoint() {
+  return applyDecorators(
+    HttpCode(HttpStatus.OK),
+    StandardDocs({
+      summary: 'Retrieve Plaform configuration and info',
+      includeErrors: [
+        ErrorType.INTERNAL_SERVER_ERROR,
+        ErrorType.UNAUTHORIZED,
+        ErrorType.BAD_REQUEST,
+      ],
+      successMessage: RESPONSE_MESSAGES.PlatformConfig.Success.Retrieved,
+      status: HttpStatus.OK,
+      type: PlatformConfigApiResponse,
     }),
   );
 }

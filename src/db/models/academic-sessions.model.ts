@@ -19,4 +19,9 @@ export class AcademicSession extends BaseModel {
   @Default(false)
   @Column(DataType.BOOLEAN)
   declare is_current_session: boolean;
+
+  @AllowNull(false)
+  @Default(false)
+  @Column(DataType.BOOLEAN)
+  declare is_next_session: boolean;
 }

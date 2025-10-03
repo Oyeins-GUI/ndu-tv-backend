@@ -1,8 +1,34 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { RESPONSE_MESSAGES } from '../../../shared/responses/response-messages';
-import { DepartmentResponseBody, FacultyResponseBody } from './base.dto';
-import { DepartmentDto, FacultyDto } from './common.dto';
+import {
+  DepartmentResponseBody,
+  FacultyResponseBody,
+  PlatformConfigResponseBody,
+} from './base.dto';
+import { DepartmentDto, FacultyDto, PlatformConfigDto } from './common.dto';
 import { ApiResponse } from '../../../shared/responses/api-response';
+
+export class PlatformConfigApiResponse extends ApiResponse<PlatformConfigDto> {
+  @ApiProperty({
+    description: 'Platfrom Configuration info',
+    example: RESPONSE_MESSAGES.PlatformConfig.Success.Retrieved,
+    type: 'string',
+  })
+  public override message: string =
+    RESPONSE_MESSAGES.PlatformConfig.Success.Retrieved;
+
+  @ApiProperty({
+    description: 'Department data returned from operation',
+    type: PlatformConfigResponseBody,
+  })
+  public override data: PlatformConfigDto;
+
+  constructor(data: PlatformConfigDto, message?: string) {
+    super();
+    this.data = data;
+    if (message) this.message = message;
+  }
+}
 
 export class DepartmentApiResponse extends ApiResponse<DepartmentDto> {
   @ApiProperty({

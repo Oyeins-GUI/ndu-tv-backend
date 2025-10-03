@@ -4,6 +4,17 @@ export const RESPONSE_MESSAGES = {
   Default: 'OK',
   Error: 'An error occurred',
 
+  PlatformConfig: {
+    Success: {
+      Retrieved: 'Platform config (info) retrieved successfully',
+      Updated: 'Platform config (info) updated successfully',
+    },
+    Failure: {
+      UnableToRetrieve: 'Could not retrieve platform config',
+      UnableToUpdate: 'Could not updatd platform config',
+    },
+  },
+
   Auth: {
     Success: {
       LoggedIn: 'User session is active',
@@ -69,6 +80,8 @@ export const RESPONSE_MESSAGES = {
       Deleted: 'SUG Executive sucessfully deleteted',
     },
     Failure: {
+      DeparmentNotInFaculty:
+        'Specified Department must be a department of sepecified Faculty',
       NotFound: 'SUG Executive not found',
       AlreadyExisting: 'Sug Executive Already Exists',
       FacultyIdNotProvided:
