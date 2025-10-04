@@ -158,7 +158,7 @@ export class AdminManagementService implements IAdminManagementService {
           role: this.mapRoles(role.role),
           department: executive.department.department,
           faculty: executive.faculty.faculty,
-          action_url: `${env.FRONTEND_URL}/verify/?token=${randomToken}`,
+          action_url: `${env.FRONTEND_URL}/admin/new?token=${randomToken}`,
           year: new Date().getFullYear(),
         },
       });

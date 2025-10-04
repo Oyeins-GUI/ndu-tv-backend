@@ -210,7 +210,7 @@ export class AuthService implements IAuthService {
           role: admin.role.role,
           department: admin.department.department,
           faculty: admin.faculty.faculty,
-          action_url: `${env.FRONTEND_URL}/verify/?token=${randomToken}`,
+          action_url: `${env.FRONTEND_URL}/admin/new?token=${randomToken}`,
           year: new Date().getFullYear(),
         },
       });

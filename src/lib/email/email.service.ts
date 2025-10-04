@@ -17,8 +17,6 @@ export class EmailService implements IEmailService {
   constructor(private readonly logger: CustomLogger) {
     logger.setContext(EmailService.name);
 
-    const templatesPath = path.join(process.cwd(), 'dist/lib/email/templates');
-
     this.transporter = createTransport({
       host: env.MAIL_HOST,
       port: env.MAIL_PORT,
@@ -33,10 +31,10 @@ export class EmailService implements IEmailService {
       hbs({
         viewEngine: {
           extname: '.hbs',
-          partialsDir: templatesPath,
+          partialsDir: path.join(__dirname, 'templates'),
           defaultLayout: '',
         },
-        viewPath: templatesPath,
+        viewPath: path.join(__dirname, 'templates'),
         extName: '.hbs',
       }),
     );
@@ -44,6 +42,8 @@ export class EmailService implements IEmailService {
 
   public async sendMail(options: MailOptions): Promise<void> {
     try {
+      this.logger.debug(path.join(__dirname, 'templates'));
+      this.logger.debug(process.cwd());
       const { to, template, context, subject, address } = options;
       await this.transporter.sendMail({
         from: `${env.APP_NAME} <${address || env.MAIL_FROM_ADDRESS}>`,

@@ -6,8 +6,20 @@
     "deleteOutDir": true,
     "assets": [
       {
-        "include": "lib/email/templates/**/*",
-        "outDir": "dist/src"
+        "include": "lib/email/templates/**/*.*",
+        "outDir": "dist/src/lib/email/templates"
+      },
+      {
+        "include": "lib/email/templates/**/*.hbs",
+        "outDir": "dist/src/lib/email/templates"
+      },
+      {
+        "include": "lib/email/templates/**/*.ts",
+        "outDir": "dist/src/lib/email/templates"
+      },
+      {
+        "include": "lib/email/templates/**/*.js",
+        "outDir": "dist/src/lib/email/templates"
       }
     ]
   }
