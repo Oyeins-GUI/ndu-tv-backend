@@ -7,7 +7,7 @@ import {
 import { CustomLogger } from '../logger/logger.service';
 import { createTransport, Transporter } from 'nodemailer';
 import { env } from '../../config';
-import * as hbs from 'nodemailer-express-handlebars';
+import hbs from 'nodemailer-express-handlebars';
 import * as path from 'node:path';
 
 @Injectable()
