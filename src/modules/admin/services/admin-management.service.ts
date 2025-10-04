@@ -24,7 +24,7 @@ import {
   AddAdminInput,
   IAdminManagementService,
 } from './interfaces/admin-management.interface';
-import { Role as RoleEnum } from '../../../shared/enums';
+import { Role, Role as RoleEnum } from '../../../shared/enums';
 import { RoleDto } from '../dtos/common.dto';
 import { IAcademicSessionRepository } from '../repositories/interfaces/academic-session-repository.interface';
 
@@ -54,6 +54,17 @@ export class AdminManagementService implements IAdminManagementService {
     this.logger.setContext(AdminManagementService.name);
   }
 
+  private mapRoles(role: Role): string {
+    const roleMap: Record<Role, string> = {
+      central_exec: 'Central Executive',
+      faculty_exec: 'Faculty Executive',
+      department_exec: 'Department Executive',
+      super_admin: '',
+    };
+
+    return roleMap[role] || role;
+  }
+
   public async getRoles(): Promise<RoleDto[]> {
     try {
       const roles = await this.roleRepository.findManyBy({});
@@ -70,6 +81,16 @@ export class AdminManagementService implements IAdminManagementService {
 
   public async addAdmin(data: AddAdminInput): Promise<AdminDto> {
     try {
+      const doesAdminExist = await this.adminRepository.findBy({
+        executive_id: data.executive_id,
+      });
+
+      if (doesAdminExist) {
+        throw new BadRequestException({
+          reason: RESPONSE_MESSAGES.Admin.Failiure.AlreadyExists,
+        });
+      }
+
       const [executive, role] = await Promise.all([
         this.sugExecutiveRepository.findById(data.executive_id, {
           relations: ['department', 'faculty', 'session'],
@@ -104,7 +125,7 @@ export class AdminManagementService implements IAdminManagementService {
       }
 
       const admin = await this.adminRepository.create({
-        ...executive,
+        ...executive.toJSON(),
         must_set_password: true,
         executive_id: executive.id,
         role_id: role.id,
@@ -134,9 +155,9 @@ export class AdminManagementService implements IAdminManagementService {
         subject: TEMPLATE_SUBJECTS.activateAccount,
         context: {
           name: admin.name,
-          role: role.role,
-          department: executive.department,
-          faculty: executive.faculty,
+          role: this.mapRoles(role.role),
+          department: executive.department.department,
+          faculty: executive.faculty.faculty,
           action_url: `${env.FRONTEND_URL}/verify/?token=${randomToken}`,
           year: new Date().getFullYear(),
         },

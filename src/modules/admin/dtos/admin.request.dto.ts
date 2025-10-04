@@ -106,13 +106,16 @@ export class UpdateSugExecutiveRequestBody extends PartialType(
 }
 
 export class CreateAdminRequestBody {
-  @ApiProperty({ description: 'ID of the executive user to assign as admin' })
+  @ApiProperty({
+    description: 'ID of the executive user to assign as admin',
+    example: 'f6800087-8b25-4c37-bcf4-e2539fb9e7f5',
+  })
   @IsString()
   @IsNotEmpty()
   public executive_id: string;
 
   @ApiProperty({
-    example: '4d1d1b20-5a4c-4df7-b6c4-bb6e7f3c3011',
+    example: '9904faf9-8e10-4fc7-b584-ba9c87f55a1c',
     description: 'Admin role ID',
   })
   @IsString()

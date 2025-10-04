@@ -38,7 +38,10 @@ export const RESPONSE_MESSAGES = {
       Updated: 'Admin updated successfully',
       Deleted: 'Admin deleted successfully',
     },
-    Failiure: { NotFound: ' Admin not found' },
+    Failiure: {
+      NotFound: ' Admin not found',
+      AlreadyExists: 'Admin already exists',
+    },
   },
 
   Department: {
@@ -84,6 +87,7 @@ export const RESPONSE_MESSAGES = {
         'Specified Department must be a department of sepecified Faculty',
       NotFound: 'SUG Executive not found',
       AlreadyExisting: 'Sug Executive Already Exists',
+      PostionHeld: 'Postion already held for specifeid scope and session',
       FacultyIdNotProvided:
         'Faculty ID is required to get executives of scope Faculty',
       DepartmentIdNotProvided:

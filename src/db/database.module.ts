@@ -13,8 +13,8 @@ import { env } from '../config';
       password: env.DB_PASSWORD,
       autoLoadModels: true,
       synchronize: true,
-      logging: (msg) => console.log('DB:', msg),
-      logQueryParameters: true,
+      logging: false,
+      logQueryParameters: false,
       define: {
         underscored: true,
         paranoid: true,

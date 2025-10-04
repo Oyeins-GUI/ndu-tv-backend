@@ -1,7 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { RESPONSE_MESSAGES } from '../../../shared/responses/response-messages';
 import { AdminResponseBody, SugExecutiveResponseBody } from './base.dto';
-import { ApiResponse } from '../../../shared/responses/api-response';
+import {
+  ApiResponse,
+  createPaginatedResponseDto,
+} from '../../../shared/responses/api-response';
 import { SugExecutiveDto } from './common.dto';
 import { AdminDto } from './admin.dto';
 
@@ -25,6 +28,10 @@ export class SugExecutiveApiResponse extends ApiResponse<SugExecutiveDto> {
     if (message) this.message = message;
   }
 }
+
+export class PaginatedSugExecutivesApiResponse extends createPaginatedResponseDto(
+  SugExecutiveResponseBody,
+) {}
 
 export class SugExecutivesApiResponse extends ApiResponse<SugExecutiveDto[]> {
   @ApiProperty({

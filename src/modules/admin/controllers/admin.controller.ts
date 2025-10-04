@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
 } from '@nestjs/common';
 import { IAcademicService } from '../services/interfaces/academic.interface';
@@ -20,6 +21,7 @@ import {
 
 import {
   AdminApiResponse,
+  PaginatedSugExecutivesApiResponse,
   SugExecutiveApiResponse,
   SugExecutivesApiResponse,
 } from '../dtos/admin.reponse.dto';
@@ -32,6 +34,7 @@ import {
   DeleteDepartmentEndpoint,
   DeleteFacultyEndpoint,
   DeleteSugExecutiveEndpoint,
+  GetAllSugExecutivesEndpoint,
   GetPlatformConfigEndpoint,
   GetRolesEndpoint,
   GetSessionsEndpoint,
@@ -84,21 +87,47 @@ export class AdminController {
 
   @Get('executives/central')
   @GetSugExecutivesEndpoint()
-  public async getCentralExecutives(): Promise<SugExecutivesApiResponse> {
+  public async getCentralExecutives(
+    @Query('session_id') session_id?: string,
+  ): Promise<SugExecutivesApiResponse> {
     const result = await this.executiveService.getExecutives({
       scope: SCOPE.CENTRAL,
+      session_id,
     });
     return new SugExecutivesApiResponse(result);
+  }
+
+  @Get('executives')
+  @GetAllSugExecutivesEndpoint()
+  public async getAllExecutives(
+    @Query('session_id') session_id?: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ): Promise<PaginatedSugExecutivesApiResponse> {
+    const result = await this.executiveService.getAllExecutives(
+      {
+        page: page ?? 1,
+        limit: limit ?? 50,
+      },
+      session_id,
+    );
+    return new PaginatedSugExecutivesApiResponse({
+      data: result,
+      page: page ?? 1,
+      limit: limit ?? 50,
+    });
   }
 
   @Get('executives/faculty/:id')
   @GetSugExecutivesEndpoint()
   public async getFacultyExecutives(
     @Param('id') faculty_id: string,
+    @Query('session_id') session_id?: string,
   ): Promise<SugExecutivesApiResponse> {
     const result = await this.executiveService.getExecutives({
       scope: SCOPE.FACULTY,
       faculty_id,
+      session_id,
     });
     return new SugExecutivesApiResponse(result);
   }
@@ -107,10 +136,12 @@ export class AdminController {
   @GetSugExecutivesEndpoint()
   public async getDepartmentExecutives(
     @Param('id') department_id: string,
+    @Query('session_id') session_id?: string,
   ): Promise<SugExecutivesApiResponse> {
     const result = await this.executiveService.getExecutives({
       scope: SCOPE.FACULTY,
       department_id,
+      session_id,
     });
     return new SugExecutivesApiResponse(result);
   }

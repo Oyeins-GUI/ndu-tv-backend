@@ -3,6 +3,7 @@ import { ErrorType, StandardDocs } from '../../../shared/helpers/doc.helper';
 import { RESPONSE_MESSAGES } from '../../../shared/responses/response-messages';
 import {
   AdminApiResponse,
+  PaginatedSugExecutivesApiResponse,
   SugExecutiveApiResponse,
   SugExecutivesApiResponse,
 } from '../dtos/admin.reponse.dto';
@@ -40,7 +41,7 @@ export function GetSugExecutivesEndpoint() {
   return applyDecorators(
     StandardDocs({
       summary:
-        'Gets SUG Executives (Depending on the scope, central, faculty, deparment)',
+        'Gets SUG Executives (Depending on the scope, central, faculty, deparment and session)',
       includeErrors: [
         ErrorType.BAD_REQUEST,
         ErrorType.UNAUTHORIZED,
@@ -49,6 +50,34 @@ export function GetSugExecutivesEndpoint() {
       successMessage: RESPONSE_MESSAGES.SugExecutive.Success.Retrieved,
       status: HttpStatus.OK,
       type: SugExecutivesApiResponse,
+      queryParams: [
+        {
+          name: 'session_id',
+          required: false,
+        },
+      ],
+    }),
+  );
+}
+export function GetAllSugExecutivesEndpoint() {
+  return applyDecorators(
+    StandardDocs({
+      summary:
+        'Gets SUG Executives (Depending on the scope, central, faculty, deparment and session)',
+      includeErrors: [
+        ErrorType.BAD_REQUEST,
+        ErrorType.UNAUTHORIZED,
+        ErrorType.FORBIDDEN,
+      ],
+      successMessage: RESPONSE_MESSAGES.SugExecutive.Success.Retrieved,
+      status: HttpStatus.OK,
+      type: PaginatedSugExecutivesApiResponse,
+      queryParams: [
+        {
+          name: 'session_id',
+          required: false,
+        },
+      ],
     }),
   );
 }

@@ -1,4 +1,5 @@
 import { SCOPE } from '../../../../shared/enums';
+import { PaginationInput } from '../../../../shared/types/repositories.types';
 import {
   CreateSugExecutiveRequestBody,
   UpdateSugExecutiveRequestBody,
@@ -22,10 +23,12 @@ export interface IExecutiveService {
     scope,
     faculty_id,
     department_id,
+    session_id,
   }: {
     scope: SCOPE;
     faculty_id?: string;
     department_id?: string;
+    session_id?: string;
   }): Promise<SugExecutiveDto[]>;
 
   /**
@@ -33,6 +36,15 @@ export interface IExecutiveService {
    * @returns {SugExecutiveDto} - The exectutives matching the fitler constraints
    */
   getExecutive(executive_id: string): Promise<SugExecutiveDto>;
+
+  /**
+   * Gets all executives (paginated)
+   * @param pagination - Pagination Params
+   */
+  getAllExecutives(
+    pagination: PaginationInput,
+    session_id?: string,
+  ): Promise<SugExecutiveDto[]>;
 
   /**
    * Adds a sug position

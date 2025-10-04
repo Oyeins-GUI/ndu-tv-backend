@@ -232,13 +232,16 @@ export abstract class BaseRepository<
         exclude: excludeFields as string[],
       },
       include,
-      limit: calculatePaginationLimit(options?.limit ?? 10),
-      offset: calculatePaginationOffset(
-        options?.page ?? 1,
-        options?.limit ?? 10,
-      ),
       order,
     };
+
+    if (options?.limit || options?.page) {
+      query.limit = calculatePaginationLimit(options?.limit ?? 10);
+      query.offset = calculatePaginationOffset(
+        options?.page ?? 1,
+        options?.limit ?? 10,
+      );
+    }
 
     if (options?.transaction) {
       query.transaction = options.transaction;

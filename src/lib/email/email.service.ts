@@ -7,7 +7,7 @@ import {
 import { CustomLogger } from '../logger/logger.service';
 import { createTransport, Transporter } from 'nodemailer';
 import { env } from '../../config';
-import * as hbs from 'nodemailer-express-handlebars';
+import hbs from 'nodemailer-express-handlebars';
 import * as path from 'node:path';
 
 @Injectable()
@@ -32,6 +32,7 @@ export class EmailService implements IEmailService {
         viewEngine: {
           extname: '.hbs',
           partialsDir: path.join(__dirname, 'templates'),
+          defaultLayout: '',
         },
         viewPath: path.join(__dirname, 'templates'),
         extName: '.hbs',
@@ -41,7 +42,7 @@ export class EmailService implements IEmailService {
 
   public async sendMail(options: MailOptions): Promise<void> {
     try {
-      this.logger.debug(process.cwd());
+      this.logger.debug(path.join(__dirname, 'templates'));
       const { to, template, context, subject, address } = options;
       await this.transporter.sendMail({
         from: `${env.APP_NAME} <${address || env.MAIL_FROM_ADDRESS}>`,

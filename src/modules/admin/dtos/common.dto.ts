@@ -176,9 +176,7 @@ export class PlatformConfigDto {
 
     this.platform_tagline = model.platform_tagline;
 
-    if (model.current_session) {
-      this.current_session = model.current_session.session;
-    }
+    this.current_session = model.current_session?.session;
   }
 
   static fromEntities(model: AppSettings[]): PlatformConfigDto[] {

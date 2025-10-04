@@ -104,9 +104,11 @@ export class PlatformConfigService
         await this.redisCacheService.getStringValue(APP_SETTINGS_REDIS_KEY);
 
       if (platformConfig) {
-        const parsedPlatformConfig = JSON.parse(platformConfig);
+        // const parsedPlatformConfig = JSON.parse(platformConfig);
 
-        return new PlatformConfigDto(parsedPlatformConfig as AppSettings);
+        // return new PlatformConfigDto(parsedPlatformConfig as any);
+
+        return JSON.parse(platformConfig) as PlatformConfigDto;
       }
 
       if (!platformConfig) {

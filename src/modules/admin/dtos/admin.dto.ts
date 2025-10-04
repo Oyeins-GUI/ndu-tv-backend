@@ -26,9 +26,11 @@ export class AdminDto {
     this.email = model.email;
     this.matric_number = model.matric_number;
     this.last_login_at = model.last_login_at;
-    this.role = model.role.role.toString();
+
     this.scope = model.scope.toString();
     this.is_admin_enabled = model.is_admin_enabled;
+
+    this.role = model.role?.role.toString();
 
     if (model.department) this.deparment = model.department.department;
 

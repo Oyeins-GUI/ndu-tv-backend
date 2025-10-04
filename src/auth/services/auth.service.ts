@@ -111,6 +111,10 @@ export class AuthService implements IAuthService {
         refresh_token: tokens.refresh_token,
       };
 
+      await this.adminRepository.updateByModel(admin, {
+        last_login_at: new Date(),
+      });
+
       await this.redisCacheService.setHash<SessionData>(
         sessionKey,
         sessionPayload,
@@ -221,7 +225,9 @@ export class AuthService implements IAuthService {
 
   public async setPassword(token: string, password: string): Promise<LoginDto> {
     try {
-      const jwtToken = await this.redisCacheService.getStringValue(token);
+      const jwtToken = await this.redisCacheService.getStringValue(
+        `activate-account:${token}`,
+      );
 
       if (!jwtToken)
         throw new UnauthorizedException({
@@ -284,7 +290,7 @@ export class AuthService implements IAuthService {
         SESSION_CONSTANTS.defaultTTL * 2,
       );
 
-      await this.redisCacheService.delete(token);
+      await this.redisCacheService.delete(`activate-account:${token}`);
 
       return new LoginDto(new AdminDto(admin), tokens, sessionId);
     } catch (error) {
