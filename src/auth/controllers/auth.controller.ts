@@ -118,7 +118,7 @@ export class AuthController {
   public async initSetPassword(
     @Body() body: SetPasswordInitRequestBody,
   ): Promise<SuccessResponseBody> {
-    await this.authService.initiateSetPassword(body.email, body.matric_number);
+    this.authService.initiateSetPassword(body.email, body.matric_number);
     return new SuccessResponseBody({
       message: RESPONSE_MESSAGES.Auth.Success.SentPasswordSetLink,
     });
