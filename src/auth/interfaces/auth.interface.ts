@@ -24,7 +24,7 @@ export interface IAuthService {
    * @param matric_no - mattric number of the admin
    * @returns {void}
    */
-  initiateSetPassword(email: string, matric_no: string): Promise<void>;
+  initiateSetPassword(email: string, matric_number: string): Promise<void>;
 
   /**
    * Completes a set password, and logs in the admin

@@ -159,13 +159,13 @@ export class AuthService implements IAuthService {
 
   public async initiateSetPassword(
     email: string,
-    matric_no: string,
+    matric_number: string,
   ): Promise<void> {
     try {
       const admin = await this.adminRepository.findBy(
         {
           email,
-          matric_number: matric_no,
+          matric_number,
         },
         {
           relations: ['all'],
@@ -217,7 +217,7 @@ export class AuthService implements IAuthService {
     } catch (error) {
       this.logger.logServiceError(this.initiateSetPassword.name, error, {
         email,
-        matric_no,
+        matric_number,
       });
       throw error;
     }
