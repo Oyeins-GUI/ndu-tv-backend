@@ -7,7 +7,7 @@ import {
 import { CustomLogger } from '../logger/logger.service';
 import { createTransport, Transporter } from 'nodemailer';
 import { env } from '../../config';
-import hbs from 'nodemailer-express-handlebars';
+import * as hbs from 'nodemailer-express-handlebars';
 import * as path from 'node:path';
 
 @Injectable()
@@ -43,6 +43,7 @@ export class EmailService implements IEmailService {
   public async sendMail(options: MailOptions): Promise<void> {
     try {
       this.logger.debug(path.join(__dirname, 'templates'));
+      this.logger.debug(process.cwd());
       const { to, template, context, subject, address } = options;
       await this.transporter.sendMail({
         from: `${env.APP_NAME} <${address || env.MAIL_FROM_ADDRESS}>`,
