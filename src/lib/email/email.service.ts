@@ -22,6 +22,10 @@ export class EmailService implements IEmailService {
       port: env.MAIL_PORT,
       secure: env.MAIL_PORT == 465 && env.NODE_ENV == 'production',
       requireTLS: env.NODE_ENV == 'production',
+      tls: {
+        rejectUnauthorized: false,
+        requestCert: false,
+      },
       auth: {
         user: env.MAIL_USERNAME,
         pass: env.MAIL_PASSWORD,
