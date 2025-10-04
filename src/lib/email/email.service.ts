@@ -44,6 +44,7 @@ export class EmailService implements IEmailService {
     try {
       this.logger.debug(path.join(__dirname, 'templates'));
       this.logger.debug(process.cwd());
+      this.logger.debug(path.join(process.cwd(), __dirname));
       const { to, template, context, subject, address } = options;
       await this.transporter.sendMail({
         from: `${env.APP_NAME} <${address || env.MAIL_FROM_ADDRESS}>`,
