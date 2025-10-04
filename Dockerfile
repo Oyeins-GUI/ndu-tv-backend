@@ -23,6 +23,7 @@ FROM base AS production
 ENV NODE_ENV=production
 COPY . .
 RUN pnpm install --frozen-lockfile && pnpm run build:prod && pnpm prune --prod
+COPY src/lib/email/templates/*.hbs ./dist/src/lib/email/templates/
 EXPOSE 3100
 CMD ["pnpm", "run", "start:prod:trace"]
 
