@@ -98,6 +98,15 @@ class EnvConfig {
 
   @IsString()
   MAIL_FROM_NAME: string;
+
+  @IsString()
+  API_MAIL_HOST: string;
+
+  @IsString()
+  API_MAIL_TOKEN: string;
+
+  @IsString()
+  API_MAIL_FROM_ADDRESS: string;
 }
 
 const env = plainToInstance(EnvConfig, process.env, {

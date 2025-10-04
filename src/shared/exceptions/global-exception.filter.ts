@@ -8,6 +8,8 @@ import {
 import { HttpAdapterHost } from '@nestjs/core';
 import { ValidationError } from 'class-validator';
 
+import { ValidationError as SequelizeValidationError } from 'sequelize';
+
 import { AppException } from './app-exception';
 import { CustomLogger } from '../../lib/logger/logger.service';
 import { ERROR_CODES } from './error-codes';
@@ -71,6 +73,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
           reason = r.message || r.error || reason;
         }
       }
+    }
+
+    if (exception instanceof SequelizeValidationError) {
+      exception.errors.forEach((e) => this.logger.error(e.message));
     }
 
     if (exception instanceof ValidationError) {

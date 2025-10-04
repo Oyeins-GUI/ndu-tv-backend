@@ -27,6 +27,7 @@ import {
 import { Role, Role as RoleEnum } from '../../../shared/enums';
 import { RoleDto } from '../dtos/common.dto';
 import { IAcademicSessionRepository } from '../repositories/interfaces/academic-session-repository.interface';
+import { mapRoles } from '../../../shared/helpers/service.helper';
 
 export class AdminManagementService implements IAdminManagementService {
   constructor(
@@ -52,17 +53,6 @@ export class AdminManagementService implements IAdminManagementService {
     private readonly jwtService: JwtService,
   ) {
     this.logger.setContext(AdminManagementService.name);
-  }
-
-  private mapRoles(role: Role): string {
-    const roleMap: Record<Role, string> = {
-      central_exec: 'Central Executive',
-      faculty_exec: 'Faculty Executive',
-      department_exec: 'Department Executive',
-      super_admin: '',
-    };
-
-    return roleMap[role] || role;
   }
 
   public async getRoles(): Promise<RoleDto[]> {
@@ -155,7 +145,7 @@ export class AdminManagementService implements IAdminManagementService {
         subject: TEMPLATE_SUBJECTS.activateAccount,
         context: {
           name: admin.name,
-          role: this.mapRoles(role.role),
+          role: mapRoles(role.role),
           department: executive.department.department,
           faculty: executive.faculty.faculty,
           action_url: `${env.FRONTEND_URL}/admin/new?token=${randomToken}`,

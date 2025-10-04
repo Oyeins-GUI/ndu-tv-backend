@@ -30,6 +30,7 @@ import { env } from '../../config';
 import { IEmailService } from '../../lib/email/email.interface';
 import { TEMPLATE_NAMES, TEMPLATE_SUBJECTS } from '../../lib/email/templates';
 import { generateRandomToken } from '../../lib/utils';
+import { mapRoles } from '../../shared/helpers/service.helper';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -207,7 +208,7 @@ export class AuthService implements IAuthService {
         subject: TEMPLATE_SUBJECTS.activateAccount,
         context: {
           name: admin.name,
-          role: admin.role.role,
+          role: mapRoles(admin.role.role),
           department: admin.department.department,
           faculty: admin.faculty.faculty,
           action_url: `${env.FRONTEND_URL}/admin/new?token=${randomToken}`,
