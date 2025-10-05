@@ -59,6 +59,25 @@ export class UnauthorizedException extends AppException<unknown | undefined> {
   }
 }
 
+export class ForbiddenException extends AppException<unknown | undefined> {
+  constructor({
+    details,
+    reason = 'Forbiden',
+  }: {
+    details?: unknown;
+    reason: string;
+  }) {
+    super(
+      {
+        code: ERROR_CODES.FORBIDDEN,
+        reason,
+        details,
+      },
+      HttpStatus.FORBIDDEN,
+    );
+  }
+}
+
 export class BadRequestException extends AppException<unknown | undefined> {
   constructor({
     details,

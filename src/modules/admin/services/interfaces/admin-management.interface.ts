@@ -1,4 +1,5 @@
 import { AdminDto } from '../../dtos/admin.dto';
+import { UpdateAdminRequestBody } from '../../dtos/admin.request.dto';
 import { RoleDto } from '../../dtos/common.dto';
 
 export interface IAdminManagementService {
@@ -19,6 +20,11 @@ export interface IAdminManagementService {
    * Gets Roles
    */
   getRoles(): Promise<RoleDto[]>;
+
+  updateAdmin(
+    admin_id: string,
+    data: UpdateAdminRequestBody,
+  ): Promise<AdminDto>;
 }
 
 export type AddAdminInput = {

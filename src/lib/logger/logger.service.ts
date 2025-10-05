@@ -89,6 +89,218 @@
 //   }
 // }
 
+// import {
+//   ConsoleLogger,
+//   Injectable,
+//   LoggerService,
+//   Scope,
+// } from '@nestjs/common';
+// import * as winston from 'winston';
+// import 'winston-daily-rotate-file';
+// import { inspect } from 'util';
+
+// @Injectable({ scope: Scope.TRANSIENT })
+// export class CustomLogger extends ConsoleLogger implements LoggerService {
+//   private readonly winstonLogger: winston.Logger;
+
+//   constructor(context?: string) {
+//     super(context || '');
+
+//     this.winstonLogger = winston.createLogger({
+//       level: 'info',
+//       format: winston.format.combine(
+//         winston.format.timestamp(),
+//         winston.format.errors({ stack: true }),
+//         winston.format.json(),
+//       ),
+//       transports: [
+//         new winston.transports.Console({
+//           format: winston.format.combine(
+//             winston.format.colorize(),
+//             winston.format.printf(
+//               ({
+//                 level,
+//                 message,
+//                 timestamp,
+//                 context,
+//                 trace,
+//                 stack,
+//                 ...meta
+//               }) => {
+//                 // Format the main message - handle objects properly
+//                 let formattedMessage = message;
+//                 if (typeof message === 'object' && message !== null) {
+//                   formattedMessage = inspect(message, {
+//                     depth: null,
+//                     colors: true,
+//                     maxArrayLength: null,
+//                     breakLength: 80,
+//                     compact: false,
+//                   });
+//                 }
+
+//                 let log = `${timestamp} ${level} ${context ? `[${context}]` : ''} ${formattedMessage}`;
+
+//                 // Remove known fields from meta to avoid duplication
+//                 const { error, method, ...restMeta } = meta;
+
+//                 // Show additional metadata if present
+//                 if (Object.keys(restMeta).length > 0) {
+//                   log += `\n${inspect(restMeta, {
+//                     depth: null,
+//                     colors: true,
+//                     maxArrayLength: null,
+//                     breakLength: 80,
+//                     compact: false,
+//                   })}`;
+//                 }
+
+//                 // Show error details if present
+//                 if (error) {
+//                   log += `\n${inspect(error, {
+//                     depth: null,
+//                     colors: true,
+//                     maxArrayLength: null,
+//                     breakLength: 80,
+//                     compact: false,
+//                   })}`;
+//                 }
+
+//                 // Show stack trace if present (either from trace or stack)
+//                 const stackTrace = trace || stack;
+//                 if (stackTrace) {
+//                   log += `\n${stackTrace}`;
+//                 }
+
+//                 return log;
+//               },
+//             ),
+//           ),
+//           level: 'silly',
+//         }),
+//         new winston.transports.DailyRotateFile({
+//           filename: 'logs/application-%DATE%.log',
+//           datePattern: 'YYYY-MM-DD',
+//           zippedArchive: true,
+//           maxSize: '20m',
+//           maxFiles: '14d',
+//           format: winston.format.combine(
+//             winston.format.timestamp(),
+//             winston.format.errors({ stack: true }),
+//             // Custom formatter to handle objects properly in JSON logs
+//             winston.format.printf((info) => {
+//               // Ensure objects are properly serialized, not converted to [object Object]
+//               const formattedInfo = { ...info };
+
+//               // If message is an object, keep it as is (JSON.stringify will handle it)
+//               if (typeof info.message === 'object' && info.message !== null) {
+//                 formattedInfo.message = info.message;
+//               }
+
+//               return JSON.stringify(formattedInfo);
+//             }),
+//           ),
+//         }),
+//       ],
+//     });
+//   }
+
+//   /**
+//    * Helper to normalize messages - handles objects, arrays, and primitives
+//    */
+//   private normalizeMessage(message: any): any {
+//     // If it's already a primitive or null, return as-is
+//     if (message === null || typeof message !== 'object') {
+//       return message;
+//     }
+
+//     // For objects and arrays, return them directly so Winston can handle them
+//     return message;
+//   }
+
+//   log(message: any, context?: string) {
+//     const logContext = context || this.context;
+//     const normalizedMessage = this.normalizeMessage(message);
+
+//     this.winstonLogger.info(normalizedMessage, { context: logContext });
+//   }
+
+//   error(message: any, trace?: string, context?: string) {
+//     const logContext = context || this.context;
+//     const normalizedMessage = this.normalizeMessage(message);
+
+//     this.winstonLogger.error(normalizedMessage, {
+//       trace,
+//       context: logContext,
+//     });
+//   }
+
+//   warn(message: any, context?: string) {
+//     const logContext = context || this.context;
+//     const normalizedMessage = this.normalizeMessage(message);
+
+//     this.winstonLogger.warn(normalizedMessage, { context: logContext });
+//   }
+
+//   debug(message: any, context?: string) {
+//     const logContext = context || this.context;
+//     const normalizedMessage = this.normalizeMessage(message);
+
+//     this.winstonLogger.debug(normalizedMessage, { context: logContext });
+//   }
+
+//   verbose(message: any, context?: string) {
+//     const logContext = context || this.context;
+//     const normalizedMessage = this.normalizeMessage(message);
+
+//     this.winstonLogger.verbose(normalizedMessage, { context: logContext });
+//   }
+
+//   setContext(context: string) {
+//     super.setContext(context);
+//   }
+
+//   /**
+//    * Enhanced service error logging with better formatting
+//    * Now properly handles object logging
+//    */
+//   logServiceError(
+//     method: string,
+//     error: unknown,
+//     additionalContext: Record<string, any> = {},
+//   ) {
+//     const errorMessage = error instanceof Error ? error.message : String(error);
+//     const stack = error instanceof Error ? error.stack : undefined;
+
+//     this.winstonLogger.error(`Error in ${method}: ${errorMessage}`, {
+//       context: this.context,
+//       method,
+//       error: {
+//         message: errorMessage,
+//         stack,
+//         name: error instanceof Error ? error.name : 'Unknown',
+//         ...(error instanceof Error && 'cause' in error
+//           ? { cause: error.cause }
+//           : {}),
+//       },
+//       ...additionalContext,
+//     });
+//   }
+
+//   /**
+//    * Utility method for logging objects directly (like console.log)
+//    * Usage: logger.logObject({ user: {...}, data: [...] })
+//    */
+//   logObject(
+//     obj: any,
+//     level: 'info' | 'debug' | 'warn' | 'error' = 'info',
+//     context?: string,
+//   ) {
+//     const logContext = context || this.context;
+//     this.winstonLogger[level](obj, { context: logContext });
+//   }
+// }
+
 import {
   ConsoleLogger,
   Injectable,
@@ -127,49 +339,74 @@ export class CustomLogger extends ConsoleLogger implements LoggerService {
                 stack,
                 ...meta
               }) => {
+                // Format timestamp
+                // Format timestamp
+                const time = timestamp
+                  ? new Date(timestamp as string).toLocaleTimeString('en-US', {
+                      hour12: false,
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit',
+                    })
+                  : '';
+
                 // Format the main message - handle objects properly
                 let formattedMessage = message;
                 if (typeof message === 'object' && message !== null) {
-                  formattedMessage = inspect(message, {
-                    depth: null,
-                    colors: true,
-                    maxArrayLength: null,
-                    breakLength: 80,
-                    compact: false,
-                  });
+                  formattedMessage =
+                    '\n' +
+                    inspect(message, {
+                      depth: null,
+                      colors: true,
+                      maxArrayLength: null,
+                      breakLength: 80,
+                      compact: false,
+                    });
                 }
 
-                let log = `${timestamp} ${level} ${context ? `[${context}]` : ''} ${formattedMessage}`;
+                // Build log line
+                let log = `${time} ${level}`;
+                if (context) log += ` [${context}]`;
+                log += ` ${formattedMessage}`;
 
                 // Remove known fields from meta to avoid duplication
-                const { error, method, ...restMeta } = meta;
+                const { error, errorObject, method, ...restMeta } = meta;
+
+                // Show method if present
+                if (method) {
+                  log += `\n  ↳ Method: ${method}`;
+                }
+
+                // Show error object if present (full error details)
+                if (errorObject) {
+                  log +=
+                    '\n  ↳ Error Object:\n' +
+                    inspect(errorObject, {
+                      depth: null,
+                      colors: true,
+                      maxArrayLength: null,
+                      breakLength: 80,
+                      compact: false,
+                    });
+                }
 
                 // Show additional metadata if present
                 if (Object.keys(restMeta).length > 0) {
-                  log += `\n${inspect(restMeta, {
-                    depth: null,
-                    colors: true,
-                    maxArrayLength: null,
-                    breakLength: 80,
-                    compact: false,
-                  })}`;
+                  log +=
+                    '\n  ↳ Context:\n' +
+                    inspect(restMeta, {
+                      depth: null,
+                      colors: true,
+                      maxArrayLength: null,
+                      breakLength: 80,
+                      compact: false,
+                    });
                 }
 
-                // Show error details if present
-                if (error) {
-                  log += `\n${inspect(error, {
-                    depth: null,
-                    colors: true,
-                    maxArrayLength: null,
-                    breakLength: 80,
-                    compact: false,
-                  })}`;
-                }
-
-                // Show stack trace if present (either from trace or stack)
+                // Show stack trace if present
                 const stackTrace = trace || stack;
                 if (stackTrace) {
-                  log += `\n${stackTrace}`;
+                  log += '\n  ↳ Stack Trace:\n' + stackTrace;
                 }
 
                 return log;
@@ -187,17 +424,51 @@ export class CustomLogger extends ConsoleLogger implements LoggerService {
           format: winston.format.combine(
             winston.format.timestamp(),
             winston.format.errors({ stack: true }),
-            // Custom formatter to handle objects properly in JSON logs
             winston.format.printf((info) => {
-              // Ensure objects are properly serialized, not converted to [object Object]
-              const formattedInfo = { ...info };
+              // Deep clone to avoid mutations
+              const logEntry: any = {
+                timestamp: info.timestamp,
+                level: info.level,
+                context: info.context,
+                method: info.method,
+              };
 
-              // If message is an object, keep it as is (JSON.stringify will handle it)
+              // Handle message - convert objects to readable format
               if (typeof info.message === 'object' && info.message !== null) {
-                formattedInfo.message = info.message;
+                logEntry.message = JSON.parse(JSON.stringify(info.message));
+              } else {
+                logEntry.message = info.message;
               }
 
-              return JSON.stringify(formattedInfo);
+              // Add error object if present
+              if (info.errorObject) {
+                logEntry.errorObject = JSON.parse(
+                  JSON.stringify(info.errorObject),
+                );
+              }
+
+              // Add stack trace if present
+              if (info.trace || info.stack) {
+                logEntry.stack = info.trace || info.stack;
+              }
+
+              // Add any remaining metadata
+              const {
+                timestamp,
+                level,
+                message,
+                context,
+                trace,
+                stack,
+                errorObject,
+                method,
+                ...rest
+              } = info;
+              if (Object.keys(rest).length > 0) {
+                logEntry.metadata = rest;
+              }
+
+              return JSON.stringify(logEntry);
             }),
           ),
         }),
@@ -205,31 +476,14 @@ export class CustomLogger extends ConsoleLogger implements LoggerService {
     });
   }
 
-  /**
-   * Helper to normalize messages - handles objects, arrays, and primitives
-   */
-  private normalizeMessage(message: any): any {
-    // If it's already a primitive or null, return as-is
-    if (message === null || typeof message !== 'object') {
-      return message;
-    }
-
-    // For objects and arrays, return them directly so Winston can handle them
-    return message;
-  }
-
   log(message: any, context?: string) {
     const logContext = context || this.context;
-    const normalizedMessage = this.normalizeMessage(message);
-
-    this.winstonLogger.info(normalizedMessage, { context: logContext });
+    this.winstonLogger.info(message, { context: logContext });
   }
 
   error(message: any, trace?: string, context?: string) {
     const logContext = context || this.context;
-    const normalizedMessage = this.normalizeMessage(message);
-
-    this.winstonLogger.error(normalizedMessage, {
+    this.winstonLogger.error(message, {
       trace,
       context: logContext,
     });
@@ -237,23 +491,17 @@ export class CustomLogger extends ConsoleLogger implements LoggerService {
 
   warn(message: any, context?: string) {
     const logContext = context || this.context;
-    const normalizedMessage = this.normalizeMessage(message);
-
-    this.winstonLogger.warn(normalizedMessage, { context: logContext });
+    this.winstonLogger.warn(message, { context: logContext });
   }
 
   debug(message: any, context?: string) {
     const logContext = context || this.context;
-    const normalizedMessage = this.normalizeMessage(message);
-
-    this.winstonLogger.debug(normalizedMessage, { context: logContext });
+    this.winstonLogger.debug(message, { context: logContext });
   }
 
   verbose(message: any, context?: string) {
     const logContext = context || this.context;
-    const normalizedMessage = this.normalizeMessage(message);
-
-    this.winstonLogger.verbose(normalizedMessage, { context: logContext });
+    this.winstonLogger.verbose(message, { context: logContext });
   }
 
   setContext(context: string) {
@@ -261,8 +509,7 @@ export class CustomLogger extends ConsoleLogger implements LoggerService {
   }
 
   /**
-   * Enhanced service error logging with better formatting
-   * Now properly handles object logging
+   * Enhanced service error logging with complete error object display
    */
   logServiceError(
     method: string,
@@ -275,28 +522,34 @@ export class CustomLogger extends ConsoleLogger implements LoggerService {
     this.winstonLogger.error(`Error in ${method}: ${errorMessage}`, {
       context: this.context,
       method,
-      error: {
-        message: errorMessage,
-        stack,
-        name: error instanceof Error ? error.name : 'Unknown',
-        ...(error instanceof Error && 'cause' in error
-          ? { cause: error.cause }
-          : {}),
-      },
+      stack,
+      errorObject: error, // Complete error object for inspection
       ...additionalContext,
     });
   }
 
   /**
-   * Utility method for logging objects directly (like console.log)
-   * Usage: logger.logObject({ user: {...}, data: [...] })
+   * Log objects beautifully (like console.log)
    */
   logObject(
     obj: any,
+    label?: string,
     level: 'info' | 'debug' | 'warn' | 'error' = 'info',
-    context?: string,
   ) {
-    const logContext = context || this.context;
-    this.winstonLogger[level](obj, { context: logContext });
+    const message = label ? `${label}:` : 'Object:';
+    this.winstonLogger[level](message, {
+      context: this.context,
+      data: obj,
+    });
+  }
+
+  /**
+   * Log with separator for better readability
+   */
+  logSection(title: string, level: 'info' | 'debug' | 'warn' = 'info') {
+    const separator = '─'.repeat(50);
+    this.winstonLogger[level](`\n${separator}\n${title}\n${separator}`, {
+      context: this.context,
+    });
   }
 }

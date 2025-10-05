@@ -16,7 +16,6 @@ import { RoleRepository } from './repositories/role.repository';
 import { SugExecutiveRepository } from './repositories/sug-executive.repository';
 import { AdminController } from './controllers/admin.controller';
 import { Role } from '../../db/models/roles.model';
-import { RedisCacheService } from '../../lib/redis/redis.service';
 import { DepartmentController } from './controllers/department.controller';
 import { FacultyController } from './controllers/faculty.controller';
 import { AcademicService } from './services/academic.service';
@@ -25,8 +24,9 @@ import { AdminManagementService } from './services/admin-management.service';
 import { AppSettings } from '../../db/models/app-settings.model';
 import { PlatformConfigService } from './services/platform-config.service';
 import { PlatformConfigRepository } from './repositories/platform-config.repository';
+import { CentralAdminGuard } from './guards/central-admin.guard';
 
-//Module appears too large did not think it will grow like this
+//Module appears too large did not think it will grow like this [makes me look like i don tnow what am doing i know :) ]
 
 @Module({
   imports: [
@@ -94,6 +94,8 @@ import { PlatformConfigRepository } from './repositories/platform-config.reposit
 
     EmailService,
     { provide: 'IEmailService', useExisting: EmailService },
+
+    CentralAdminGuard,
   ],
 
   controllers: [AdminController, DepartmentController, FacultyController],

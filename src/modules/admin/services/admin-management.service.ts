@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CustomLogger } from '../../../lib/logger/logger.service';
 import { IAdminRepository } from '../repositories/interfaces/admin-repository.interface';
 import { AdminDto } from '../dtos/admin.dto';
@@ -24,11 +24,13 @@ import {
   AddAdminInput,
   IAdminManagementService,
 } from './interfaces/admin-management.interface';
-import { Role, Role as RoleEnum } from '../../../shared/enums';
+import { Role as RoleEnum, SCOPE } from '../../../shared/enums';
 import { RoleDto } from '../dtos/common.dto';
 import { IAcademicSessionRepository } from '../repositories/interfaces/academic-session-repository.interface';
 import { mapRoles } from '../../../shared/helpers/service.helper';
+import { UpdateAdminRequestBody } from '../dtos/admin.request.dto';
 
+@Injectable()
 export class AdminManagementService implements IAdminManagementService {
   constructor(
     private readonly logger: CustomLogger,
@@ -114,6 +116,17 @@ export class AdminManagementService implements IAdminManagementService {
         });
       }
 
+      const allowedRoles = {
+        [SCOPE.CENTRAL]: RoleEnum.CENTRAL_EXEC,
+        [SCOPE.FACULTY]: RoleEnum.FACULTY_EXEC,
+        [SCOPE.DEPARTMENT]: RoleEnum.DEPARTMENT_EXEC,
+      };
+
+      if (role.role !== allowedRoles[executive.scope])
+        throw new BadRequestException({
+          reason: 'Role must match its corresponding scope',
+        });
+
       const admin = await this.adminRepository.create({
         ...executive.toJSON(),
         must_set_password: true,
@@ -170,6 +183,54 @@ export class AdminManagementService implements IAdminManagementService {
         });
 
       await this.adminRepository.delete(admin);
+    } catch (error) {
+      this.logger.logServiceError(this.removeAdmin.name, error);
+      throw error;
+    }
+  }
+
+  public async updateAdmin(
+    admin_id: string,
+    data: UpdateAdminRequestBody,
+  ): Promise<AdminDto> {
+    try {
+      const admin = await this.adminRepository.findById(admin_id);
+
+      if (!admin)
+        throw new NotFoundException({
+          reason: RESPONSE_MESSAGES.Admin.Failiure.NotFound,
+        });
+
+      if (data.role_id) {
+        const allowedRoles = {
+          [SCOPE.CENTRAL]: RoleEnum.CENTRAL_EXEC,
+          [SCOPE.FACULTY]: RoleEnum.FACULTY_EXEC,
+          [SCOPE.DEPARTMENT]: RoleEnum.DEPARTMENT_EXEC,
+        };
+
+        const role = await this.roleRepository.findById(data.role_id);
+
+        if (!role) {
+          throw new NotFoundException({
+            reason: RESPONSE_MESSAGES.Role.Failure.NotFound,
+            details: {
+              executive_id: role,
+            },
+          });
+        }
+
+        if (role.role !== allowedRoles[admin.scope])
+          throw new BadRequestException({
+            reason: 'Role must match its corresponding scope',
+          });
+      }
+
+      const updatedAdmin = await this.adminRepository.updateByModel(
+        admin,
+        data,
+      );
+
+      return new AdminDto(updatedAdmin);
     } catch (error) {
       this.logger.logServiceError(this.removeAdmin.name, error);
       throw error;

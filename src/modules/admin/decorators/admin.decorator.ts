@@ -135,6 +135,25 @@ export function CreateAdminEndpoint() {
   );
 }
 
+export function UpdateAdminEndpoint() {
+  return applyDecorators(
+    StandardDocs({
+      summary: 'Update an admin',
+      includeErrors: [
+        ErrorType.BAD_REQUEST,
+        ErrorType.CONFLICT,
+        ErrorType.UNAUTHORIZED,
+        ErrorType.FORBIDDEN,
+        ErrorType.INTERNAL_SERVER_ERROR,
+        ErrorType.NOT_FOUND,
+      ],
+      successMessage: RESPONSE_MESSAGES.Admin.Success.Updated,
+      status: HttpStatus.OK,
+      type: AdminApiResponse,
+    }),
+  );
+}
+
 export function RemoveAdminEndpoint() {
   return applyDecorators(
     HttpCode(HttpStatus.NO_CONTENT),

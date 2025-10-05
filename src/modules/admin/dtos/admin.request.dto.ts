@@ -8,6 +8,7 @@ import {
   IsNotEmpty,
   Matches,
   IsOptional,
+  IsBoolean,
 } from 'class-validator';
 import { SCOPE } from '../../../shared/enums';
 import { AtLeastOneFieldValidator } from '../../../shared/validators/at-least-one-field.validator';
@@ -129,6 +130,17 @@ export class UpdateAdminRequestBody {
     description: 'New admin role ID',
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   public role_id: string;
+
+  @ApiProperty({
+    example: false,
+    description: 'Disable or enables admin',
+  })
+  @IsBoolean()
+  @IsOptional()
+  public is_admin_enabled: boolean;
+
+  @Validate(AtLeastOneFieldValidator)
+  public __self__: any;
 }

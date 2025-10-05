@@ -9,6 +9,7 @@ import {
   Post,
   Query,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { IAcademicService } from '../services/interfaces/academic.interface';
 import { IExecutiveService } from '../services/interfaces/executive.interface';
@@ -16,6 +17,7 @@ import { IAdminManagementService } from '../services/interfaces/admin-management
 import {
   CreateAdminRequestBody,
   CreateSugExecutiveRequestBody,
+  UpdateAdminRequestBody,
   UpdateSugExecutiveRequestBody,
 } from '../dtos/admin.request.dto';
 
@@ -41,6 +43,7 @@ import {
   GetSugExecutivesEndpoint,
   GetSugPositionsEndpoint,
   RemoveAdminEndpoint,
+  UpdateAdminEndpoint,
   UpdateDepartmentEndpoint,
   UpdateFacultyEndpoint,
   UpdatePlatformConfigEndpoint,
@@ -67,9 +70,11 @@ import { AcademicSessionDto, RoleDto, SugPostionDto } from '../dtos/common.dto';
 import { SCOPE } from '../../../shared/enums';
 
 import { IPlatformConfigService } from '../services/interfaces/platform-config.interface';
+import { CentralAdminGuard } from '../guards/central-admin.guard';
 
 @Controller('admin')
 @ApiTags('Admin')
+@UseGuards(CentralAdminGuard)
 export class AdminController {
   constructor(
     @Inject('IAcademicService')
@@ -185,6 +190,19 @@ export class AdminController {
     @Body() body: CreateAdminRequestBody,
   ): Promise<AdminApiResponse> {
     const result = await this.adminManagementService.addAdmin(body);
+    return new AdminApiResponse(result);
+  }
+
+  @Patch(':id')
+  @UpdateAdminEndpoint()
+  public async update(
+    @Param('id') admin_id: string,
+    @Body() body: UpdateAdminRequestBody,
+  ): Promise<AdminApiResponse> {
+    const result = await this.adminManagementService.updateAdmin(
+      admin_id,
+      body,
+    );
     return new AdminApiResponse(result);
   }
 

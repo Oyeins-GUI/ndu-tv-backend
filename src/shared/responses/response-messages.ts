@@ -29,6 +29,8 @@ export const RESPONSE_MESSAGES = {
       InvalidCredential: 'Invalid credentials',
       EmptyOrInvalidToken: 'Empty, Invalid or Expired token',
       PasswordSet: 'Admin account already activated',
+      NotAuthorized: 'You are not authorized to perform this action',
+      Forbidden: 'You are not allowed to acces this resource',
     },
   },
 

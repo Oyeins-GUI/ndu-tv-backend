@@ -67,7 +67,11 @@ export class ExecutiveService implements IExecutiveService {
           this.facultyRepository.findById(data.faculty_id),
           this.sugPositionRepository.findById(data.position_id),
           this.sugExecutiveRepository.findBy(
-            or([{ email: data.email }, { matric_number: data.matric_number }]),
+            or([
+              { email: data.email },
+              { matric_number: data.matric_number },
+              { phone_number: data.phone_number },
+            ]),
           ),
         ]);
 
@@ -89,10 +93,23 @@ export class ExecutiveService implements IExecutiveService {
         });
       }
 
-      if (doesExecutiveExist)
-        throw new BadRequestException({
-          reason: RESPONSE_MESSAGES.SugExecutive.Failure.AlreadyExisting,
-        });
+      if (doesExecutiveExist) {
+        if (doesExecutiveExist.phone_number === data.phone_number) {
+          throw new BadRequestException({
+            reason: 'Phone number already in use',
+          });
+        }
+        if (doesExecutiveExist.email === data.email) {
+          throw new BadRequestException({
+            reason: 'Email already in use',
+          });
+        }
+        if (doesExecutiveExist.matric_number === data.matric_number) {
+          throw new BadRequestException({
+            reason: 'Matric number already in use',
+          });
+        }
+      }
 
       let isExecutiveExisting: SugExecutive | null = null;
 
