@@ -9,6 +9,8 @@ import {
   IsUppercase,
   IsUUID,
   IsBoolean,
+  Matches,
+  ValidateIf,
 } from 'class-validator';
 import { AtLeastOneFieldValidator } from '../../../shared/validators/at-least-one-field.validator';
 
@@ -132,6 +134,46 @@ export class PlatformConfigRequestBody {
 
 export class UpdatePlatformConfigRequestBody extends PartialType(
   PlatformConfigRequestBody,
+) {
+  @Validate(AtLeastOneFieldValidator)
+  public __self__: any;
+}
+
+export class CreateAcademicSessionRequestBody {
+  @ApiProperty({
+    description:
+      'Academic session in the format YYYY/YYYY, starting from 2024/2025',
+    example: '2024/2025',
+  })
+  @IsString()
+  @IsNotEmpty()
+  @Matches(/^20[2-9]\d\/20[2-9]\d$/, {
+    message:
+      'Session must follow the format 0000/0000 and start from 2024/2025',
+  })
+  public session: string;
+
+  @ApiProperty({
+    description: 'Mark if this is the current session',
+    example: false,
+  })
+  @IsBoolean()
+  @IsNotEmpty()
+  public is_current_session: boolean;
+
+  @ApiProperty({ description: 'Set as next session', example: false })
+  @IsBoolean()
+  @ValidateIf(
+    (o) => o.is_next_session === true && o.is_current_session === true,
+  )
+  @Validate((value, args) => !args.object.is_current_session, {
+    message: 'A session cannot be both current and next at the same time',
+  })
+  public is_next_session: boolean;
+}
+
+export class UpdateAcademicSessionRequestBody extends PartialType(
+  CreateAcademicSessionRequestBody,
 ) {
   @Validate(AtLeastOneFieldValidator)
   public __self__: any;

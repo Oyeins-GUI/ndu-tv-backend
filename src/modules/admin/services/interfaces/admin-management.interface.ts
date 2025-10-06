@@ -4,6 +4,11 @@ import { RoleDto } from '../../dtos/common.dto';
 
 export interface IAdminManagementService {
   /**
+   * Get all current admins
+   */
+  getAdmins(): Promise<AdminDto[]>;
+
+  /**
    * Adds a new Admin (Executive)
    * @param data- Data to add
    * @returns {AdminDto} - The newly added admin

@@ -25,6 +25,8 @@ import { AppSettings } from '../../db/models/app-settings.model';
 import { PlatformConfigService } from './services/platform-config.service';
 import { PlatformConfigRepository } from './repositories/platform-config.repository';
 import { CentralAdminGuard } from './guards/central-admin.guard';
+import { EventService } from '../../lib/event/event.service';
+import { AdminEventListener } from './events/admin-event.listener';
 
 //Module appears too large did not think it will grow like this [makes me look like i don tnow what am doing i know :) ]
 
@@ -96,6 +98,14 @@ import { CentralAdminGuard } from './guards/central-admin.guard';
     { provide: 'IEmailService', useExisting: EmailService },
 
     CentralAdminGuard,
+
+    AdminEventListener,
+
+    EventService,
+    {
+      provide: 'IEventService',
+      useExisting: EventService,
+    },
   ],
 
   controllers: [AdminController, DepartmentController, FacultyController],

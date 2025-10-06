@@ -4,8 +4,10 @@ import {
   FacultyDto,
 } from '../../dtos/common.dto';
 import {
+  CreateAcademicSessionRequestBody,
   CreateDepartmentRequestBody,
   CreateFacultyRequestBody,
+  UpdateAcademicSessionRequestBody,
   UpdateDepartmentRequestBody,
 } from '../../dtos/common.request.dto';
 
@@ -100,4 +102,23 @@ export interface IAcademicService {
    */
 
   getAcademicSessions(): Promise<AcademicSessionDto[]>;
+
+  /**
+   * Adds a new academic session
+   * @returns Academic session
+   */
+
+  addAcademicSession(
+    data: CreateAcademicSessionRequestBody,
+  ): Promise<AcademicSessionDto>;
+
+  /**
+   * Updates a new academic session
+   * @returns Academic session
+   */
+
+  updateAcademicSession(
+    session_id: string,
+    data: UpdateAcademicSessionRequestBody,
+  ): Promise<AcademicSessionDto>;
 }

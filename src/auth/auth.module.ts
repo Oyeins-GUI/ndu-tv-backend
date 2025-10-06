@@ -6,6 +6,8 @@ import { AuthController } from './controllers/auth.controller';
 import { AuthService } from './services/auth.service';
 import { EmailService } from '../lib/email/email.service';
 
+import { TokenValidationService } from './services/token-validation.service';
+
 @Module({
   imports: [
     JwtModule.register({
@@ -17,6 +19,8 @@ import { EmailService } from '../lib/email/email.service';
   ],
   providers: [
     AuthService,
+    TokenValidationService,
+    { provide: 'ITokenValidationService', useExisting: TokenValidationService },
     { provide: 'IAuthService', useExisting: AuthService },
     EmailService,
     { provide: 'IEmailService', useExisting: EmailService },

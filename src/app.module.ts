@@ -13,6 +13,7 @@ import { AuthModlue } from './auth/auth.module';
 import { AuthGuard } from './auth/gaurds/auth.guard';
 import { TokenValidationService } from './auth/services/token-validation.service';
 import { RedisModule } from './lib/redis/redis.module';
+import { RefreshTokenGuard } from './auth/gaurds/refresh.guard';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { RedisModule } from './lib/redis/redis.module';
       useExisting: GlobalExceptionFilter,
     },
     AuthGuard,
+    RefreshTokenGuard,
     {
       provide: 'APP_GUARD',
       useExisting: AuthGuard,

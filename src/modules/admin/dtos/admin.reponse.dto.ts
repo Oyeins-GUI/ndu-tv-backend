@@ -62,12 +62,32 @@ export class AdminApiResponse extends ApiResponse<AdminDto> {
   public override message: string = RESPONSE_MESSAGES.Admin.Success.Created;
 
   @ApiProperty({
-    description: 'Executive data returned from operation',
+    description: 'Admin data returned from operation',
     type: AdminResponseBody,
   })
   public override data: AdminDto;
 
   constructor(data: AdminDto, message?: string) {
+    super();
+    this.data = data;
+    if (message) this.message = message;
+  }
+}
+
+export class AdminsApiResponse extends ApiResponse<AdminDto[]> {
+  @ApiProperty({
+    description: 'Executive operation response message',
+    example: RESPONSE_MESSAGES.Admin.Success.Retrieved,
+  })
+  public override message: string = RESPONSE_MESSAGES.Admin.Success.Retrieved;
+
+  @ApiProperty({
+    description: 'Admin data returned from operation',
+    type: [AdminResponseBody],
+  })
+  public override data: AdminDto[];
+
+  constructor(data: AdminDto[], message?: string) {
     super();
     this.data = data;
     if (message) this.message = message;

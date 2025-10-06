@@ -57,6 +57,26 @@ export class AdminManagementService implements IAdminManagementService {
     this.logger.setContext(AdminManagementService.name);
   }
 
+  public async getAdmins(): Promise<AdminDto[]> {
+    try {
+      const admins = await this.adminRepository.findManyBy(
+        {},
+        { relations: ['all'] },
+      );
+
+      const filteredAdmins = admins.filter(
+        (admin) =>
+          admin.scope !== SCOPE.SUPER &&
+          admin.role.role !== RoleEnum.SUPER_ADMIN,
+      );
+
+      return AdminDto.fromEntities(filteredAdmins);
+    } catch (error) {
+      this.logger.logServiceError(this.getAdmins.name, error);
+      throw error;
+    }
+  }
+
   public async getRoles(): Promise<RoleDto[]> {
     try {
       const roles = await this.roleRepository.findManyBy({});

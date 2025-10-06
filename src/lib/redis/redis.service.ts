@@ -36,6 +36,24 @@ export class RedisCacheService implements IRedisCacheService {
   //     throw new Error(`Redis connection failed: ${err.message}`);
   //   }
   // }
+  async executeBatch(
+    action: (multi: ReturnType<typeof this.client.multi>) => void,
+    options: { atomic?: boolean } = {},
+  ): Promise<void> {
+    try {
+      const multi = this.client.multi();
+      action(multi);
+
+      if (options.atomic) {
+        await multi.exec(); // Transaction (atomic)
+      } else {
+        await multi.execAsPipeline(); // Non-atomic pipeline
+      }
+    } catch (error: any) {
+      this.logger.warn(`Redis batch execution failed: ${error.message}`);
+      throw error;
+    }
+  }
 
   public async delete(target: string | string[]): Promise<number> {
     try {

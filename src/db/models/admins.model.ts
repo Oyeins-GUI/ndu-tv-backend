@@ -100,4 +100,8 @@ export class Admin extends BaseModel {
   @AllowNull(true)
   @Column(DataType.DATE)
   declare last_login_at: Date | null;
+
+  @AllowNull(true)
+  @Column(DataType.DATE)
+  declare last_password_change: Date | null;
 }

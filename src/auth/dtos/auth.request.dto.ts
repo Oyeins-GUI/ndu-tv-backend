@@ -82,3 +82,39 @@ export class PasswordConfirmRequestBody {
   )
   public password: string;
 }
+
+export class ChangePasswordInitRequestBody {
+  @ApiProperty({
+    description: 'Current (old) password of the user',
+    example: 'MyOldPass123!',
+  })
+  @IsString()
+  @IsNotEmpty()
+  public old_password: string;
+}
+
+export class ChangePasswordConfirmRequestBody {
+  @ApiProperty({
+    description: '6-digit OTP code sent via email',
+    example: '482917',
+  })
+  @IsString()
+  @Matches(/^\d{6}$/, { message: 'OTP must be a 6-digit number' })
+  public otp: string;
+
+  @ApiProperty({
+    description:
+      'New password - must be at least 8 characters with uppercase, lowercase, number and special character',
+    example: 'StrongPassword123!',
+  })
+  @IsString()
+  @IsNotEmpty()
+  @Matches(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+    {
+      message:
+        'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)',
+    },
+  )
+  public new_password: string;
+}

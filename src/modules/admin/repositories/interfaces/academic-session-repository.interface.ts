@@ -12,6 +12,7 @@ export interface IAcademicSessionRepository
 export type CreateAcademicSessionInput = {
   session: string;
   is_current_session: boolean;
+  is_next_session: boolean;
 };
 
 export type UpdateAcademicSessionInput = AtLeastOne<CreateAcademicSessionInput>;

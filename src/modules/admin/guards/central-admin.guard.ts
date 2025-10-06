@@ -47,6 +47,7 @@ export class CentralAdminGuard implements CanActivate {
 
     if (
       admin.scope !== SCOPE.CENTRAL &&
+      admin.scope !== SCOPE.SUPER &&
       admin.role.role !== Role.CENTRAL_EXEC &&
       admin.role.role !== Role.SUPER_ADMIN
     ) {

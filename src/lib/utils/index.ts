@@ -55,6 +55,12 @@ export function generateRandomToken(length: number = 16): string {
   return crypto.randomBytes(bytes).toString('hex').slice(0, length);
 }
 
+export function generateOtp(length: number = 6): string {
+  const max = 10 ** length;
+  const code = crypto.randomInt(0, max);
+  return code.toString().padStart(length, '0');
+}
+
 // export function encrypt(data: string, key?: string) {
 //   const realKey = key ? Buffer.from(key, 'hex') : MASTER_KEY;
 //   const iv = crypto.randomBytes(IV_LENGTH);

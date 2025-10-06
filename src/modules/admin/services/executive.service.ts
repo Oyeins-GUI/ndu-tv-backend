@@ -219,6 +219,8 @@ export class ExecutiveService implements IExecutiveService {
         sessionId = currentSession?.id;
       }
 
+      let sugExecutives: SugExecutiveDto[] = [];
+
       switch (scope) {
         case SCOPE.CENTRAL:
           const centralExecutives =
@@ -231,7 +233,7 @@ export class ExecutiveService implements IExecutiveService {
                 relations: ['all'],
               },
             );
-          return SugExecutiveDto.fromEntities(centralExecutives);
+          sugExecutives = SugExecutiveDto.fromEntities(centralExecutives);
 
         case SCOPE.FACULTY:
           if (!faculty_id)
@@ -255,7 +257,7 @@ export class ExecutiveService implements IExecutiveService {
                 relations: ['all'],
               },
             );
-          return SugExecutiveDto.fromEntities(facultyExecutives);
+          sugExecutives = SugExecutiveDto.fromEntities(facultyExecutives);
 
         case SCOPE.DEPARTMENT:
           if (!department_id)
@@ -280,8 +282,9 @@ export class ExecutiveService implements IExecutiveService {
                 relations: ['all'],
               },
             );
-          return SugExecutiveDto.fromEntities(departmentExecutives);
+          sugExecutives = SugExecutiveDto.fromEntities(departmentExecutives);
       }
+      return sugExecutives;
     } catch (error) {
       this.logger.logServiceError(this.getExecutives.name, error);
       throw error;

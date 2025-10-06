@@ -1,10 +1,20 @@
-import { Body, Controller, Inject, Post, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Inject,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthTokens, IAuthService } from '../interfaces/auth.interface';
 import { env } from '../../config';
 import { Response, Request } from 'express';
 import { COOKIE_CONSTANTS } from '../constants';
 import {
+  ChangePasswordConfirmRequestBody,
+  ChangePasswordInitRequestBody,
   LoginRequestBody,
   PasswordConfirmRequestBody,
   SetPasswordInitRequestBody,
@@ -12,13 +22,19 @@ import {
 import { AdminApiResponse } from '../../modules/admin/dtos/admin.reponse.dto';
 import { RESPONSE_MESSAGES } from '../../shared/responses/response-messages';
 import {
+  ChangePasswordEndpoint,
+  InitChangePasswordEndpoint,
+  InitResetPasswordEndpoint,
   InitSetPasswordEndpoint,
   LoginEndpoint,
   LogoutEndpoint,
   MeEndpoint,
+  RefreshTokenEndpoint,
+  ResetPasswordEndpoint,
   SetPasswordConfirmEndpoint,
 } from '../decorators/auth.decorator';
 import { SuccessResponseBody } from '../../shared/responses/success-response';
+import { RefreshTokenGuard } from '../gaurds/refresh.guard';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -65,7 +81,11 @@ export class AuthController {
     @Res() res: Response,
     @Body() body: LoginRequestBody,
   ): Promise<AdminApiResponse> {
-    const data = await this.authService.login(body.identifier, body.password);
+    const data = await this.authService.login(
+      body.identifier,
+      body.password,
+      body.remember_me,
+    );
     const maxAge = body.remember_me
       ? COOKIE_CONSTANTS.rememberMaxAge
       : COOKIE_CONSTANTS.defaultMaxAge;
@@ -75,6 +95,27 @@ export class AuthController {
     const result = new AdminApiResponse(
       data.admin,
       RESPONSE_MESSAGES.Auth.Success.Login,
+    );
+
+    res.json(result);
+    return result;
+  }
+
+  @Post('refresh')
+  @RefreshTokenEndpoint()
+  async refresh(@Req() req: Request, @Res() res: Response) {
+    const { id } = req.user;
+    const data = await this.authService.refreshToken(id, req.session_id);
+    this.setAuthCookies(
+      res,
+      data.tokens,
+      data.session_id,
+      COOKIE_CONSTANTS.defaultMaxAge,
+    );
+
+    const result = new AdminApiResponse(
+      data.admin,
+      RESPONSE_MESSAGES.Auth.Success.TokenRefreshed,
     );
 
     res.json(result);
@@ -111,6 +152,65 @@ export class AuthController {
 
     res.json(result);
     return result;
+  }
+
+  @Post('password/change/init')
+  @InitChangePasswordEndpoint()
+  public async initChangePassword(
+    @Req() req: Request,
+    @Body() body: ChangePasswordInitRequestBody,
+  ): Promise<SuccessResponseBody> {
+    await this.authService.initChangePassword(req.user?.id, body.old_password);
+    return new SuccessResponseBody({
+      message: RESPONSE_MESSAGES.Auth.Success.OtpSent,
+    });
+  }
+
+  @Post('password/change/confirm')
+  @ChangePasswordEndpoint()
+  public async changePassword(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() body: ChangePasswordConfirmRequestBody,
+  ): Promise<SuccessResponseBody> {
+    await this.authService.changePassword(
+      req.user?.id,
+      body.otp,
+      body.new_password,
+    );
+
+    res.clearCookie(COOKIE_CONSTANTS.sessionId);
+    res.clearCookie(COOKIE_CONSTANTS.accessToken);
+    res.clearCookie(COOKIE_CONSTANTS.refreshToken);
+
+    const result = new SuccessResponseBody({
+      message: RESPONSE_MESSAGES.Auth.Success.PasswordChange,
+    });
+
+    res.json(result);
+    return result;
+  }
+
+  @Post('password/reset/init')
+  @InitResetPasswordEndpoint()
+  public async initResetPassword(
+    @Body() body: SetPasswordInitRequestBody,
+  ): Promise<SuccessResponseBody> {
+    this.authService.initiateResetPassword(body.email, body.matric_number);
+    return new SuccessResponseBody({
+      message: RESPONSE_MESSAGES.Auth.Success.SentPasswordSetLink,
+    });
+  }
+
+  @Post('password/reset/confirm')
+  @ResetPasswordEndpoint()
+  public async resetPassword(
+    @Body() body: PasswordConfirmRequestBody,
+  ): Promise<SuccessResponseBody> {
+    await this.authService.resetPassword(body.token, body.password);
+    return new SuccessResponseBody({
+      message: RESPONSE_MESSAGES.Auth.Success.PasswordReset,
+    });
   }
 
   @Post('password/set/init')

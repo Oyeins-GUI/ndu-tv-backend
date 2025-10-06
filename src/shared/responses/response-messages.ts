@@ -17,6 +17,7 @@ export const RESPONSE_MESSAGES = {
 
   Auth: {
     Success: {
+      TokenRefreshed: 'Token refreshed successfully',
       LoggedIn: 'User session is active',
       Login: 'User Loggged in successfully',
       Logout: 'User Logged out successfully',
@@ -24,10 +25,14 @@ export const RESPONSE_MESSAGES = {
         'If this email and matric number combination exists in our system, a password setup link has been sent to your email.',
       PasswordSet:
         'Password successfully set! Your admin account is now activated and ready to use.',
+      PasswordReset: 'Password reset sucessfull!, Please login to continue',
+      PasswordChange: 'Password change sucessfull!, Please login to continue',
+      OtpSent: 'Otp has been sent to your email',
     },
     Failure: {
       InvalidCredential: 'Invalid credentials',
       EmptyOrInvalidToken: 'Empty, Invalid or Expired token',
+      InvalidOrExpired: 'Otp invalid or has expired',
       PasswordSet: 'Admin account already activated',
       NotAuthorized: 'You are not authorized to perform this action',
       Forbidden: 'You are not allowed to acces this resource',
@@ -39,6 +44,7 @@ export const RESPONSE_MESSAGES = {
       Created: 'Admin created successfully',
       Updated: 'Admin updated successfully',
       Deleted: 'Admin deleted successfully',
+      Retrieved: 'Admin(s) retrieved successfully',
     },
     Failiure: {
       NotFound: ' Admin not found',
@@ -102,6 +108,8 @@ export const RESPONSE_MESSAGES = {
   },
   AcademicSession: {
     Success: {
+      Created: 'Academic session created successfully',
+      Updated: 'Academic session updated successfully',
       Retrieved: 'Academic Session(s) retrieved successfully',
     },
     Failure: {

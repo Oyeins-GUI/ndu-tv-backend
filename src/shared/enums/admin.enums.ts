@@ -2,4 +2,5 @@ export enum SCOPE {
   DEPARTMENT = 'DEPARTMENT',
   FACULTY = 'FACULTY',
   CENTRAL = 'CENTRAL',
+  SUPER = 'SUPER',
 }

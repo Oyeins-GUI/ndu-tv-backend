@@ -1,10 +1,16 @@
-import { applyDecorators, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  applyDecorators,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { ErrorType, StandardDocs } from '../../shared/helpers/doc.helper';
 import { RESPONSE_MESSAGES } from '../../shared/responses/response-messages';
 import { AdminApiResponse } from '../../modules/admin/dtos/admin.reponse.dto';
 import { Public } from '../../shared/decorators/public.decorator';
 import { SuccessResponseBody } from '../../shared/responses/success-response';
 import { RateLimit } from '../../shared/decorators/user-rate-limit.decorator';
+import { RefreshTokenGuard } from '../gaurds/refresh.guard';
 
 export function LoginEndpoint() {
   return applyDecorators(
@@ -13,6 +19,22 @@ export function LoginEndpoint() {
     StandardDocs({
       summary: 'Logs in an admin (user)',
       successMessage: RESPONSE_MESSAGES.Auth.Success.Login,
+      includeErrors: [ErrorType.BAD_REQUEST, ErrorType.INTERNAL_SERVER_ERROR],
+      type: AdminApiResponse,
+      status: HttpStatus.OK,
+      auth: false,
+    }),
+  );
+}
+
+export function RefreshTokenEndpoint() {
+  return applyDecorators(
+    Public(),
+    UseGuards(RefreshTokenGuard),
+    HttpCode(HttpStatus.OK),
+    StandardDocs({
+      summary: 'Refresh token',
+      successMessage: RESPONSE_MESSAGES.Auth.Success.TokenRefreshed,
       includeErrors: [ErrorType.BAD_REQUEST, ErrorType.INTERNAL_SERVER_ERROR],
       type: AdminApiResponse,
       status: HttpStatus.OK,
@@ -53,11 +75,85 @@ export function LogoutEndpoint() {
 export function InitSetPasswordEndpoint() {
   return applyDecorators(
     Public(),
-    RateLimit(3600 * 24, 1),
+    RateLimit(3600 * 24, 5),
     StandardDocs({
       summary:
         'Initialize password set and account activation process for new admin',
       successMessage: RESPONSE_MESSAGES.Auth.Success.SentPasswordSetLink,
+      includeErrors: [
+        ErrorType.BAD_REQUEST,
+        ErrorType.TOO_MANY_REQUESTS,
+        ErrorType.INTERNAL_SERVER_ERROR,
+      ],
+      auth: false,
+      type: SuccessResponseBody,
+      status: HttpStatus.OK,
+    }),
+  );
+}
+
+export function InitResetPasswordEndpoint() {
+  return applyDecorators(
+    Public(),
+    RateLimit(3600, 10),
+    StandardDocs({
+      summary: 'Initialize password reset process for a admin',
+      successMessage: RESPONSE_MESSAGES.Auth.Success.SentPasswordSetLink,
+      includeErrors: [
+        ErrorType.BAD_REQUEST,
+        ErrorType.TOO_MANY_REQUESTS,
+        ErrorType.INTERNAL_SERVER_ERROR,
+      ],
+      auth: false,
+      type: SuccessResponseBody,
+      status: HttpStatus.OK,
+    }),
+  );
+}
+
+export function InitChangePasswordEndpoint() {
+  return applyDecorators(
+    RateLimit(120, 1),
+    StandardDocs({
+      summary: 'Initialize password change process for a admin',
+      successMessage: RESPONSE_MESSAGES.Auth.Success.OtpSent,
+      includeErrors: [
+        ErrorType.BAD_REQUEST,
+        ErrorType.TOO_MANY_REQUESTS,
+        ErrorType.INTERNAL_SERVER_ERROR,
+      ],
+      auth: false,
+      type: SuccessResponseBody,
+      status: HttpStatus.OK,
+    }),
+  );
+}
+
+export function ResetPasswordEndpoint() {
+  return applyDecorators(
+    Public(),
+    RateLimit(3600, 10),
+    StandardDocs({
+      summary: 'Resets an admin password',
+      successMessage: RESPONSE_MESSAGES.Auth.Success.PasswordReset,
+      includeErrors: [
+        ErrorType.BAD_REQUEST,
+        ErrorType.TOO_MANY_REQUESTS,
+        ErrorType.INTERNAL_SERVER_ERROR,
+      ],
+      auth: false,
+      type: SuccessResponseBody,
+      status: HttpStatus.OK,
+    }),
+  );
+}
+
+export function ChangePasswordEndpoint() {
+  return applyDecorators(
+    RateLimit(120, 2),
+    StandardDocs({
+      summary: 'Changes an admin password',
+      successMessage: RESPONSE_MESSAGES.Auth.Success.PasswordChange,
       includeErrors: [
         ErrorType.BAD_REQUEST,
         ErrorType.TOO_MANY_REQUESTS,

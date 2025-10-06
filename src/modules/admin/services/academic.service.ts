@@ -7,8 +7,10 @@ import {
   FacultyDto,
 } from '../dtos/common.dto';
 import {
+  CreateAcademicSessionRequestBody,
   CreateDepartmentRequestBody,
   CreateFacultyRequestBody,
+  UpdateAcademicSessionRequestBody,
   UpdateDepartmentRequestBody,
 } from '../dtos/common.request.dto';
 import { IAcademicService } from './interfaces/academic.interface';
@@ -17,8 +19,17 @@ import {
   UpdateDepartmentInput,
 } from '../repositories/interfaces/department-repository.interface';
 import { IFacultyRepository } from '../repositories/interfaces/faculty-repository.interface';
-import { NotFoundException } from '../../../shared/exceptions';
-import { IAcademicSessionRepository } from '../repositories/interfaces/academic-session-repository.interface';
+import {
+  BadRequestException,
+  NotFoundException,
+} from '../../../shared/exceptions';
+import {
+  IAcademicSessionRepository,
+  UpdateAcademicSessionInput,
+} from '../repositories/interfaces/academic-session-repository.interface';
+import { Sequelize } from 'sequelize-typescript';
+import { IEventService } from '../../../lib/event/event.interface';
+import { ADMIN_EVENT_NAMES } from '../events/event.names';
 
 export class AcademicService implements IAcademicService {
   constructor(
@@ -32,6 +43,10 @@ export class AcademicService implements IAcademicService {
 
     @Inject('IAcademicSessionRepository')
     private readonly academicSessionRepository: IAcademicSessionRepository,
+
+    @Inject() private readonly seqeulize: Sequelize,
+
+    @Inject('IEventService') private readonly eventService: IEventService,
   ) {
     this.logger.setContext(AcademicService.name);
   }
@@ -227,6 +242,226 @@ export class AcademicService implements IAcademicService {
       return AcademicSessionDto.fromEntities(sessions);
     } catch (error) {
       this.logger.logServiceError(this.getAcademicSessions.name, error);
+      throw error;
+    }
+  }
+
+  public async addAcademicSession(
+    data: CreateAcademicSessionRequestBody,
+  ): Promise<AcademicSessionDto> {
+    try {
+      if (data.is_current_session && data.is_next_session) {
+        throw new BadRequestException({
+          reason: 'A session cannot be current and next at same time',
+        });
+      }
+      return this.seqeulize.transaction(async (t) => {
+        const [existingSession, existingCurrent, existingNext] =
+          await Promise.all([
+            this.academicSessionRepository.findBy(
+              { session: data.session },
+              {
+                transaction: t,
+              },
+            ),
+            data.is_current_session
+              ? this.academicSessionRepository.findBy(
+                  {
+                    is_current_session: true,
+                  },
+                  {
+                    transaction: t,
+                  },
+                )
+              : Promise.resolve(null),
+            data.is_next_session
+              ? this.academicSessionRepository.findBy(
+                  { is_next_session: true },
+                  {
+                    transaction: t,
+                  },
+                )
+              : Promise.resolve(null),
+          ]);
+
+        if (existingSession) {
+          throw new BadRequestException({
+            reason: `Academic session ${data.session} already exists`,
+          });
+        }
+
+        // if (existingCurrent) {
+        //   throw new BadRequestException({
+        //     reason: `There is already a current session: ${existingCurrent.session}`,
+        //   });
+        // }
+
+        // if (existingNext) {
+        //   throw new BadRequestException({
+        //     reason: `There is already a next session: ${existingNext.session}`,
+        //   });
+        // }
+
+        if (existingCurrent) {
+          await this.academicSessionRepository.updateByModel(
+            existingCurrent,
+            {
+              is_current_session: false,
+            },
+            { transaction: t },
+          );
+        }
+
+        if (existingNext) {
+          const currentSession = await this.academicSessionRepository.findBy(
+            { is_current_session: true },
+            { transaction: t },
+          );
+
+          const [currentStart, currentEnd] = currentSession!.session
+            .split('/')
+            .map(Number);
+          const [nextStart, nextEnd] = data.session.split('/').map(Number);
+
+          if (nextStart !== currentStart + 1 || nextEnd !== currentEnd + 1) {
+            throw new BadRequestException({
+              reason: `Next session must immediately follow the current session ${currentSession?.session}`,
+            });
+          }
+
+          await this.academicSessionRepository.updateByModel(
+            existingNext,
+            {
+              is_next_session: false,
+            },
+            { transaction: t },
+          );
+        }
+
+        const created = await this.academicSessionRepository.create(data, {
+          transaction: t,
+        });
+
+        this.eventService.emit(ADMIN_EVENT_NAMES.SessionUpdated, {});
+
+        return new AcademicSessionDto(created);
+      });
+    } catch (error) {
+      this.logger.logServiceError(this.addAcademicSession.name, error);
+      throw error;
+    }
+  }
+
+  public async updateAcademicSession(
+    session_id: string,
+    data: UpdateAcademicSessionRequestBody,
+  ): Promise<AcademicSessionDto> {
+    try {
+      if (data.is_current_session && data.is_next_session) {
+        throw new BadRequestException({
+          reason: 'A session cannot be current and next at same time',
+        });
+      }
+
+      return this.seqeulize.transaction(async (t) => {
+        const session = await this.academicSessionRepository.findById(
+          session_id,
+          { transaction: t },
+        );
+        if (!session) {
+          throw new NotFoundException({
+            reason: `Academic session with id ${session_id} not found`,
+          });
+        }
+
+        const existingSessionName = await this.academicSessionRepository.findBy(
+          {
+            session: data.session,
+          },
+          { transaction: t },
+        );
+
+        if (existingSessionName && existingSessionName.id == session_id) {
+          throw new BadRequestException({
+            reason: 'Acadmic Session already exists',
+          });
+        }
+
+        if (data.is_current_session) {
+          const existingCurrentSession =
+            await this.academicSessionRepository.findBy(
+              { is_current_session: true },
+              { transaction: t },
+            );
+          if (existingCurrentSession)
+            await this.academicSessionRepository.updateByModel(
+              existingCurrentSession,
+              {
+                is_current_session: false,
+              },
+              { transaction: t },
+            );
+        }
+
+        if (data.is_next_session) {
+          const currentSession = await this.academicSessionRepository.findBy(
+            { is_current_session: true },
+            { transaction: t },
+          );
+
+          const [currentStart, currentEnd] = currentSession!.session
+            .split('/')
+            .map(Number);
+
+          if (data.session) {
+            const [nextStart, nextEnd] = data.session?.split('/').map(Number);
+
+            if (nextStart !== currentStart + 1 || nextEnd !== currentEnd + 1) {
+              throw new BadRequestException({
+                reason: `Next session must immediately follow the current session ${currentSession?.session}`,
+              });
+            }
+          } else {
+            const [nextStart, nextEnd] = session.session
+              ?.split('/')
+              .map(Number);
+
+            if (nextStart !== currentStart + 1 || nextEnd !== currentEnd + 1) {
+              throw new BadRequestException({
+                reason: `Next session must immediately follow the current session ${currentSession?.session}`,
+              });
+            }
+          }
+
+          const existingNextSession =
+            await this.academicSessionRepository.findBy(
+              { is_next_session: true },
+              { transaction: t },
+            );
+          if (existingNextSession)
+            await this.academicSessionRepository.updateByModel(
+              existingNextSession,
+              {
+                is_next_session: false,
+              },
+              { transaction: t },
+            );
+        }
+        const updatedSession =
+          await this.academicSessionRepository.updateByModel(
+            session,
+            data as UpdateAcademicSessionInput,
+            {
+              transaction: t,
+            },
+          );
+
+        this.eventService.emit(ADMIN_EVENT_NAMES.SessionUpdated, {});
+
+        return new AcademicSessionDto(updatedSession);
+      });
+    } catch (error) {
+      this.logger.logServiceError(this.updateAcademicSession.name, error);
       throw error;
     }
   }

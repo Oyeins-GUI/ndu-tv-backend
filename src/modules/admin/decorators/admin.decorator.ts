@@ -3,6 +3,7 @@ import { ErrorType, StandardDocs } from '../../../shared/helpers/doc.helper';
 import { RESPONSE_MESSAGES } from '../../../shared/responses/response-messages';
 import {
   AdminApiResponse,
+  AdminsApiResponse,
   PaginatedSugExecutivesApiResponse,
   SugExecutiveApiResponse,
   SugExecutivesApiResponse,
@@ -131,6 +132,24 @@ export function CreateAdminEndpoint() {
       successMessage: RESPONSE_MESSAGES.Admin.Success.Created,
       status: HttpStatus.CREATED,
       type: AdminApiResponse,
+    }),
+  );
+}
+export function GetAdminsEndpoint() {
+  return applyDecorators(
+    StandardDocs({
+      summary: 'Gets all current admin',
+      includeErrors: [
+        ErrorType.BAD_REQUEST,
+        ErrorType.CONFLICT,
+        ErrorType.UNAUTHORIZED,
+        ErrorType.FORBIDDEN,
+        ErrorType.INTERNAL_SERVER_ERROR,
+        ErrorType.NOT_FOUND,
+      ],
+      successMessage: RESPONSE_MESSAGES.Admin.Success.Retrieved,
+      status: HttpStatus.OK,
+      type: AdminsApiResponse,
     }),
   );
 }
@@ -381,6 +400,30 @@ export function GetSessionsEndpoint() {
       successMessage: RESPONSE_MESSAGES.AcademicSession.Success.Retrieved,
       status: HttpStatus.OK,
       type: SuccessResponseBody<AcademicSessionDto[]>,
+    }),
+  );
+}
+
+export function AddSessionEndpoint() {
+  return applyDecorators(
+    StandardDocs({
+      summary: 'Adds an academic session',
+      includeErrors: [ErrorType.INTERNAL_SERVER_ERROR],
+      successMessage: RESPONSE_MESSAGES.AcademicSession.Success.Created,
+      status: HttpStatus.CREATED,
+      type: SuccessResponseBody<AcademicSessionDto>,
+    }),
+  );
+}
+
+export function UpdateSessionEndpoint() {
+  return applyDecorators(
+    StandardDocs({
+      summary: 'Updates an academic session',
+      includeErrors: [ErrorType.INTERNAL_SERVER_ERROR],
+      successMessage: RESPONSE_MESSAGES.AcademicSession.Success.Updated,
+      status: HttpStatus.OK,
+      type: SuccessResponseBody<AcademicSessionDto>,
     }),
   );
 }

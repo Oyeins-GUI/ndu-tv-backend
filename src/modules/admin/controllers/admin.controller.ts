@@ -23,11 +23,13 @@ import {
 
 import {
   AdminApiResponse,
+  AdminsApiResponse,
   PaginatedSugExecutivesApiResponse,
   SugExecutiveApiResponse,
   SugExecutivesApiResponse,
 } from '../dtos/admin.reponse.dto';
 import {
+  AddSessionEndpoint,
   CreateAdminEndpoint,
   CreateDepartmentEndpoint,
   CreateFacultyEndpoint,
@@ -36,6 +38,7 @@ import {
   DeleteDepartmentEndpoint,
   DeleteFacultyEndpoint,
   DeleteSugExecutiveEndpoint,
+  GetAdminsEndpoint,
   GetAllSugExecutivesEndpoint,
   GetPlatformConfigEndpoint,
   GetRolesEndpoint,
@@ -47,6 +50,7 @@ import {
   UpdateDepartmentEndpoint,
   UpdateFacultyEndpoint,
   UpdatePlatformConfigEndpoint,
+  UpdateSessionEndpoint,
   UpdateSugExecutiveEndpoint,
   UpdateSugPositionEndpoint,
 } from '../decorators/admin.decorator';
@@ -54,9 +58,11 @@ import { ApiTags } from '@nestjs/swagger';
 import { RESPONSE_MESSAGES } from '../../../shared/responses/response-messages';
 import { SuccessResponseBody } from '../../../shared/responses/success-response';
 import {
+  CreateAcademicSessionRequestBody,
   CreateDepartmentRequestBody,
   CreateFacultyRequestBody,
   CreateSugPositionRequestBody,
+  UpdateAcademicSessionRequestBody,
   UpdateDepartmentRequestBody,
   UpdatePlatformConfigRequestBody,
   UpdateSugPositionRequestBody,
@@ -184,6 +190,13 @@ export class AdminController {
     return new SugExecutiveApiResponse(result);
   }
 
+  @Get('')
+  @GetAdminsEndpoint()
+  public async getAdmins(): Promise<AdminsApiResponse> {
+    const result = await this.adminManagementService.getAdmins();
+    return new AdminsApiResponse(result);
+  }
+
   @Post('')
   @CreateAdminEndpoint()
   public async createAdmin(
@@ -296,6 +309,34 @@ export class AdminController {
     return new SuccessResponseBody({
       message: RESPONSE_MESSAGES.AcademicSession.Success.Retrieved,
       data: sessions,
+    });
+  }
+
+  @Post('acadmic-sessions')
+  @AddSessionEndpoint()
+  public async addAcademicSessions(
+    @Body() body: CreateAcademicSessionRequestBody,
+  ): Promise<SuccessResponseBody<AcademicSessionDto>> {
+    const session = await this.academicService.addAcademicSession(body);
+    return new SuccessResponseBody({
+      message: RESPONSE_MESSAGES.AcademicSession.Success.Created,
+      data: session,
+    });
+  }
+
+  @Patch('acadmic-sessions/:id')
+  @UpdateSessionEndpoint()
+  public async updateAcademicSessions(
+    @Param('id') session_id: string,
+    @Body() body: UpdateAcademicSessionRequestBody,
+  ): Promise<SuccessResponseBody<AcademicSessionDto>> {
+    const session = await this.academicService.updateAcademicSession(
+      session_id,
+      body,
+    );
+    return new SuccessResponseBody({
+      message: RESPONSE_MESSAGES.AcademicSession.Success.Updated,
+      data: session,
     });
   }
 

@@ -1,5 +1,15 @@
 export interface IRedisCacheService {
   /**
+   * Exexutes a redis command in batch as piple line or as trascationi
+   * @param action  - Actions to execute
+   * @param options - Redis Options
+   */
+  executeBatch(
+    action: (multi: ReturnType<typeof this.client.multi>) => void,
+    options: { atomic?: boolean },
+  ): Promise<void>;
+
+  /**
    * Deletes a key or a set of keys and their values from Redis.
    * @param target - One or more Redis keys to delete.
    * @returns The number of keys deleted.

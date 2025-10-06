@@ -38,7 +38,11 @@ export type CreateAdminInput = {
   scope: SCOPE;
   must_set_password: boolean;
   is_admin_enabled: boolean;
-  last_login_at?: Date;
 };
 
-export type UpdateAdminInput = AtLeastOne<CreateAdminInput>;
+export type UpdateAdminInput = AtLeastOne<
+  CreateAdminInput & {
+    last_login_at?: Date;
+    last_password_change?: Date;
+  }
+>;
