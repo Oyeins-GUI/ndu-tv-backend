@@ -70,16 +70,15 @@ export class AuthService implements IAuthService {
 
     return { access_token, refresh_token };
   }
-
-  private async clearUserSession(admin_id: string): Promise<void> {
-    const setKey = getUserSessionSetKey(admin_id);
+  private async clearUserSession(user_id: string): Promise<void> {
+    const setKey = getUserSessionSetKey(user_id);
     const sessionKeys = await this.redisCacheService.getSetMembers(setKey);
 
     if (!sessionKeys?.length) return;
 
     await this.redisCacheService.executeBatch(
       (multi) => {
-        sessionKeys.forEach((k) => multi.del(k));
+        sessionKeys.forEach((k) => multi.del(getSessionKey(k)));
         multi.del(setKey);
       },
       { atomic: true },

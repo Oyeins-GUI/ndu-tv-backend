@@ -140,7 +140,7 @@ export class AuthController {
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<SuccessResponseBody> {
-    const data = await this.authService.logout(req.session_id);
+    await this.authService.logout(req.session_id);
 
     res.clearCookie(COOKIE_CONSTANTS.sessionId);
     res.clearCookie(COOKIE_CONSTANTS.accessToken);
