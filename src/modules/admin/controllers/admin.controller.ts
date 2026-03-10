@@ -54,10 +54,10 @@ import { NansExecutiveDto, NansPostionDto, RoleDto } from '../dtos/common.dto';
 
 import { IPlatformConfigService } from '../services/interfaces/platform-config.interface';
 import { SuperAdminGuard } from '../../../shared/guards/super-admin.guard';
+import { ExecType } from '../../../shared/enums/execs.enum';
 
 @Controller('admin')
 @ApiTags('Admin')
-@UseGuards(SuperAdminGuard)
 export class AdminController {
   constructor(
     @Inject('IExecutiveService')
@@ -75,12 +75,14 @@ export class AdminController {
   public async getExecutives(
     @Query('q') search_term?: string,
     @Query('year') year?: string,
+    @Query('type') exec_type?: ExecType,
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
   ): Promise<PaginatedNansExecutivesApiResponse> {
     const result = await this.executiveService.getExecutives({
       search_term,
       year,
+      exec_type,
       page: page,
       limit: limit,
     });
@@ -135,6 +137,7 @@ export class AdminController {
   }
 
   @Get('')
+  @UseGuards(SuperAdminGuard)
   @GetAdminsEndpoint()
   public async getAdmins(): Promise<AdminsApiResponse> {
     const result = await this.adminManagementService.getAdmins();
@@ -142,6 +145,7 @@ export class AdminController {
   }
 
   @Post('')
+  @UseGuards(SuperAdminGuard)
   @CreateAdminEndpoint()
   public async createAdmin(
     @Body() body: CreateAdminRequestBody,
@@ -151,6 +155,7 @@ export class AdminController {
   }
 
   @Patch(':id')
+  @UseGuards(SuperAdminGuard)
   @UpdateAdminEndpoint()
   public async update(
     @Param('id') admin_id: string,
@@ -164,6 +169,7 @@ export class AdminController {
   }
 
   @Delete(':id')
+  @UseGuards(SuperAdminGuard)
   @RemoveAdminEndpoint()
   public async removeAdmin(
     @Param('id') admin_id: string,
@@ -175,6 +181,7 @@ export class AdminController {
   }
 
   @Get('roles')
+  @UseGuards(SuperAdminGuard)
   @GetRolesEndpoint()
   public async getRoles(): Promise<SuccessResponseBody<RoleDto[]>> {
     const roles = await this.adminManagementService.getRoles();
@@ -209,6 +216,7 @@ export class AdminController {
   }
 
   @Patch('platform-config')
+  @UseGuards(SuperAdminGuard)
   @UpdatePlatformConfigEndpoint()
   public async updatePlatformConfig(
     @Body() body: UpdatePlatformConfigRequestBody,

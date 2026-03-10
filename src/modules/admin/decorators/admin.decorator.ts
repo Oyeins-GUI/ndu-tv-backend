@@ -61,6 +61,14 @@ export function GetNansExecutivesEndpoint() {
           description: 'executives for specific year',
           required: false,
         },
+
+        {
+          name: 'type',
+          type: 'string',
+          example: 'zonal',
+          description: 'type of executives',
+          required: false,
+        },
       ],
     }),
   );

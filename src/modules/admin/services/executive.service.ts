@@ -21,11 +21,10 @@ import {
 } from '../dtos/admin.request.dto';
 import { NansExecutiveDto, NansPostionDto } from '../dtos/common.dto';
 import { CreateNansPositionRequestBody } from '../dtos/common.request.dto';
-import { ilike, or, search } from '../../../shared/helpers/repository.helper';
+import { search } from '../../../shared/helpers/repository.helper';
 import { BadRequestException } from '../../../shared/exceptions';
 import { FiltersOrOperators } from '../../../shared/types/repositories.types';
 import { NansExecutive } from '../../../db/models/nans-executives.model';
-import { ThrottlerStorageOptions } from '@nestjs/throttler/dist/throttler-storage-options.interface';
 
 export class ExecutiveService implements IExecutiveService {
   constructor(
@@ -59,6 +58,7 @@ export class ExecutiveService implements IExecutiveService {
       const exectuiveExits = await this.nansExecutiveRepository.findBy({
         position_id: data.position_id,
         year: data.year,
+        exec_type: data.exec_type,
       });
 
       if (exectuiveExits)
@@ -77,9 +77,12 @@ export class ExecutiveService implements IExecutiveService {
     filters: GetExecutiveFilters,
   ): Promise<NansExecutiveDto[]> {
     try {
-      const { search_term, year, position_id } = filters;
+      const { search_term, year, position_id, exec_type } = filters;
 
       const _filters: FiltersOrOperators<NansExecutive> = {
+        ...(exec_type && {
+          exec_type,
+        }),
         ...(year && { year }),
         ...(position_id && { position_id }),
         ...(search_term && search<NansExecutive>(['name'], search_term)),

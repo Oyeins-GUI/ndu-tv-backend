@@ -49,6 +49,12 @@ export class NansExecutiveResponseBody {
     description: 'URL of the executive’s profile image',
   })
   public image_url: string;
+
+  @ApiProperty({
+    example: 'zonal',
+    description: 'Category of the executive',
+  })
+  public exec_type: string;
 }
 
 export class PlatformConfigResponseBody {

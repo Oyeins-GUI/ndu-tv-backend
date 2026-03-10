@@ -1,3 +1,4 @@
+import { ExecType } from '../../../../shared/enums/execs.enum';
 import { PaginationInput } from '../../../../shared/types/repositories.types';
 import {
   CreateNansExecutiveRequestBody,
@@ -72,4 +73,5 @@ export type GetExecutiveFilters = PaginationInput & {
   year?: string;
   position_id?: string;
   search_term?: string;
+  exec_type?: ExecType;
 };

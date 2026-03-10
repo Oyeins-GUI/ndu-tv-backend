@@ -8,8 +8,10 @@ import {
   IsOptional,
   IsBoolean,
   IsEmail,
+  IsEnum,
 } from 'class-validator';
 import { AtLeastOneFieldValidator } from '../../../shared/validators/at-least-one-field.validator';
+import { ExecType } from '../../../shared/enums/execs.enum';
 
 export class CreateNansExecutiveRequestBody {
   @ApiProperty({ example: 'John Smith' })
@@ -30,6 +32,15 @@ export class CreateNansExecutiveRequestBody {
   @IsUUID()
   @IsNotEmpty()
   public position_id: string;
+
+  @ApiProperty({
+    example: 'zonal',
+    description: 'Category of executive',
+    enum: ExecType,
+  })
+  @IsEnum(ExecType)
+  @IsNotEmpty()
+  public exec_type: ExecType;
 
   @ApiProperty({
     example: 'https://cdn.ndutv.ng/executives/john-smith.jpg',

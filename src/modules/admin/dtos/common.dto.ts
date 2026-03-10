@@ -15,12 +15,15 @@ export class NansExecutiveDto {
 
   public year: string;
 
+  public exec_type: string;
+
   constructor(model: NansExecutive) {
     this.id = model.id;
     this.name = model.name;
     this.image_url = model.image_url;
     this.position = model.position.position;
     this.year = model.year;
+    this.exec_type = model.exec_type.toString();
   }
 
   static fromEntities(models: NansExecutive[]): NansExecutiveDto[] {

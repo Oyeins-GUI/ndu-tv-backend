@@ -16,14 +16,15 @@ import {
 } from 'sequelize-typescript';
 import { BaseModel } from './base.model';
 import { NansPosition } from './nans-positions.model';
+import { ExecType } from '../../shared/enums/execs.enum';
 
 @Table({
   tableName: 'nans_executives',
   indexes: [
     {
-      name: 'unique_position_year',
+      name: 'unique_position_year_exec_type',
       unique: true,
-      fields: ['year', 'position_id'],
+      fields: ['year', 'position_id', 'exec_type'],
     },
   ],
 })
@@ -40,6 +41,10 @@ export class NansExecutive extends BaseModel {
   @AllowNull(false)
   @Column(DataType.STRING(100))
   declare year: string;
+
+  @AllowNull(false)
+  @Column(DataType.ENUM(...Object.values(ExecType)))
+  declare exec_type: ExecType;
 
   @ForeignKey(() => NansPosition)
   @AllowNull(false)
