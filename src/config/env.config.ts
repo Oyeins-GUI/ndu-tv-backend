@@ -2,7 +2,13 @@ import * as dotenv from 'dotenv';
 import * as path from 'node:path';
 import * as fs from 'fs';
 import { plainToInstance } from 'class-transformer';
-import { validateSync, IsEnum, IsNumber, IsString } from 'class-validator';
+import {
+  validateSync,
+  IsEnum,
+  IsNumber,
+  IsString,
+  IsOptional,
+} from 'class-validator';
 
 const envPath = path.resolve(process.cwd(), '.env');
 const envDevPath = path.resolve(process.cwd(), '.env.development');
@@ -51,12 +57,6 @@ class EnvConfig {
   @IsString()
   APP_NAME: string;
 
-  // @IsString()
-  // GF_SECURITY_ADMIN_USER: string;
-
-  // @IsString()
-  // GF_SECURITY_ADMIN_PASSWORD: string;
-
   @IsString()
   ACCESS_TOKEN_SECRET: string;
 
@@ -76,25 +76,7 @@ class EnvConfig {
   FRONTEND_URL: string;
 
   @IsString()
-  MAIL_MAILER: string;
-
-  @IsString()
-  MAIL_HOST: string;
-
-  @IsNumber()
-  MAIL_PORT: number;
-
-  @IsString()
-  MAIL_USERNAME: string;
-
-  @IsString()
-  MAIL_PASSWORD: string;
-
-  @IsString()
   MAIL_ENCRYPTION: string;
-
-  @IsString()
-  MAIL_FROM_ADDRESS: string;
 
   @IsString()
   MAIL_FROM_NAME: string;
@@ -107,6 +89,14 @@ class EnvConfig {
 
   @IsString()
   API_MAIL_FROM_ADDRESS: string;
+
+  @IsString()
+  @IsOptional()
+  SUPER_ADMIN_EMAIL: string;
+
+  @IsString()
+  @IsOptional()
+  SUPER_ADMIN_PASSWORD: string;
 }
 
 const env = plainToInstance(EnvConfig, process.env, {

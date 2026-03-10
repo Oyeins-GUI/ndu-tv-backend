@@ -15,6 +15,19 @@ export const RESPONSE_MESSAGES = {
     },
   },
 
+  Article: {
+    Success: {
+      Created: 'Article created successfully',
+      Updated: 'Article updated successfully',
+      Deleted: 'Article deleted successfully',
+      Retrieved: 'Article(s) retrieved successfully',
+    },
+    Failure: {
+      NotFound: 'Article not found',
+      AlreadyExists: 'Article already exists',
+    },
+  },
+
   Auth: {
     Success: {
       TokenRefreshed: 'Token refreshed successfully',

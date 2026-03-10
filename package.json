@@ -26,6 +26,7 @@
     "migrate:down": "ts-node migration-runner.ts down",
     "migrate:reset": "ts-node migration-runner.ts reset",
     "migrate:file": "ts-node migration-runner.ts up",
+    "migrate:unlog": "ts-node migration-runner.ts unlog",
     "seed:up": "ts-node migration-runner.ts seed-up",
     "seed:down": "ts-node migration-runner.ts seed-down",
     "seed:reset": "ts-node migration-runner.ts seed-reset",

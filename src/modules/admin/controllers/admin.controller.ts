@@ -24,7 +24,6 @@ import {
   AdminsApiResponse,
   PaginatedNansExecutivesApiResponse,
   NansExecutiveApiResponse,
-  NansExecutivesApiResponse,
 } from '../dtos/admin.reponse.dto';
 import {
   CreateAdminEndpoint,
@@ -50,7 +49,7 @@ import {
   UpdatePlatformConfigRequestBody,
 } from '../dtos/common.request.dto';
 import { PlatformConfigApiResponse } from '../dtos/common.response.dto';
-import { NansExecutiveDto, NansPostionDto, RoleDto } from '../dtos/common.dto';
+import { NansPostionDto, RoleDto } from '../dtos/common.dto';
 
 import { IPlatformConfigService } from '../services/interfaces/platform-config.interface';
 import { SuperAdminGuard } from '../../../shared/guards/super-admin.guard';
