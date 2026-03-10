@@ -20,7 +20,7 @@ import { IRedisCacheService } from '../../../lib/redis/redis.interface';
 import { getTokenKey } from '../../../auth/auth.utils';
 import { generateRandomToken } from '../../../lib/utils';
 import { IAdminManagementService } from './interfaces/admin-management.interface';
-import { Role as RoleEnum, SCOPE } from '../../../shared/enums';
+import { Role as RoleEnum } from '../../../shared/enums';
 import { RoleDto } from '../dtos/common.dto';
 
 import {
