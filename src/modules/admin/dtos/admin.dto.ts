@@ -5,17 +5,7 @@ export class AdminDto {
 
   public email: string;
 
-  public matric_number: string;
-
   public role: string;
-
-  public position: string;
-
-  public faculty: string;
-
-  public deparment: string;
-
-  public scope: string;
 
   public is_admin_enabled: boolean;
 
@@ -24,19 +14,12 @@ export class AdminDto {
   constructor(model: Admin) {
     this.name = model.name;
     this.email = model.email;
-    this.matric_number = model.matric_number;
+
     this.last_login_at = model.last_login_at;
 
-    this.scope = model.scope.toString();
     this.is_admin_enabled = model.is_admin_enabled;
 
     this.role = model.role?.role.toString();
-
-    if (model.department) this.deparment = model.department.department;
-
-    if (model.faculty) this.faculty = model.faculty.faculty;
-
-    if (model.position) this.position = model.position.position;
   }
 
   static fromEntities(models: Admin[]): AdminDto[] {

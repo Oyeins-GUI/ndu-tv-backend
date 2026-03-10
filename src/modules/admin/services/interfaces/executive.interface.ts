@@ -1,89 +1,75 @@
-import { SCOPE } from '../../../../shared/enums';
 import { PaginationInput } from '../../../../shared/types/repositories.types';
 import {
-  CreateSugExecutiveRequestBody,
-  UpdateSugExecutiveRequestBody,
+  CreateNansExecutiveRequestBody,
+  UpdateNansExecutiveRequestBody,
 } from '../../dtos/admin.request.dto';
-import { SugExecutiveDto, SugPostionDto } from '../../dtos/common.dto';
-import { CreateSugPositionRequestBody } from '../../dtos/common.request.dto';
+import { NansExecutiveDto, NansPostionDto } from '../../dtos/common.dto';
+import { CreateNansPositionRequestBody } from '../../dtos/common.request.dto';
 
 export interface IExecutiveService {
   /**
    * Adds a new Executive
    * @param data- Data to add
-   * @returns {SugExecutiveDto} - The newly added executive
+   * @returns {NansExecutiveDto} - The newly added executive
    */
-  addExecutive(data: CreateSugExecutiveRequestBody): Promise<SugExecutiveDto>;
+  addExecutive(data: CreateNansExecutiveRequestBody): Promise<NansExecutiveDto>;
 
   /**
    * Gets Executive for the current session
-   * @returns {SugExecutiveDto} - The exectutives matching the fitler constraints
+   * @returns {NansExecutiveDto} - The exectutives matching the fitler constraints
    */
-  getExecutives({
-    scope,
-    faculty_id,
-    department_id,
-    session_id,
-  }: {
-    scope: SCOPE;
-    faculty_id?: string;
-    department_id?: string;
-    session_id?: string;
-  }): Promise<SugExecutiveDto[]>;
+  getExecutives(filters: GetExecutiveFilters): Promise<NansExecutiveDto[]>;
 
   /**
    * Gets Executive for the current session by id
-   * @returns {SugExecutiveDto} - The exectutives matching the fitler constraints
+   * @returns {NansExecutiveDto} - The exectutives matching the fitler constraints
    */
-  getExecutive(executive_id: string): Promise<SugExecutiveDto>;
+  getExecutive(executive_id: string): Promise<NansExecutiveDto>;
 
   /**
-   * Gets all executives (paginated)
-   * @param pagination - Pagination Params
-   */
-  getAllExecutives(
-    pagination: PaginationInput,
-    session_id?: string,
-  ): Promise<SugExecutiveDto[]>;
-
-  /**
-   * Adds a sug position
+   * Adds a Nans position
    * @param data- Data to add
-   * @returns {SugPositionDto} - The newly addded Sug position
+   * @returns {NansPositionDto} - The newly addded Nans position
    */
-  addSugPostion(data: CreateSugPositionRequestBody): Promise<SugPostionDto>;
+  addNansPostion(data: CreateNansPositionRequestBody): Promise<NansPostionDto>;
 
   /**
-   * Updates an Sug Position
-   * @param sug_position_id- ID of SUG Position to update
+   * Updates an Nans Position
+   * @param Nans_position_id- ID of Nans Position to update
    * @param data- Data to update by
-   * @returns {SugPositionDto} - The newly addded Sug position
+   * @returns {NansPositionDto} - The newly addded Nans position
    */
-  updateSugPostion(
-    sug_position_id: string,
-    data: UpdateSugExecutiveRequestBody,
-  ): Promise<SugPostionDto>;
+  updateNansPostion(
+    Nans_position_id: string,
+    data: UpdateNansExecutiveRequestBody,
+  ): Promise<NansPostionDto>;
 
   /**
-   * Delete am Sug Exectuive
-   * @param executive_id - ID of sug excutive to delete
+   * Delete am Nans Exectuive
+   * @param executive_id - ID of Nans excutive to delete
    */
   deleteExecutive(executive_id: string): Promise<void>;
 
   /**
-   * Gets Sug position
-   * @returns {SugPositionDto} - The the sug positions available
+   * Gets Nans position
+   * @returns {NansPositionDto} - The the Nans positions available
    */
-  getSugPostions(): Promise<SugPostionDto[]>;
+  getNansPostions(): Promise<NansPostionDto[]>;
 
   /**
-   * Updates an SUG Executive data
+   * Updates an Nans Executive data
    * @param executive_id - ID of the execuvitve data
    * @param data - Data to update
-   * @returns {SugExecutiveDto}- The newly updated sug executive
+   * @returns {NansExecutiveDto}- The newly updated Nans executive
    */
   updateExecutive(
     executive_id: string,
-    data: UpdateSugExecutiveRequestBody,
-  ): Promise<SugExecutiveDto>;
+    data: UpdateNansExecutiveRequestBody,
+  ): Promise<NansExecutiveDto>;
 }
+
+export type GetExecutiveFilters = PaginationInput & {
+  year?: string;
+  position_id?: string;
+  search_term?: string;
+};

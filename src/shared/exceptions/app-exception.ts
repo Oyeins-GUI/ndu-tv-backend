@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { ERROR_CODES } from './error-codes';
+import { ERROR_CODES, ErrorCode } from './error-codes';
 
 export interface AppErrorShape<TDetails = undefined> {
   code: ERROR_CODES | string;
@@ -8,7 +8,7 @@ export interface AppErrorShape<TDetails = undefined> {
 }
 
 export class AppException<TDetails = undefined> extends HttpException {
-  public readonly code: string | keyof ERROR_CODES;
+  public readonly code: string | ErrorCode;
   public readonly reason: string;
   public readonly details?: TDetails;
 

@@ -1,36 +1,27 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import {
   IsString,
-  IsEmail,
   IsUUID,
-  IsEnum,
   Validate,
   IsNotEmpty,
   Matches,
   IsOptional,
   IsBoolean,
+  IsEmail,
 } from 'class-validator';
-import { SCOPE } from '../../../shared/enums';
 import { AtLeastOneFieldValidator } from '../../../shared/validators/at-least-one-field.validator';
 
-export class CreateSugExecutiveRequestBody {
+export class CreateNansExecutiveRequestBody {
   @ApiProperty({ example: 'John Smith' })
   @IsString()
   @IsNotEmpty()
   public name: string;
 
-  @ApiProperty({ example: 'john.smith@ndutv.ng' })
-  @IsEmail()
-  @IsNotEmpty()
-  public email: string;
-
-  @ApiProperty({ example: 'UG/21/0456', description: 'Matriculation number' })
+  @ApiProperty({ example: '2023' })
   @IsString()
-  @Matches(/^UG\/\d{2}\/\d{4}$/, {
-    message: 'Matric number must match UG/00/0000 format',
-  })
   @IsNotEmpty()
-  public matric_number: string;
+  @Matches(/^20\d{2}$/)
+  public year: string;
 
   @ApiProperty({
     example: 'd290f1ee-6c54-4b01-90e6-d701748f0851',
@@ -41,46 +32,6 @@ export class CreateSugExecutiveRequestBody {
   public position_id: string;
 
   @ApiProperty({
-    example: '7c9e6679-7425-40de-944b-e07fc1f90ae7',
-    description: 'UUID of the session',
-  })
-  @IsUUID()
-  @IsNotEmpty()
-  public session_id: string;
-
-  @ApiProperty({
-    example: 'e7b8c68e-d726-4906-8494-f7f9d5c2c624',
-    description: 'UUID of the faculty',
-  })
-  @IsUUID()
-  @IsNotEmpty()
-  public faculty_id: string;
-
-  @ApiProperty({
-    example: '4d1d1b20-5a4c-4df7-b6c4-bb6e7f3c3011',
-    description: 'UUID of the department',
-  })
-  @IsUUID()
-  @IsNotEmpty()
-  public department_id: string;
-
-  @ApiProperty({
-    example: '+2348012345678',
-    description: 'Phone number in international format',
-  })
-  @IsString()
-  @Matches(/^\+234[789][01]\d{8}$/, {
-    message: 'Phone number must be a valid Nigerian number in +234 format',
-  })
-  @IsNotEmpty()
-  public phone_number: string;
-
-  @ApiProperty({ enum: SCOPE, example: SCOPE.FACULTY })
-  @IsEnum(SCOPE)
-  @IsNotEmpty()
-  public scope: SCOPE;
-
-  @ApiProperty({
     example: 'https://cdn.ndutv.ng/executives/john-smith.jpg',
     description: 'URL of the executive’s profile image',
   })
@@ -89,18 +40,8 @@ export class CreateSugExecutiveRequestBody {
   public image_url: string;
 }
 
-// export class GetSugExecutivesQuery {
-//   @IsUUID()
-//   @IsOptional()
-//   public facutly_id?: string;
-
-//   @IsUUID()
-//   @IsOptional()
-//   public department_id?: string;
-// }
-
-export class UpdateSugExecutiveRequestBody extends PartialType(
-  CreateSugExecutiveRequestBody,
+export class UpdateNansExecutiveRequestBody extends PartialType(
+  CreateNansExecutiveRequestBody,
 ) {
   @Validate(AtLeastOneFieldValidator)
   public __self__: any;
@@ -108,12 +49,20 @@ export class UpdateSugExecutiveRequestBody extends PartialType(
 
 export class CreateAdminRequestBody {
   @ApiProperty({
-    description: 'ID of the executive user to assign as admin',
-    example: 'f6800087-8b25-4c37-bcf4-e2539fb9e7f5',
+    description: 'Email of the user',
+    example: 'jonhdoe@gmail.com',
+  })
+  @IsNotEmpty()
+  @IsEmail()
+  public email: string;
+
+  @ApiProperty({
+    description: 'Name of the user',
+    example: 'John Doe',
   })
   @IsString()
   @IsNotEmpty()
-  public executive_id: string;
+  public name: string;
 
   @ApiProperty({
     example: '9904faf9-8e10-4fc7-b584-ba9c87f55a1c',

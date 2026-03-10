@@ -6,12 +6,9 @@ import {
   IAdminRepository,
   UpdateAdminInput,
 } from './interfaces/admin-repository.interface';
-import { Department } from '../../../db/models/departments.model';
-import { Faculty } from '../../../db/models/faculties.model';
-import { SugPosition } from '../../../db/models/sug-positions.model';
 import { Role } from '../../../db/models/roles.model';
 import { BaseRepository } from '../../../shared/repositories/base.repository';
-import { IncludeOptions, Op } from 'sequelize';
+import { IncludeOptions } from 'sequelize';
 
 export class AdminRepository
   extends BaseRepository<
@@ -34,63 +31,14 @@ export class AdminRepository
   ];
 
   protected computeRelations(relations: AdminRelations[]): IncludeOptions[] {
-    const allRelations: AdminRelations[] = [
-      'department',
-      'faculty',
-      'position',
-    ];
+    const allRelations: AdminRelations[] = ['role'];
     const toInclude = relations.includes('all') ? allRelations : relations;
-
     const include: IncludeOptions[] = [];
-
     include.push({
       model: Role,
       as: 'role',
     });
 
-    if (toInclude.includes('department')) {
-      include.push({
-        model: Department,
-        as: 'department',
-      });
-    }
-
-    if (toInclude.includes('faculty')) {
-      include.push({
-        model: Faculty,
-        as: 'faculty',
-      });
-    }
-
-    if (toInclude.push('position')) {
-      include.push({
-        model: SugPosition,
-        as: 'position',
-      });
-    }
     return include;
-  }
-
-  public async findActiveVerifiedByIdentifier(
-    identifier: string,
-  ): Promise<Admin | null> {
-    return this.findBy(
-      {
-        [Op.or]: [
-          {
-            email: identifier,
-            must_set_password: false,
-          },
-          {
-            matric_number: identifier,
-            must_set_password: false,
-          },
-        ],
-      },
-      {
-        includeFields: ['password'],
-        relations: ['all'],
-      },
-    );
   }
 }

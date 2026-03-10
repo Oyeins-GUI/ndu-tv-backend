@@ -50,17 +50,15 @@ export interface IAuthService {
    * Initiate set-password flow for a new admin.
    * Sends email with token or code.
    * @param email - email of the admin
-   * @param matric_no - mattric number of the admin
    * @returns {void}
    */
-  initiateSetPassword(email: string, matric_number: string): Promise<void>;
+  initiateSetPassword(email: string): Promise<void>;
 
   /**
    * Initiate password reset flow for an existing admin
    * @param email - Email of the admin
-   * @param matric_number Matric number of the admin
    */
-  initiateResetPassword(email: string, matric_number: string): Promise<void>;
+  initiateResetPassword(email: string): Promise<void>;
 
   /**
    * Complete reset password flow

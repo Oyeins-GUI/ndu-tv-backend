@@ -24,6 +24,8 @@ const sequelize = new Sequelize({
   database: process.env.DB_NAME as string,
 });
 
+const storage = new SequelizeStorage({ sequelize });
+
 const migration = new Umzug({
   migrations: { glob: './src/db/migrations/*.ts' },
   context: sequelize.getQueryInterface(),
@@ -39,7 +41,7 @@ const seeder = new Umzug({
 });
 
 const task = (process.argv[2] || '').trim();
-const migrationFile = process.argv[3]; // Add an argument for the specific file
+const migrationFile = process.argv[3];
 
 const migrationPath = `./src/db/migrations/${migrationFile}`;
 const seederPath = `./src/db/seeders/${migrationFile}`;
@@ -47,7 +49,7 @@ const seederPath = `./src/db/seeders/${migrationFile}`;
 // Function to run specific migration file
 async function runSpecificMigration(file: string) {
   try {
-    const result = await migration.up({ to: file });
+    const result = await migration.up({ migrations: [file] });
     console.log(`Migration ${file} ran successfully!`, result);
   } catch (error) {
     console.error(`Error running specific migration ${file}:`, error);
@@ -59,7 +61,7 @@ async function createMigration(name: string) {
     const result = await migration.create({
       name: name,
       folder: './src/db/migrations',
-      prefix: 'DATE',
+      prefix: 'TIMESTAMP',
     });
     console.log(`Migration file created successfully`);
   } catch (error) {
@@ -72,7 +74,7 @@ async function createSeeder(name: string) {
     const result = await seeder.create({
       name: name,
       folder: './src/db/seeders',
-      prefix: 'NONE',
+      prefix: 'TIMESTAMP',
     });
     console.log(`Seeder file created successfully`);
   } catch (error) {
@@ -83,18 +85,21 @@ async function createSeeder(name: string) {
 // Main function to handle all tasks
 async function run() {
   try {
-    if (
-      migrationFile &&
-      task != 'seeder-create' &&
-      task != 'migration-create'
-    ) {
+    if (task == 'unlog') {
+      await storage.unlogMigration({ name: migrationFile });
+      console.log(`Migration ${migrationFile} unlogged successfully!`);
+      return;
+    }
+    if (migrationFile && task == 'file') {
       // Run a specific migration or seeder file
       if (fs.existsSync(migrationPath)) {
-        await runSpecificMigration(migrationFile);
+        const result = await runSpecificMigration(migrationFile);
+        console.log(`Migration ${migrationFile} ran successfully!`, result);
       } else if (fs.existsSync(seederPath)) {
         const result = await seeder.up({ to: migrationFile });
         console.log(`Seeder ${migrationFile} ran successfully!`, result);
       }
+      return;
     } else {
       switch (task) {
         case 'up':

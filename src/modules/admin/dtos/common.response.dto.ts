@@ -1,12 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { RESPONSE_MESSAGES } from '../../../shared/responses/response-messages';
-import {
-  DepartmentResponseBody,
-  FacultyResponseBody,
-  PlatformConfigResponseBody,
-} from './base.dto';
-import { DepartmentDto, FacultyDto, PlatformConfigDto } from './common.dto';
+import { PlatformConfigResponseBody } from './base.dto';
+
 import { ApiResponse } from '../../../shared/responses/api-response';
+import { PlatformConfigDto } from './common.dto';
 
 export class PlatformConfigApiResponse extends ApiResponse<PlatformConfigDto> {
   @ApiProperty({
@@ -18,94 +15,12 @@ export class PlatformConfigApiResponse extends ApiResponse<PlatformConfigDto> {
     RESPONSE_MESSAGES.PlatformConfig.Success.Retrieved;
 
   @ApiProperty({
-    description: 'Department data returned from operation',
+    description: 'Platform data returned from operation',
     type: PlatformConfigResponseBody,
   })
   public override data: PlatformConfigDto;
 
   constructor(data: PlatformConfigDto, message?: string) {
-    super();
-    this.data = data;
-    if (message) this.message = message;
-  }
-}
-
-export class DepartmentApiResponse extends ApiResponse<DepartmentDto> {
-  @ApiProperty({
-    description: 'Department operation response message',
-    example: RESPONSE_MESSAGES.Department.Success.Created,
-  })
-  public override message: string =
-    RESPONSE_MESSAGES.Department.Success.Created;
-
-  @ApiProperty({
-    description: 'Department data returned from operation',
-    type: DepartmentResponseBody,
-  })
-  public override data: DepartmentDto;
-
-  constructor(data: DepartmentDto, message?: string) {
-    super();
-    this.data = data;
-    if (message) this.message = message;
-  }
-}
-
-export class DepartmentsApiResponse extends ApiResponse<DepartmentDto[]> {
-  @ApiProperty({
-    description: 'Departments operation response message',
-    example: RESPONSE_MESSAGES.Department.Success.Retrieved,
-  })
-  public override message: string =
-    RESPONSE_MESSAGES.Department.Success.Retrieved;
-
-  @ApiProperty({
-    description: 'Array of department data returned from operation',
-    type: [DepartmentResponseBody],
-  })
-  public override data: DepartmentDto[];
-
-  constructor(data: DepartmentDto[], message?: string) {
-    super();
-    this.data = data;
-    if (message) this.message = message;
-  }
-}
-
-export class FacultyApiResponse extends ApiResponse<FacultyDto> {
-  @ApiProperty({
-    description: 'Faculty operation response message',
-    example: RESPONSE_MESSAGES.Faculty.Success.Created,
-  })
-  public override message: string = RESPONSE_MESSAGES.Faculty.Success.Created;
-
-  @ApiProperty({
-    description: 'Faculty data returned from operation',
-    type: FacultyResponseBody,
-  })
-  public override data: FacultyDto;
-
-  constructor(data: FacultyDto, message?: string) {
-    super();
-    this.data = data;
-    if (message) this.message = message;
-  }
-}
-
-export class FacultiesApiResponse extends ApiResponse<FacultyDto[]> {
-  @ApiProperty({
-    description: 'Faculties operation response message',
-    example: RESPONSE_MESSAGES.Faculty.Success.Retrieved,
-  })
-  public override message: string = RESPONSE_MESSAGES.Faculty.Success.Retrieved;
-
-  @ApiProperty({
-    description: 'Array of faculty data returned from operation',
-    type: [FacultyResponseBody],
-  })
-  public override data: FacultyDto[];
-
-  constructor(data: FacultyDto[], message?: string) {
     super();
     this.data = data;
     if (message) this.message = message;

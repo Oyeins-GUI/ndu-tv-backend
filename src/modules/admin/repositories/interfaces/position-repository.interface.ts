@@ -1,21 +1,18 @@
-import { SugPosition } from '../../../../db/models/sug-positions.model';
+import { NansPosition } from '../../../../db/models/nans-positions.model';
 import { IBaseRepository } from '../../../../shared/interfaces/base-repository.interface';
-import {
-  AtLeastOne,
-  FiltersOrOperators,
-} from '../../../../shared/types/repositories.types';
+import { AtLeastOne } from '../../../../shared/types/repositories.types';
 
-export interface ISugPositionRepository
+export interface INansPositionRepository
   extends IBaseRepository<
-    SugPosition,
-    CreateSugPositionInput,
-    UpdateSugPositionInput
+    NansPosition,
+    CreateNansPositionInput,
+    UpdateNansPositionInput
   > {}
 
-export type CreateSugPositionInput = {
+export type CreateNansPositionInput = {
   position: string;
   title: string;
   description: string;
 };
 
-export type UpdateSugPositionInput = AtLeastOne<CreateSugPositionInput>;
+export type UpdateNansPositionInput = AtLeastOne<CreateNansPositionInput>;

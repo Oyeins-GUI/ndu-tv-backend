@@ -6,13 +6,10 @@ export interface IPlatformConfigRepository
   extends IBaseRepository<
     AppSettings,
     CreatePlatformConfigInput,
-    UpdatePlatformConfigInput,
-    PlatformConfigRelations
+    UpdatePlatformConfigInput
   > {}
 
 export type CreatePlatformConfigInput = {
-  current_session_id: string;
-
   is_ad_enabled: boolean;
 
   is_app_enabled: boolean;
@@ -25,5 +22,3 @@ export type CreatePlatformConfigInput = {
 };
 
 export type UpdatePlatformConfigInput = AtLeastOne<CreatePlatformConfigInput>;
-
-export type PlatformConfigRelations = 'current_session' | 'all';

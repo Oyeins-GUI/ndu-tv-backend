@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CustomLogger } from '../../../lib/logger/logger.service';
 import { IAdminRepository } from '../repositories/interfaces/admin-repository.interface';
 import { AdminDto } from '../dtos/admin.dto';
-import { ISugExecutiveRepository } from '../repositories/interfaces/sug-executive-repository.interface';
+import { ISugExecutiveRepository } from '../repositories/interfaces/nans-executive-repository.interface';
 import {
   BadRequestException,
   NotFoundException,

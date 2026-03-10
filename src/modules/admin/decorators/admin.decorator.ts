@@ -4,25 +4,17 @@ import { RESPONSE_MESSAGES } from '../../../shared/responses/response-messages';
 import {
   AdminApiResponse,
   AdminsApiResponse,
-  PaginatedSugExecutivesApiResponse,
-  SugExecutiveApiResponse,
-  SugExecutivesApiResponse,
+  NansExecutiveApiResponse,
+  NansExecutivesApiResponse,
 } from '../dtos/admin.reponse.dto';
-import {
-  DepartmentApiResponse,
-  DepartmentsApiResponse,
-  FacultiesApiResponse,
-  FacultyApiResponse,
-  PlatformConfigApiResponse,
-} from '../dtos/common.response.dto';
 import { SuccessResponseBody } from '../../../shared/responses/success-response';
-import { Public } from '../../../shared/decorators/public.decorator';
-import { AcademicSessionDto, RoleDto, SugPostionDto } from '../dtos/common.dto';
+import { RoleDto, NansPostionDto } from '../dtos/common.dto';
+import { PlatformConfigApiResponse } from '../dtos/common.response.dto';
 
-export function CreateSugExecutiveEndpoint() {
+export function CreateNansExecutiveEndpoint() {
   return applyDecorators(
     StandardDocs({
-      summary: 'Add an sug Executive',
+      summary: 'Add an Nans Executive',
       includeErrors: [
         ErrorType.BAD_REQUEST,
         ErrorType.CONFLICT,
@@ -31,86 +23,41 @@ export function CreateSugExecutiveEndpoint() {
         ErrorType.INTERNAL_SERVER_ERROR,
         ErrorType.NOT_FOUND,
       ],
-      successMessage: RESPONSE_MESSAGES.SugExecutive.Success.Created,
+      successMessage: RESPONSE_MESSAGES.NansExecutive.Success.Created,
       status: HttpStatus.CREATED,
-      type: SugExecutiveApiResponse,
+      type: NansExecutiveApiResponse,
     }),
   );
 }
 
-export function GetSugExecutivesEndpoint() {
+export function UpdateNansExecutiveEndpoint() {
   return applyDecorators(
     StandardDocs({
-      summary:
-        'Gets SUG Executives (Depending on the scope, central, faculty, deparment and session)',
+      summary: 'Updates an Nans Executives',
       includeErrors: [
         ErrorType.BAD_REQUEST,
         ErrorType.UNAUTHORIZED,
         ErrorType.FORBIDDEN,
       ],
-      successMessage: RESPONSE_MESSAGES.SugExecutive.Success.Retrieved,
+      successMessage: RESPONSE_MESSAGES.NansExecutive.Success.Updated,
       status: HttpStatus.OK,
-      type: SugExecutivesApiResponse,
-      queryParams: [
-        {
-          name: 'session_id',
-          required: false,
-        },
-      ],
-    }),
-  );
-}
-export function GetAllSugExecutivesEndpoint() {
-  return applyDecorators(
-    StandardDocs({
-      summary:
-        'Gets SUG Executives (Depending on the scope, central, faculty, deparment and session)',
-      includeErrors: [
-        ErrorType.BAD_REQUEST,
-        ErrorType.UNAUTHORIZED,
-        ErrorType.FORBIDDEN,
-      ],
-      successMessage: RESPONSE_MESSAGES.SugExecutive.Success.Retrieved,
-      status: HttpStatus.OK,
-      type: PaginatedSugExecutivesApiResponse,
-      queryParams: [
-        {
-          name: 'session_id',
-          required: false,
-        },
-      ],
+      type: NansExecutivesApiResponse,
     }),
   );
 }
 
-export function UpdateSugExecutiveEndpoint() {
-  return applyDecorators(
-    StandardDocs({
-      summary: 'Updates an SUG Executives',
-      includeErrors: [
-        ErrorType.BAD_REQUEST,
-        ErrorType.UNAUTHORIZED,
-        ErrorType.FORBIDDEN,
-      ],
-      successMessage: RESPONSE_MESSAGES.SugExecutive.Success.Updated,
-      status: HttpStatus.OK,
-      type: SugExecutivesApiResponse,
-    }),
-  );
-}
-
-export function DeleteSugExecutiveEndpoint() {
+export function DeleteNansExecutiveEndpoint() {
   return applyDecorators(
     HttpCode(HttpStatus.NO_CONTENT),
     StandardDocs({
-      summary: 'Deltes an SUG Executive',
+      summary: 'Deltes an Nans Executive',
       includeErrors: [
         ErrorType.BAD_REQUEST,
         ErrorType.UNAUTHORIZED,
         ErrorType.FORBIDDEN,
         ErrorType.NOT_FOUND,
       ],
-      successMessage: RESPONSE_MESSAGES.SugExecutive.Success.Deleted,
+      successMessage: RESPONSE_MESSAGES.NansExecutive.Success.Deleted,
       status: HttpStatus.NO_CONTENT,
       type: SuccessResponseBody,
     }),
@@ -191,191 +138,6 @@ export function RemoveAdminEndpoint() {
   );
 }
 
-export function CreateDepartmentEndpoint() {
-  return applyDecorators(
-    StandardDocs({
-      summary: 'Add a department',
-      includeErrors: [
-        ErrorType.BAD_REQUEST,
-        ErrorType.CONFLICT,
-        ErrorType.UNAUTHORIZED,
-        ErrorType.FORBIDDEN,
-        ErrorType.INTERNAL_SERVER_ERROR,
-        ErrorType.NOT_FOUND,
-      ],
-      successMessage: RESPONSE_MESSAGES.Department.Success.Created,
-      status: HttpStatus.CREATED,
-      type: DepartmentApiResponse,
-    }),
-  );
-}
-
-export function GetDepartmentsEndpoint() {
-  return applyDecorators(
-    Public(),
-    StandardDocs({
-      summary: 'Get all departments',
-      queryParams: [
-        {
-          name: 'faculty_id',
-          required: false,
-          description: 'Filter departments by faculty ID',
-          example: '550e8400-e29b-41d4-a716-446655440000',
-          type: 'string',
-        },
-      ],
-      auth: false,
-      includeErrors: [
-        ErrorType.UNAUTHORIZED,
-        ErrorType.FORBIDDEN,
-        ErrorType.INTERNAL_SERVER_ERROR,
-      ],
-      successMessage: RESPONSE_MESSAGES.Department.Success.Retrieved,
-      status: HttpStatus.OK,
-      type: DepartmentsApiResponse,
-    }),
-  );
-}
-
-export function GetDepartmentEndpoint() {
-  return applyDecorators(
-    Public(),
-    StandardDocs({
-      summary: 'Get a department by its id',
-      auth: false,
-      includeErrors: [ErrorType.INTERNAL_SERVER_ERROR],
-      successMessage: RESPONSE_MESSAGES.Department.Success.Retrieved,
-      status: HttpStatus.OK,
-      type: DepartmentApiResponse,
-    }),
-  );
-}
-
-export function UpdateDepartmentEndpoint() {
-  return applyDecorators(
-    StandardDocs({
-      summary: 'Update a department',
-      includeErrors: [
-        ErrorType.BAD_REQUEST,
-        ErrorType.UNAUTHORIZED,
-        ErrorType.FORBIDDEN,
-        ErrorType.NOT_FOUND,
-        ErrorType.INTERNAL_SERVER_ERROR,
-      ],
-      successMessage: RESPONSE_MESSAGES.Department.Success.Updated,
-      status: HttpStatus.OK,
-      type: DepartmentApiResponse,
-    }),
-  );
-}
-
-export function DeleteDepartmentEndpoint() {
-  return applyDecorators(
-    StandardDocs({
-      summary: 'Delete a department',
-      includeErrors: [
-        ErrorType.UNAUTHORIZED,
-        ErrorType.FORBIDDEN,
-        ErrorType.NOT_FOUND,
-        ErrorType.INTERNAL_SERVER_ERROR,
-      ],
-      successMessage: RESPONSE_MESSAGES.Department.Success.Deleted,
-      status: HttpStatus.OK,
-      type: SuccessResponseBody,
-    }),
-  );
-}
-
-export function CreateFacultyEndpoint() {
-  return applyDecorators(
-    StandardDocs({
-      summary: 'Add a faculty',
-      includeErrors: [
-        ErrorType.BAD_REQUEST,
-        ErrorType.CONFLICT,
-        ErrorType.UNAUTHORIZED,
-        ErrorType.FORBIDDEN,
-        ErrorType.INTERNAL_SERVER_ERROR,
-        ErrorType.NOT_FOUND,
-      ],
-      successMessage: RESPONSE_MESSAGES.Faculty.Success.Created,
-      status: HttpStatus.CREATED,
-      type: FacultyApiResponse,
-    }),
-  );
-}
-
-export function GetFacultiesEndpoint() {
-  return applyDecorators(
-    Public(),
-    StandardDocs({
-      summary: 'Get all faculties',
-      includeErrors: [
-        ErrorType.UNAUTHORIZED,
-        ErrorType.FORBIDDEN,
-        ErrorType.INTERNAL_SERVER_ERROR,
-      ],
-      auth: false,
-      successMessage: RESPONSE_MESSAGES.Faculty.Success.Retrieved,
-      status: HttpStatus.OK,
-      type: FacultiesApiResponse,
-    }),
-  );
-}
-
-export function GetFacultyEndpoint() {
-  return applyDecorators(
-    Public(),
-    StandardDocs({
-      summary: 'Gets a single Faculty by its ID',
-      includeErrors: [
-        ErrorType.UNAUTHORIZED,
-        ErrorType.FORBIDDEN,
-        ErrorType.INTERNAL_SERVER_ERROR,
-      ],
-      auth: false,
-      successMessage: RESPONSE_MESSAGES.Faculty.Success.Retrieved,
-      status: HttpStatus.OK,
-      type: FacultyApiResponse,
-    }),
-  );
-}
-
-export function UpdateFacultyEndpoint() {
-  return applyDecorators(
-    StandardDocs({
-      summary: 'Update a faculty',
-      includeErrors: [
-        ErrorType.BAD_REQUEST,
-        ErrorType.UNAUTHORIZED,
-        ErrorType.FORBIDDEN,
-        ErrorType.NOT_FOUND,
-        ErrorType.INTERNAL_SERVER_ERROR,
-      ],
-      successMessage: RESPONSE_MESSAGES.Faculty.Success.Updated,
-      status: HttpStatus.OK,
-      type: FacultyApiResponse,
-    }),
-  );
-}
-
-export function DeleteFacultyEndpoint() {
-  return applyDecorators(
-    StandardDocs({
-      summary: 'Delete a faculty',
-      includeErrors: [
-        ErrorType.UNAUTHORIZED,
-        ErrorType.FORBIDDEN,
-        ErrorType.NOT_FOUND,
-        ErrorType.INTERNAL_SERVER_ERROR,
-      ],
-      successMessage: RESPONSE_MESSAGES.Faculty.Success.Deleted,
-      status: HttpStatus.NO_CONTENT,
-      type: SuccessResponseBody,
-    }),
-  );
-}
-
 export function GetRolesEndpoint() {
   return applyDecorators(
     StandardDocs({
@@ -392,76 +154,40 @@ export function GetRolesEndpoint() {
   );
 }
 
-export function GetSessionsEndpoint() {
+export function GetNansPositionsEndpoint() {
   return applyDecorators(
     StandardDocs({
-      summary: 'Gets academic sessions',
-      includeErrors: [ErrorType.INTERNAL_SERVER_ERROR],
-      successMessage: RESPONSE_MESSAGES.AcademicSession.Success.Retrieved,
-      status: HttpStatus.OK,
-      type: SuccessResponseBody<AcademicSessionDto[]>,
-    }),
-  );
-}
-
-export function AddSessionEndpoint() {
-  return applyDecorators(
-    StandardDocs({
-      summary: 'Adds an academic session',
-      includeErrors: [ErrorType.INTERNAL_SERVER_ERROR],
-      successMessage: RESPONSE_MESSAGES.AcademicSession.Success.Created,
-      status: HttpStatus.CREATED,
-      type: SuccessResponseBody<AcademicSessionDto>,
-    }),
-  );
-}
-
-export function UpdateSessionEndpoint() {
-  return applyDecorators(
-    StandardDocs({
-      summary: 'Updates an academic session',
-      includeErrors: [ErrorType.INTERNAL_SERVER_ERROR],
-      successMessage: RESPONSE_MESSAGES.AcademicSession.Success.Updated,
-      status: HttpStatus.OK,
-      type: SuccessResponseBody<AcademicSessionDto>,
-    }),
-  );
-}
-
-export function GetSugPositionsEndpoint() {
-  return applyDecorators(
-    StandardDocs({
-      summary: 'Gets SUG Positions',
+      summary: 'Gets Nans Positions',
       includeErrors: [ErrorType.INTERNAL_SERVER_ERROR, ErrorType.UNAUTHORIZED],
-      successMessage: RESPONSE_MESSAGES.SugPosition.Success.Retrieved,
+      successMessage: RESPONSE_MESSAGES.NansPosition.Success.Retrieved,
       status: HttpStatus.OK,
-      type: SuccessResponseBody<SugPostionDto[]>,
+      type: SuccessResponseBody<NansPostionDto[]>,
     }),
   );
 }
 
-export function CreateSugPositionEndpoint() {
+export function CreateNansPositionEndpoint() {
   return applyDecorators(
     HttpCode(HttpStatus.CREATED),
     StandardDocs({
-      summary: 'Adds an SUG Position',
+      summary: 'Adds an Nans Position',
       includeErrors: [ErrorType.INTERNAL_SERVER_ERROR, ErrorType.UNAUTHORIZED],
-      successMessage: RESPONSE_MESSAGES.SugPosition.Success.Created,
+      successMessage: RESPONSE_MESSAGES.NansPosition.Success.Created,
       status: HttpStatus.CREATED,
-      type: SuccessResponseBody<SugPostionDto>,
+      type: SuccessResponseBody<NansPostionDto>,
     }),
   );
 }
 
-export function UpdateSugPositionEndpoint() {
+export function UpdateNansPositionEndpoint() {
   return applyDecorators(
     HttpCode(HttpStatus.OK),
     StandardDocs({
-      summary: 'Updates an SUG Position',
+      summary: 'Updates an Nans Position',
       includeErrors: [ErrorType.INTERNAL_SERVER_ERROR, ErrorType.UNAUTHORIZED],
-      successMessage: RESPONSE_MESSAGES.SugPosition.Success.Updated,
+      successMessage: RESPONSE_MESSAGES.NansPosition.Success.Updated,
       status: HttpStatus.OK,
-      type: SuccessResponseBody<SugPostionDto>,
+      type: SuccessResponseBody<NansPostionDto>,
     }),
   );
 }

@@ -131,8 +131,7 @@ export class AuthService implements IAuthService {
     remember_me?: boolean,
   ): Promise<LoginDto> {
     try {
-      const admin =
-        await this.adminRepository.findActiveVerifiedByIdentifier(identifier);
+      const admin = await this.adminRepository.findBy({ email: identifier });
 
       if (!admin) throw new InvalidCredentialsException();
 
@@ -214,15 +213,12 @@ export class AuthService implements IAuthService {
     }
   }
 
-  public async initiateResetPassword(
-    email: string,
-    matric_number: string,
-  ): Promise<void> {
+  public async initiateResetPassword(email: string): Promise<void> {
     try {
       const admin = await this.adminRepository.findBy(
         {
           email,
-          matric_number,
+
           must_set_password: false,
         },
         {
@@ -268,21 +264,16 @@ export class AuthService implements IAuthService {
     } catch (error) {
       this.logger.logServiceError(this.initiateSetPassword.name, error, {
         email,
-        matric_number,
       });
       throw error;
     }
   }
 
-  public async initiateSetPassword(
-    email: string,
-    matric_number: string,
-  ): Promise<void> {
+  public async initiateSetPassword(email: string): Promise<void> {
     try {
       const admin = await this.adminRepository.findBy(
         {
           email,
-          matric_number,
         },
         {
           relations: ['all'],
@@ -325,8 +316,6 @@ export class AuthService implements IAuthService {
         context: {
           name: admin.name,
           role: mapRoles(admin.role.role),
-          department: admin.department.department,
-          faculty: admin.faculty.faculty,
           action_url: `${env.FRONTEND_URL}/admin/new?token=${randomToken}`,
           year: new Date().getFullYear(),
         },
@@ -334,7 +323,6 @@ export class AuthService implements IAuthService {
     } catch (error) {
       this.logger.logServiceError(this.initiateSetPassword.name, error, {
         email,
-        matric_number,
       });
       throw error;
     }

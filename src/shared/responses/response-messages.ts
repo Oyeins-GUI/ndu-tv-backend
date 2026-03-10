@@ -52,68 +52,26 @@ export const RESPONSE_MESSAGES = {
     },
   },
 
-  Department: {
+  NansPosition: {
     Success: {
-      Created: 'Department successfully created',
-      Retrieved: 'Department(s) successfully retrieved',
-      Updated: 'Department successfully updated',
-      Deleted: 'Department successfully deleted',
+      Retrieved: 'NANS Postion(s) retrieved successfully',
+      Created: 'NANS Postion(s) created successfully',
+      Updated: 'NANS Postion(s) updated successfully',
     },
-    Failure: { NotFound: 'Department not found' },
+    Failure: { NotFound: 'NANS  Position not found' },
   },
 
-  Faculty: {
+  NansExecutive: {
     Success: {
-      Created: 'Faculty successfully created',
-      Retrieved: 'Faculties successfully retrieved',
-      Updated: 'Faculty successfully updated',
-      Deleted: 'Faculty successfully deleted',
+      Created: 'NANS Executive(s) created successfully',
+      Updated: 'NANS Executive(s) updated successfully',
+      Retrieved: 'NANS Executive(s) retrieved succesfully',
+      Deleted: 'NANS Executive sucessfully deleteted',
     },
     Failure: {
-      NotFound: 'Faculty not found',
-    },
-  },
-
-  SugPosition: {
-    Success: {
-      Retrieved: 'SUG Postion(s) retrieved successfully',
-      Created: 'SUG Postion(s) created successfully',
-      Updated: 'SUG Postion(s) updated successfully',
-    },
-    Failure: { NotFound: 'SUG  Position not found' },
-  },
-
-  SugExecutive: {
-    Success: {
-      Created: 'SUG Executive(s) created successfully',
-      Updated: 'SUG Executive(s) updated successfully',
-      Retrieved: 'SUG Executive(s) retrieved succesfully',
-      Deleted: 'SUG Executive sucessfully deleteted',
-    },
-    Failure: {
-      DeparmentNotInFaculty:
-        'Specified Department must be a department of sepecified Faculty',
-      NotFound: 'SUG Executive not found',
-      AlreadyExisting: 'Sug Executive Already Exists',
-      PostionHeld: 'Postion already held for specifeid scope and session',
-      FacultyIdNotProvided:
-        'Faculty ID is required to get executives of scope Faculty',
-      DepartmentIdNotProvided:
-        'Department ID is required to get executives of scope Department',
-      IsAnAdmin:
-        'SUG Executive is a current admin, remove from admin before removing as executive',
-      MustBeCurrentSessionExecutive:
-        'Sug exectuive must be current session executive',
-    },
-  },
-  AcademicSession: {
-    Success: {
-      Created: 'Academic session created successfully',
-      Updated: 'Academic session updated successfully',
-      Retrieved: 'Academic Session(s) retrieved successfully',
-    },
-    Failure: {
-      NotFound: 'Academic Session not found',
+      NotFound: 'NANS Executive not found',
+      AlreadyExisting:
+        'NANS Executive for said postion and year Already Exists',
     },
   },
   Role: {

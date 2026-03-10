@@ -1,45 +1,30 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Admin } from '../../db/models/admins.model';
-import { Department } from '../../db/models/departments.model';
-import { Faculty } from '../../db/models/faculties.model';
-import { SugExecutive } from '../../db/models/sug-executives.model';
-import { SugPosition } from '../../db/models/sug-positions.model';
-import { AcademicSession } from '../../db/models/academic-sessions.model';
 import { EmailService } from '../../lib/email/email.service';
-import { AcademicSessionRepository } from './repositories/academic-session.repository';
 import { AdminRepository } from './repositories/admin.repository';
-import { DepartmentRepository } from './repositories/department.repository';
-import { FacultyRepository } from './repositories/faculty.repository';
-import { SugPositionRepository } from './repositories/position.repository';
 import { RoleRepository } from './repositories/role.repository';
-import { SugExecutiveRepository } from './repositories/sug-executive.repository';
-import { AdminController } from './controllers/admin.controller';
 import { Role } from '../../db/models/roles.model';
-import { DepartmentController } from './controllers/department.controller';
-import { FacultyController } from './controllers/faculty.controller';
-import { AcademicService } from './services/academic.service';
 import { ExecutiveService } from './services/executive.service';
 import { AdminManagementService } from './services/admin-management.service';
 import { AppSettings } from '../../db/models/app-settings.model';
 import { PlatformConfigService } from './services/platform-config.service';
 import { PlatformConfigRepository } from './repositories/platform-config.repository';
-import { CentralAdminGuard } from './guards/central-admin.guard';
 import { EventService } from '../../lib/event/event.service';
 import { AdminEventListener } from './events/admin-event.listener';
-
-//Module appears too large did not think it will grow like this [makes me look like i don tnow what am doing i know :) ]
+import { NansExecutive } from '../../db/models/nans-executives.model';
+import { NansPosition } from '../../db/models/nans-positions.model';
+import { AdminController } from './controllers/admin.controller';
+import { NansExecutiveRepository } from './repositories/nans-executive.repository';
+import { NansPositionRepository } from './repositories/position.repository';
 
 @Module({
   imports: [
     SequelizeModule.forFeature([
       AppSettings,
       Admin,
-      Department,
-      Faculty,
-      SugExecutive,
-      SugPosition,
-      AcademicSession,
+      NansExecutive,
+      NansPosition,
       Role,
     ]),
   ],
@@ -58,29 +43,14 @@ import { AdminEventListener } from './events/admin-event.listener';
     AdminRepository,
     { provide: 'IAdminRepository', useExisting: AdminRepository },
 
-    DepartmentRepository,
-    { provide: 'IDepartmentRepository', useExisting: DepartmentRepository },
-
-    FacultyRepository,
-    { provide: 'IFacultyRepository', useExisting: FacultyRepository },
-
-    SugExecutiveRepository,
-    { provide: 'ISugExecutiveRepository', useExisting: SugExecutiveRepository },
+    NansExecutiveRepository,
+    {
+      provide: 'INansExecutiveRepository',
+      useExisting: NansExecutiveRepository,
+    },
 
     RoleRepository,
     { provide: 'IRoleRepository', useExisting: RoleRepository },
-
-    AcademicSessionRepository,
-    {
-      provide: 'IAcademicSessionRepository',
-      useExisting: AcademicSessionRepository,
-    },
-
-    AcademicService,
-    {
-      provide: 'IAcademicService',
-      useExisting: AcademicService,
-    },
 
     ExecutiveService,
     { provide: 'IExecutiveService', useExisting: ExecutiveService },
@@ -91,13 +61,11 @@ import { AdminEventListener } from './events/admin-event.listener';
       useExisting: AdminManagementService,
     },
 
-    SugPositionRepository,
-    { provide: 'ISugPositionRepository', useExisting: SugPositionRepository },
+    NansPositionRepository,
+    { provide: 'INansPositionRepository', useExisting: NansPositionRepository },
 
     EmailService,
     { provide: 'IEmailService', useExisting: EmailService },
-
-    CentralAdminGuard,
 
     AdminEventListener,
 
@@ -108,7 +76,7 @@ import { AdminEventListener } from './events/admin-event.listener';
     },
   ],
 
-  controllers: [AdminController, DepartmentController, FacultyController],
+  controllers: [AdminController],
 
   exports: [
     SequelizeModule,

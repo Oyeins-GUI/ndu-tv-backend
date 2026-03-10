@@ -1,4 +1,4 @@
-import { IncludeOptions, Op } from 'sequelize';
+import { IncludeOptions, Op, WhereOptions } from 'sequelize';
 import { GeneralFindOptions } from '../types/repositories.types';
 
 export function resolveOptions<T, K>(
@@ -6,8 +6,12 @@ export function resolveOptions<T, K>(
   excludeFieldsParam: Array<keyof T>,
   relationsFunction: (relations: K[]) => IncludeOptions[],
 ) {
+  const completeExcludeFields = options?.excludeFields
+    ? [...excludeFieldsParam, ...options.excludeFields]
+    : excludeFieldsParam;
+
   const excludeFields = getExcludedFields(
-    excludeFieldsParam,
+    completeExcludeFields,
     options?.includeFields ?? [],
     options?.includeAllFields,
   );
@@ -30,13 +34,22 @@ export function getExcludedFields<T>(
       : excludeFields;
 }
 
-export const search = <T>(fields: Array<keyof T>[], term: string) => ({
+export const search = <T>(fields: Array<keyof T>, term: string) => ({
   or: fields.map((field) => ({ [field as any]: ilike(`%${term}%`) })),
 });
 
 const createOperator = (op: symbol) => (value: any) => ({ [op]: value });
 
-export const or = createOperator(Op.or);
+// export const and = createOperator(Op.and);
+// export const or = createOperator(Op.or);
+export const and = <T>(conditions: WhereOptions<T>[]): WhereOptions<T> => ({
+  [Op.and]: conditions,
+});
+
+export const or = <T>(conditions: WhereOptions<T>[]): WhereOptions<T> => ({
+  [Op.or]: conditions,
+});
+
 export const like = createOperator(Op.like);
 export const ilike = createOperator(Op.iLike);
 export const inArray = createOperator(Op.in);

@@ -4,10 +4,9 @@ import { BaseRepository } from '../../../shared/repositories/base.repository';
 import {
   CreatePlatformConfigInput,
   IPlatformConfigRepository,
-  PlatformConfigRelations,
   UpdatePlatformConfigInput,
 } from './interfaces/platform-config-repository.interface';
-import { AcademicSession } from '../../../db/models/academic-sessions.model';
+
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 
@@ -16,8 +15,7 @@ export class PlatformConfigRepository
   extends BaseRepository<
     AppSettings,
     CreatePlatformConfigInput,
-    UpdatePlatformConfigInput,
-    PlatformConfigRelations
+    UpdatePlatformConfigInput
   >
   implements IPlatformConfigRepository
 {
@@ -25,15 +23,8 @@ export class PlatformConfigRepository
     super(model);
   }
 
-  protected computeRelations(
-    relations: PlatformConfigRelations[],
-  ): IncludeOptions[] {
+  protected computeRelations(relations: ''[]): IncludeOptions[] {
     const include: IncludeOptions[] = [];
-
-    include.push({
-      model: AcademicSession,
-      as: 'current_session',
-    });
 
     return include;
   }

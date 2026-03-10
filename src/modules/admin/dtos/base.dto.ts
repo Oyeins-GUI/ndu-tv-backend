@@ -1,6 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { SCOPE } from '../../../shared/enums';
-import { AcademicSessionDto } from './common.dto';
 
 export class AdminResponseBody {
   @ApiProperty({ example: 'Jane Doe', description: 'Full name of the admin' })
@@ -9,39 +7,12 @@ export class AdminResponseBody {
   @ApiProperty({ example: 'jane@example.com', description: 'Email address' })
   public email: string;
 
-  @ApiProperty({
-    example: 'NDU/1234/2020',
-    description: 'Matric number of the admin',
-  })
-  public matric_number: string;
-
   @ApiProperty({ example: 'System Admin', description: 'Admin role/title' })
   public role: string;
 
   @ApiProperty({
-    example: 'President',
-    description: 'Position held by the admin',
-  })
-  public position: string;
-
-  @ApiProperty({
-    example: 'Engineering',
-    description: 'Faculty the admin belongs to',
-  })
-  public faculty: string;
-
-  @ApiProperty({
-    example: 'Electrical Engineering',
-    description: 'Department of the admin',
-  })
-  public deparment: string;
-
-  @ApiProperty({ enum: SCOPE, description: 'Scope of access' })
-  public scope: string;
-
-  @ApiProperty({
-    example: true,
-    description: 'Whether the admin is active',
+    description: 'Admin active status',
+    example: false,
     type: 'boolean',
   })
   public is_admin_enabled: boolean;
@@ -54,7 +25,7 @@ export class AdminResponseBody {
   public last_login_at: string | Date | null;
 }
 
-export class SugExecutiveResponseBody {
+export class NansExecutiveResponseBody {
   @ApiProperty({
     example: 'John Smith',
     description: 'Full name of the executive',
@@ -62,44 +33,16 @@ export class SugExecutiveResponseBody {
   public name: string;
 
   @ApiProperty({
-    example: 'john.smith@ndutv.ng',
-    description: 'Email address of the executive',
+    example: '2023',
+    description: 'year position was held assigned',
   })
-  public email: string;
-
-  @ApiProperty({
-    example: 'NDU/2021/04567',
-    description: 'Matric number of the executive',
-  })
-  public matric_number: string;
-
-  @ApiProperty({ example: '+2348012345678', description: 'Phone number' })
-  public phone_number: string;
-
-  @ApiProperty({
-    example: '2023/2024',
-    description: 'Academic session assigned',
-  })
-  public session: string;
+  public year: string;
 
   @ApiProperty({
     example: 'President',
     description: 'Title or position in student government',
   })
   public position: string;
-
-  @ApiProperty({ example: 'Management Sciences', description: 'Faculty name' })
-  public faculty: string;
-
-  @ApiProperty({ example: 'Accounting', description: 'Department name' })
-  public deparment: string;
-
-  @ApiProperty({
-    enum: SCOPE,
-    example: SCOPE.FACULTY,
-    description: 'Scope of representation',
-  })
-  public scope: string;
 
   @ApiProperty({
     example: 'https://cdn.ndutv.ng/executives/john-smith.jpg',
@@ -108,78 +51,20 @@ export class SugExecutiveResponseBody {
   public image_url: string;
 }
 
-export class DepartmentResponseBody {
-  @ApiProperty({
-    description: 'Department ID',
-    example: '550e8400-e29b-41d4-a716-446655440001',
-  })
-  public id: string;
-
-  @ApiProperty({
-    description: 'Department name',
-    example: 'Computer Science',
-  })
-  public department: string;
-
-  @ApiProperty({
-    description: 'Department options/programs',
-    example: ['Software Engineering', 'Cybersecurity', 'Data Science'],
-    type: [String],
-    nullable: true,
-  })
-  public options?: string[] | null;
-
-  @ApiProperty({
-    description: 'Faculty name',
-    example: 'Faculty of Science',
-  })
-  public faculty: string;
-}
-
-export class FacultyResponseBody {
-  @ApiProperty({
-    description: 'Faculty ID',
-    example: '550e8400-e29b-41d4-a716-446655440001',
-  })
-  public id: string;
-
-  @ApiProperty({
-    description: 'Faculty name',
-    example: 'Faculty of Science',
-  })
-  public faculty: string;
-
-  @ApiProperty({
-    description: 'Departments under this faculty',
-    example: ['Computer Science', 'Mathematics', 'Physics'],
-    required: false,
-    type: [String],
-  })
-  public departments?: string[];
-}
-
 export class PlatformConfigResponseBody {
   @ApiProperty({
-    description: 'ID of the current session',
-    example: '550e8400-e29b-41d4-a716-446655440001',
-    type: 'string',
+    description: 'App Enablement status',
+    example: true,
+    type: 'boolean',
   })
-  public current_session_id: string;
+  public is_app_enabled: boolean;
 
   @ApiProperty({
-    description: 'current session details',
-    example: '2024/2025',
+    description: 'Advertisment Enablement status',
+    example: true,
+    type: 'boolean',
   })
-  public current_session: string;
-
-  // @ApiProperty({
-  //   description: 'ID of the current session',
-  //   example: '550e8400-e29b-41d4-a716-446655440001',
-  //   type: 'string',
-  // })
-  // public is_app_enabled: boolean;
-
-  // public is_ad_enabled: boolean;
+  public is_add_enabled: boolean;
 
   @ApiProperty({
     description: 'Article publishing status',

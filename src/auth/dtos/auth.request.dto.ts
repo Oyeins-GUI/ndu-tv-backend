@@ -15,7 +15,7 @@ export class LoginRequestBody {
   })
   @IsString()
   @IsNotEmpty()
-  public identifier: string;
+  public email: string;
 
   @ApiProperty({
     description: 'Plaintext password',
@@ -44,17 +44,6 @@ export class SetPasswordInitRequestBody {
   @IsNotEmpty()
   @IsEmail()
   public email: string;
-
-  @ApiProperty({
-    description: 'Matric number of the user',
-    example: 'UG/19/2024',
-  })
-  @IsString()
-  @Matches(/^UG\/\d{2}\/\d{4}$/, {
-    message: 'Matric number must match UG/00/0000 format',
-  })
-  @IsNotEmpty()
-  public matric_number: string;
 }
 
 export class PasswordConfirmRequestBody {

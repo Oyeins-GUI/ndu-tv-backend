@@ -1,26 +1,26 @@
 import { InjectModel } from '@nestjs/sequelize';
-import {
-  CreateSugPositionInput,
-  ISugPositionRepository,
-  UpdateSugPositionInput,
-} from './interfaces/position-repository.interface';
-import { SugPosition } from '../../../db/models/sug-positions.model';
-import { IncludeOptions } from 'sequelize';
+import { NansPosition } from '../../../db/models/nans-positions.model';
 import { BaseRepository } from '../../../shared/repositories/base.repository';
+import {
+  CreateNansPositionInput,
+  UpdateNansPositionInput,
+  INansPositionRepository,
+} from './interfaces/position-repository.interface';
+import { IncludeOptions } from 'sequelize';
 
-export class SugPositionRepository
+export class NansPositionRepository
   extends BaseRepository<
-    SugPosition,
-    CreateSugPositionInput,
-    UpdateSugPositionInput
+    NansPosition,
+    CreateNansPositionInput,
+    UpdateNansPositionInput
   >
-  implements ISugPositionRepository
+  implements INansPositionRepository
 {
   constructor(
-    @InjectModel(SugPosition)
-    private readonly sugPositionModel: typeof SugPosition,
+    @InjectModel(NansPosition)
+    private readonly NansPositionModel: typeof NansPosition,
   ) {
-    super(sugPositionModel);
+    super(NansPositionModel);
   }
 
   protected computeRelations(relations: ''[]): IncludeOptions[] {
