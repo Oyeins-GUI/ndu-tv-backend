@@ -1,5 +1,8 @@
 import { AdminDto } from '../../dtos/admin.dto';
-import { UpdateAdminRequestBody } from '../../dtos/admin.request.dto';
+import {
+  CreateAdminRequestBody,
+  UpdateAdminRequestBody,
+} from '../../dtos/admin.request.dto';
 import { RoleDto } from '../../dtos/common.dto';
 
 export interface IAdminManagementService {
@@ -13,7 +16,7 @@ export interface IAdminManagementService {
    * @param data- Data to add
    * @returns {AdminDto} - The newly added admin
    */
-  addAdmin(data: AddAdminInput): Promise<AdminDto>;
+  addAdmin(data: CreateAdminRequestBody): Promise<AdminDto>;
 
   /**
    * Removes an admin
@@ -31,8 +34,3 @@ export interface IAdminManagementService {
     data: UpdateAdminRequestBody,
   ): Promise<AdminDto>;
 }
-
-export type AddAdminInput = {
-  executive_id: string;
-  role_id: string;
-};

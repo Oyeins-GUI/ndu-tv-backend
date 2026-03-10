@@ -10,7 +10,7 @@ export async function up({
 }: MigrationContext): Promise<void> {
   const date = new Date();
 
-  await queryInterface.bulkInsert('sug_positions', [
+  await queryInterface.bulkInsert('nans_positions', [
     {
       id: uuidv4(),
       position: 'PRES',

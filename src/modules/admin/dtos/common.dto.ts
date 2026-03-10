@@ -11,13 +11,16 @@ export class NansExecutiveDto {
 
   public image_url: string;
 
-  public postion: string;
+  public position: string;
+
+  public year: string;
 
   constructor(model: NansExecutive) {
     this.id = model.id;
     this.name = model.name;
     this.image_url = model.image_url;
-    this.postion = model.position.position;
+    this.position = model.position.position;
+    this.year = model.year;
   }
 
   static fromEntities(models: NansExecutive[]): NansExecutiveDto[] {

@@ -10,6 +10,61 @@ import {
 import { SuccessResponseBody } from '../../../shared/responses/success-response';
 import { RoleDto, NansPostionDto } from '../dtos/common.dto';
 import { PlatformConfigApiResponse } from '../dtos/common.response.dto';
+import { Public } from '../../../shared/decorators/public.decorator';
+
+export function GetNansExecutiveEndpoint() {
+  return applyDecorators(
+    StandardDocs({
+      summary: 'Get a nans exectuive by thier id',
+      includeErrors: [
+        ErrorType.BAD_REQUEST,
+        ErrorType.CONFLICT,
+        ErrorType.UNAUTHORIZED,
+        ErrorType.FORBIDDEN,
+        ErrorType.INTERNAL_SERVER_ERROR,
+        ErrorType.NOT_FOUND,
+      ],
+      successMessage: RESPONSE_MESSAGES.NansExecutive.Success.Retrieved,
+      status: HttpStatus.CREATED,
+      type: NansExecutiveApiResponse,
+    }),
+  );
+}
+
+export function GetNansExecutivesEndpoint() {
+  return applyDecorators(
+    Public(),
+    StandardDocs({
+      summary: 'Get Nans exectuive',
+      includeErrors: [
+        ErrorType.BAD_REQUEST,
+        ErrorType.CONFLICT,
+        ErrorType.UNAUTHORIZED,
+        ErrorType.FORBIDDEN,
+        ErrorType.INTERNAL_SERVER_ERROR,
+        ErrorType.NOT_FOUND,
+      ],
+      successMessage: RESPONSE_MESSAGES.NansExecutive.Success.Retrieved,
+      status: HttpStatus.CREATED,
+      type: NansExecutiveApiResponse,
+      queryParams: [
+        {
+          name: 'q',
+          type: 'string',
+          description: 'search parameter',
+          required: false,
+        },
+        {
+          name: 'year',
+          type: 'string',
+          example: '2020',
+          description: 'executives for specific year',
+          required: false,
+        },
+      ],
+    }),
+  );
+}
 
 export function CreateNansExecutiveEndpoint() {
   return applyDecorators(

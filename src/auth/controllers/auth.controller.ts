@@ -82,7 +82,7 @@ export class AuthController {
     @Body() body: LoginRequestBody,
   ): Promise<AdminApiResponse> {
     const data = await this.authService.login(
-      body.identifier,
+      body.email,
       body.password,
       body.remember_me,
     );
@@ -196,7 +196,7 @@ export class AuthController {
   public async initResetPassword(
     @Body() body: SetPasswordInitRequestBody,
   ): Promise<SuccessResponseBody> {
-    this.authService.initiateResetPassword(body.email, body.matric_number);
+    this.authService.initiateResetPassword(body.email);
     return new SuccessResponseBody({
       message: RESPONSE_MESSAGES.Auth.Success.SentPasswordSetLink,
     });
@@ -218,7 +218,7 @@ export class AuthController {
   public async initSetPassword(
     @Body() body: SetPasswordInitRequestBody,
   ): Promise<SuccessResponseBody> {
-    this.authService.initiateSetPassword(body.email, body.matric_number);
+    this.authService.initiateSetPassword(body.email);
     return new SuccessResponseBody({
       message: RESPONSE_MESSAGES.Auth.Success.SentPasswordSetLink,
     });

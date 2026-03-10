@@ -24,6 +24,7 @@ import {
   AdminsApiResponse,
   PaginatedNansExecutivesApiResponse,
   NansExecutiveApiResponse,
+  NansExecutivesApiResponse,
 } from '../dtos/admin.reponse.dto';
 import {
   CreateAdminEndpoint,
@@ -31,7 +32,6 @@ import {
   CreateNansPositionEndpoint,
   DeleteNansExecutiveEndpoint,
   GetAdminsEndpoint,
-  GetAllNansExecutivesEndpoint,
   GetPlatformConfigEndpoint,
   GetRolesEndpoint,
   GetNansPositionsEndpoint,
@@ -39,6 +39,8 @@ import {
   UpdateAdminEndpoint,
   UpdatePlatformConfigEndpoint,
   UpdateNansExecutiveEndpoint,
+  GetNansExecutiveEndpoint,
+  GetNansExecutivesEndpoint,
 } from '../decorators/admin.decorator';
 import { ApiTags } from '@nestjs/swagger';
 import { RESPONSE_MESSAGES } from '../../../shared/responses/response-messages';
@@ -48,7 +50,7 @@ import {
   UpdatePlatformConfigRequestBody,
 } from '../dtos/common.request.dto';
 import { PlatformConfigApiResponse } from '../dtos/common.response.dto';
-import { NansPostionDto, RoleDto } from '../dtos/common.dto';
+import { NansExecutiveDto, NansPostionDto, RoleDto } from '../dtos/common.dto';
 
 import { IPlatformConfigService } from '../services/interfaces/platform-config.interface';
 import { SuperAdminGuard } from '../../../shared/guards/super-admin.guard';
@@ -69,23 +71,34 @@ export class AdminController {
   ) {}
 
   @Get('executives')
-  @GetAllNansExecutivesEndpoint()
-  public async getAllExecutives(
-    @Query('page') page?: number,
-    @Query('limit') limit?: number,
+  @GetNansExecutivesEndpoint()
+  public async getExecutives(
+    @Query('q') search_term?: string,
+    @Query('year') year?: string,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
   ): Promise<PaginatedNansExecutivesApiResponse> {
-    const result = await this.executiveService.getAllExecutives(
-      {
-        page: page ?? 1,
-        limit: limit ?? 50,
-      },
-      session_id,
-    );
+    const result = await this.executiveService.getExecutives({
+      search_term,
+      year,
+      page: page,
+      limit: limit,
+    });
+
     return new PaginatedNansExecutivesApiResponse({
       data: result,
-      page: page ?? 1,
-      limit: limit ?? 50,
+      page,
+      limit,
     });
+  }
+
+  @Get('executives/:id')
+  @GetNansExecutiveEndpoint()
+  public async getExecutive(
+    @Param('id') executive_id: string,
+  ): Promise<NansExecutiveApiResponse> {
+    const result = await this.executiveService.getExecutive(executive_id);
+    return new NansExecutiveApiResponse(result);
   }
 
   @Post('executives')

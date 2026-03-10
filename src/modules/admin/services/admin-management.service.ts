@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CustomLogger } from '../../../lib/logger/logger.service';
 import { IAdminRepository } from '../repositories/interfaces/admin-repository.interface';
 import { AdminDto } from '../dtos/admin.dto';
-import { ISugExecutiveRepository } from '../repositories/interfaces/nans-executive-repository.interface';
 import {
   BadRequestException,
   NotFoundException,
@@ -20,15 +19,14 @@ import {
 import { IRedisCacheService } from '../../../lib/redis/redis.interface';
 import { getTokenKey } from '../../../auth/auth.utils';
 import { generateRandomToken } from '../../../lib/utils';
-import {
-  AddAdminInput,
-  IAdminManagementService,
-} from './interfaces/admin-management.interface';
+import { IAdminManagementService } from './interfaces/admin-management.interface';
 import { Role as RoleEnum, SCOPE } from '../../../shared/enums';
 import { RoleDto } from '../dtos/common.dto';
-import { IAcademicSessionRepository } from '../repositories/interfaces/academic-session-repository.interface';
-import { mapRoles } from '../../../shared/helpers/service.helper';
-import { UpdateAdminRequestBody } from '../dtos/admin.request.dto';
+
+import {
+  CreateAdminRequestBody,
+  UpdateAdminRequestBody,
+} from '../dtos/admin.request.dto';
 
 @Injectable()
 export class AdminManagementService implements IAdminManagementService {
@@ -36,9 +34,6 @@ export class AdminManagementService implements IAdminManagementService {
     private readonly logger: CustomLogger,
     @Inject('IAdminRepository')
     private readonly adminRepository: IAdminRepository,
-
-    @Inject('ISugExecutiveRepository')
-    private readonly sugExecutiveRepository: ISugExecutiveRepository,
 
     @Inject('IRoleRepository')
     private readonly roleRepository: IRoleRepository,
@@ -48,9 +43,6 @@ export class AdminManagementService implements IAdminManagementService {
 
     @Inject('IRedisCacheService')
     private readonly redisCacheService: IRedisCacheService,
-
-    @Inject('IAcademicSessionRepository')
-    private readonly academicSessionRepository: IAcademicSessionRepository,
 
     private readonly jwtService: JwtService,
   ) {
@@ -65,9 +57,7 @@ export class AdminManagementService implements IAdminManagementService {
       );
 
       const filteredAdmins = admins.filter(
-        (admin) =>
-          admin.scope !== SCOPE.SUPER &&
-          admin.role.role !== RoleEnum.SUPER_ADMIN,
+        (admin) => admin.role.role !== RoleEnum.SUPER_ADMIN,
       );
 
       return AdminDto.fromEntities(filteredAdmins);
@@ -91,10 +81,10 @@ export class AdminManagementService implements IAdminManagementService {
     }
   }
 
-  public async addAdmin(data: AddAdminInput): Promise<AdminDto> {
+  public async addAdmin(data: CreateAdminRequestBody): Promise<AdminDto> {
     try {
       const doesAdminExist = await this.adminRepository.findBy({
-        executive_id: data.executive_id,
+        email: data.email,
       });
 
       if (doesAdminExist) {
@@ -103,21 +93,7 @@ export class AdminManagementService implements IAdminManagementService {
         });
       }
 
-      const [executive, role] = await Promise.all([
-        this.sugExecutiveRepository.findById(data.executive_id, {
-          relations: ['department', 'faculty', 'session'],
-        }),
-        this.roleRepository.findById(data.role_id),
-      ]);
-
-      if (!executive) {
-        throw new NotFoundException({
-          reason: RESPONSE_MESSAGES.SugExecutive.Failure.NotFound,
-          details: {
-            executive_id: data.executive_id,
-          },
-        });
-      }
+      const role = await this.roleRepository.findById(data.role_id);
 
       if (!role) {
         throw new NotFoundException({
@@ -128,35 +104,16 @@ export class AdminManagementService implements IAdminManagementService {
         });
       }
 
-      if (!executive.session.is_current_session) {
-        throw new BadRequestException({
-          reason:
-            RESPONSE_MESSAGES.SugExecutive.Failure
-              .MustBeCurrentSessionExecutive,
-        });
-      }
-
-      const allowedRoles = {
-        [SCOPE.CENTRAL]: RoleEnum.CENTRAL_EXEC,
-        [SCOPE.FACULTY]: RoleEnum.FACULTY_EXEC,
-        [SCOPE.DEPARTMENT]: RoleEnum.DEPARTMENT_EXEC,
-      };
-
-      if (role.role !== allowedRoles[executive.scope])
-        throw new BadRequestException({
-          reason: 'Role must match its corresponding scope',
-        });
-
       const admin = await this.adminRepository.create({
-        ...executive.toJSON(),
+        ...data,
         must_set_password: true,
-        executive_id: executive.id,
         role_id: role.id,
         is_admin_enabled: true,
       });
 
       const payload = {
         id: admin.id,
+        email: admin.email,
       };
 
       const token = await this.jwtService.signAsync(payload, {
@@ -177,10 +134,9 @@ export class AdminManagementService implements IAdminManagementService {
         to: admin.email,
         subject: TEMPLATE_SUBJECTS.activateAccount,
         context: {
+          app_name: env.APP_NAME,
           name: admin.name,
-          role: mapRoles(role.role),
-          department: executive.department.department,
-          faculty: executive.faculty.faculty,
+          role: role.role,
           action_url: `${env.FRONTEND_URL}/admin/new?token=${randomToken}`,
           year: new Date().getFullYear(),
         },
@@ -221,30 +177,16 @@ export class AdminManagementService implements IAdminManagementService {
           reason: RESPONSE_MESSAGES.Admin.Failiure.NotFound,
         });
 
-      if (data.role_id) {
-        const allowedRoles = {
-          [SCOPE.CENTRAL]: RoleEnum.CENTRAL_EXEC,
-          [SCOPE.FACULTY]: RoleEnum.FACULTY_EXEC,
-          [SCOPE.DEPARTMENT]: RoleEnum.DEPARTMENT_EXEC,
-        };
+      const role = await this.roleRepository.findById(data.role_id);
 
-        const role = await this.roleRepository.findById(data.role_id);
-
-        if (!role) {
-          throw new NotFoundException({
-            reason: RESPONSE_MESSAGES.Role.Failure.NotFound,
-            details: {
-              executive_id: role,
-            },
-          });
-        }
-
-        if (role.role !== allowedRoles[admin.scope])
-          throw new BadRequestException({
-            reason: 'Role must match its corresponding scope',
-          });
+      if (!role) {
+        throw new NotFoundException({
+          reason: RESPONSE_MESSAGES.Role.Failure.NotFound,
+          details: {
+            executive_id: role,
+          },
+        });
       }
-
       const updatedAdmin = await this.adminRepository.updateByModel(
         admin,
         data,

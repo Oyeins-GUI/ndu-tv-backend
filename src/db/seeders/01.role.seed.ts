@@ -22,27 +22,8 @@ export async function up({
     },
     {
       id: uuidv4(),
-      role: Role.CENTRAL_EXEC,
-      description:
-        'Moderator with content and user management privileges for entire tv',
-      created_at: date,
-      updated_at: null,
-      deleted_at: null,
-    },
-    {
-      id: uuidv4(),
-      role: Role.FACULTY_EXEC,
-      description:
-        'Moderator with content and user management privileges for Facutly level',
-      created_at: date,
-      updated_at: null,
-      deleted_at: null,
-    },
-    {
-      id: uuidv4(),
-      role: Role.DEPARTMENT_EXEC,
-      description:
-        'Moderator with content and user management privileges for Department level',
+      role: Role.BASIC_ADMIN,
+      description: 'Platform Admin with managed acess',
       created_at: date,
       updated_at: null,
       deleted_at: null,

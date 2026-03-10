@@ -19,11 +19,9 @@ import {
   APP_SETTINGS_REDIS_TTL,
   DEFAULT_PLATFORM_CONFIG,
 } from '../../../config/constants';
-import { IAcademicSessionRepository } from '../repositories/interfaces/academic-session-repository.interface';
 import { UpdatePlatformConfigRequestBody } from '../dtos/common.request.dto';
 import { BadRequestException } from '../../../shared/exceptions';
 import { RESPONSE_MESSAGES } from '../../../shared/responses/response-messages';
-import { instanceToPlain, plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class PlatformConfigService
@@ -35,9 +33,6 @@ export class PlatformConfigService
     private readonly platformConfigRepository: IPlatformConfigRepository,
     @Inject('IRedisCacheService')
     private readonly redisCacheService: IRedisCacheService,
-
-    @Inject('IAcademicSessionRepository')
-    private readonly academicSessionRepository: IAcademicSessionRepository,
   ) {
     this.logger.setContext(PlatformConfigService.name);
   }
@@ -46,7 +41,8 @@ export class PlatformConfigService
     await this.initSettings();
   }
 
-  private async cachePlatformConfig(data: AppSettings) {
+  private async cachePlatformConfig(data: AppSettings | null) {
+    if (!data) return;
     const parsedPlatformConfig = new PlatformConfigDto(data);
     await this.redisCacheService.setString(
       APP_SETTINGS_REDIS_KEY,
@@ -69,27 +65,7 @@ export class PlatformConfigService
       // }
 
       if (!platformConfig) {
-        platformConfig = await this.platformConfigRepository.findBy(
-          {},
-          {
-            relations: ['current_session'],
-          },
-        );
-
-        if (!platformConfig) {
-          const current_session = await this.academicSessionRepository.findBy({
-            is_current_session: true,
-          });
-          if (!current_session)
-            throw new IntrinsicException(
-              'Unable to initialize settings, could not get current session',
-              { cause: 'Could not get current session' },
-            );
-          platformConfig = await this.platformConfigRepository.create({
-            ...DEFAULT_PLATFORM_CONFIG,
-            current_session_id: current_session.id,
-          });
-        }
+        platformConfig = await this.platformConfigRepository.findBy({});
         await this.cachePlatformConfig(platformConfig);
       }
     } catch (error) {
@@ -112,13 +88,8 @@ export class PlatformConfigService
       }
 
       if (!platformConfig) {
-        platformConfig = await this.platformConfigRepository.findBy(
-          {},
-          {
-            relations: ['current_session'],
-          },
-        );
-        await this.cachePlatformConfig(platformConfig!);
+        platformConfig = await this.platformConfigRepository.findBy({});
+        await this.cachePlatformConfig(platformConfig);
       }
 
       return new PlatformConfigDto(platformConfig as AppSettings);

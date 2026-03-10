@@ -47,6 +47,15 @@ export class ExecutiveService implements IExecutiveService {
     data: CreateNansExecutiveRequestBody,
   ): Promise<NansExecutiveDto> {
     try {
+      const nansPostion = await this.nansPositionRepository.findById(
+        data.position_id,
+      );
+
+      if (!nansPostion)
+        throw new BadRequestException({
+          reason: RESPONSE_MESSAGES.NansPosition.Failure.NotFound,
+        });
+
       const exectuiveExits = await this.nansExecutiveRepository.findBy({
         position_id: data.position_id,
         year: data.year,

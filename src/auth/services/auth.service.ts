@@ -30,7 +30,6 @@ import { env } from '../../config';
 import { IEmailService } from '../../lib/email/email.interface';
 import { TEMPLATE_NAMES, TEMPLATE_SUBJECTS } from '../../lib/email/templates';
 import { generateOtp, generateRandomToken } from '../../lib/utils';
-import { mapRoles } from '../../shared/helpers/service.helper';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -255,6 +254,7 @@ export class AuthService implements IAuthService {
         to: admin.email,
         subject: TEMPLATE_SUBJECTS.resetPassword,
         context: {
+          app_name: env.APP_NAME,
           name: admin.name,
           expires_in: '24 Hours',
           action_url: `${env.FRONTEND_URL}/admin/reset?token=${randomToken}`,
@@ -314,8 +314,9 @@ export class AuthService implements IAuthService {
         to: admin.email,
         subject: TEMPLATE_SUBJECTS.activateAccount,
         context: {
+          app_name: env.APP_NAME,
           name: admin.name,
-          role: mapRoles(admin.role.role),
+          role: admin.role.role,
           action_url: `${env.FRONTEND_URL}/admin/new?token=${randomToken}`,
           year: new Date().getFullYear(),
         },
@@ -377,6 +378,7 @@ export class AuthService implements IAuthService {
         to: admin.email,
         subject: TEMPLATE_SUBJECTS.changePassword,
         context: {
+          app_name: env.APP_NAME,
           name: admin.name,
           otp: code,
           expires_in: '10 minutes',
