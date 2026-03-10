@@ -254,6 +254,7 @@ export class AuthService implements IAuthService {
         to: admin.email,
         subject: TEMPLATE_SUBJECTS.resetPassword,
         context: {
+          logo_url: env.LOGO_URL,
           app_name: env.APP_NAME,
           name: admin.name,
           expires_in: '24 Hours',
@@ -314,6 +315,7 @@ export class AuthService implements IAuthService {
         to: admin.email,
         subject: TEMPLATE_SUBJECTS.activateAccount,
         context: {
+          logo_url: env.LOGO_URL,
           app_name: env.APP_NAME,
           name: admin.name,
           role: admin.role.role,
@@ -378,6 +380,7 @@ export class AuthService implements IAuthService {
         to: admin.email,
         subject: TEMPLATE_SUBJECTS.changePassword,
         context: {
+          logo_url: env.LOGO_URL,
           app_name: env.APP_NAME,
           name: admin.name,
           otp: code,

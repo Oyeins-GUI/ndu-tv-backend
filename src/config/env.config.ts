@@ -97,6 +97,9 @@ class EnvConfig {
   @IsString()
   @IsOptional()
   SUPER_ADMIN_PASSWORD: string;
+
+  @IsString()
+  LOGO_URL: string;
 }
 
 const env = plainToInstance(EnvConfig, process.env, {
