@@ -130,9 +130,18 @@ export class AuthService implements IAuthService {
     remember_me?: boolean,
   ): Promise<LoginDto> {
     try {
-      const admin = await this.adminRepository.findBy({ email: identifier });
+      const admin = await this.adminRepository.findBy(
+        { email: identifier },
+        { includeAllFields: true },
+      );
 
-      if (!admin) throw new InvalidCredentialsException();
+      if (
+        !admin ||
+        !admin.is_admin_enabled ||
+        admin.must_set_password ||
+        !admin.password
+      )
+        throw new InvalidCredentialsException();
 
       const result = await bcrypt.compare(password, admin.password!);
 
@@ -533,6 +542,7 @@ export class AuthService implements IAuthService {
       const udpatedAdmin = await this.adminRepository.updateByModel(admin, {
         password: hashedPassword,
         must_set_password: false,
+        is_admin_enabled: true,
       });
 
       const payload: AuthTokenPayload = {

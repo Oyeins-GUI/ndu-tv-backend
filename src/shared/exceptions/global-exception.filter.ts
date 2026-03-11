@@ -2,6 +2,7 @@ import {
   ArgumentsHost,
   Catch,
   ExceptionFilter,
+  HttpException,
   HttpStatus,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
@@ -29,11 +30,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest();
     const response = ctx.getResponse();
 
-    let statusCode =
-      (exception as any).getStatus() || HttpStatus.INTERNAL_SERVER_ERROR;
-    let code: string | ERROR_CODES =
-      response.statusCode || ERROR_CODES.INTERNAL_SERVER_ERROR;
-    let reason = response.message || 'Internal Server Error';
+    // Safe defaults
+    let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+    let code: string | ERROR_CODES = ERROR_CODES.INTERNAL_SERVER_ERROR;
+    let reason = 'Internal Server Error';
     let details: any = undefined;
 
     if (exception instanceof AppException) {
@@ -41,44 +41,43 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       code = exception.code;
       reason = exception.reason;
       details = exception.details;
-    }
-
-    if (exception instanceof SequelizeValidationError) {
+    } else if (exception instanceof SequelizeValidationError) {
       statusCode = HttpStatus.BAD_REQUEST;
       code = ERROR_CODES.VALIDATION_ERROR;
       reason = 'Database Input Validation failed';
       details = exception.errors.map((e) => {
         this.logger.error(e.message);
-        return {
-          field: e.path,
-          message: e.message,
-        };
+        return { field: e.path, message: e.message };
       });
-    }
-
-    if (exception instanceof DatabaseError) {
+    } else if (exception instanceof DatabaseError) {
       statusCode = HttpStatus.BAD_REQUEST;
       this.logger.error(exception.message);
       if (exception.message.includes('invalid input syntax for type uuid')) {
         code = ERROR_CODES.VALIDATION_ERROR;
         reason = 'Invalid UUID format provided';
-        details = [
-          {
-            message: exception.message,
-          },
-        ];
+        details = [{ message: exception.message }];
       } else {
         code = ERROR_CODES.BAD_REQUEST;
         reason = 'Database validation error';
-        details = [
-          {
-            message: exception.message,
-          },
-        ];
+        details = [{ message: exception.message }];
       }
-    }
-
-    if (exception instanceof Error) {
+    } else if (exception instanceof HttpException) {
+      // NestJS built-in exceptions (NotFoundException, BadRequestException, etc.)
+      statusCode = exception.getStatus();
+      const exceptionResponse = exception.getResponse();
+      if (typeof exceptionResponse === 'string') {
+        reason = exceptionResponse;
+      } else if (typeof exceptionResponse === 'object') {
+        reason = (exceptionResponse as any).message ?? exception.message;
+        // class-validator errors come as an array in message
+        if (Array.isArray(reason)) {
+          details = reason;
+          reason = 'Validation failed';
+        }
+      }
+      code = ERROR_CODES.BAD_REQUEST;
+    } else if (exception instanceof Error) {
+      // Unhandled errors — keep 500 defaults, just use the message
       reason = exception.message;
     }
 
