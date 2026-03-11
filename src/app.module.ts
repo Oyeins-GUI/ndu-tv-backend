@@ -14,6 +14,7 @@ import { AuthGuard } from './auth/gaurds/auth.guard';
 import { TokenValidationService } from './auth/services/token-validation.service';
 import { RedisModule } from './lib/redis/redis.module';
 import { RefreshTokenGuard } from './auth/gaurds/refresh.guard';
+import { ArticleModlue } from './modules/article/article.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { RefreshTokenGuard } from './auth/gaurds/refresh.guard';
     }),
     AuthModlue,
     AdminModule,
+    ArticleModlue,
   ],
   controllers: [AppController],
   providers: [

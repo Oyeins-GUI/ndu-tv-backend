@@ -75,7 +75,6 @@ export function LogoutEndpoint() {
 export function InitSetPasswordEndpoint() {
   return applyDecorators(
     Public(),
-    RateLimit(3600 * 24, 5),
     StandardDocs({
       summary:
         'Initialize password set and account activation process for new admin',
@@ -95,7 +94,6 @@ export function InitSetPasswordEndpoint() {
 export function InitResetPasswordEndpoint() {
   return applyDecorators(
     Public(),
-    RateLimit(3600, 10),
     StandardDocs({
       summary: 'Initialize password reset process for a admin',
       successMessage: RESPONSE_MESSAGES.Auth.Success.SentPasswordSetLink,
@@ -113,7 +111,6 @@ export function InitResetPasswordEndpoint() {
 
 export function InitChangePasswordEndpoint() {
   return applyDecorators(
-    RateLimit(120, 1),
     StandardDocs({
       summary: 'Initialize password change process for a admin',
       successMessage: RESPONSE_MESSAGES.Auth.Success.OtpSent,
@@ -132,7 +129,6 @@ export function InitChangePasswordEndpoint() {
 export function ResetPasswordEndpoint() {
   return applyDecorators(
     Public(),
-    RateLimit(3600, 10),
     StandardDocs({
       summary: 'Resets an admin password',
       successMessage: RESPONSE_MESSAGES.Auth.Success.PasswordReset,
@@ -150,7 +146,6 @@ export function ResetPasswordEndpoint() {
 
 export function ChangePasswordEndpoint() {
   return applyDecorators(
-    RateLimit(120, 2),
     StandardDocs({
       summary: 'Changes an admin password',
       successMessage: RESPONSE_MESSAGES.Auth.Success.PasswordChange,
@@ -169,7 +164,6 @@ export function ChangePasswordEndpoint() {
 export function SetPasswordConfirmEndpoint() {
   return applyDecorators(
     Public(),
-    RateLimit(3600 * 24, 1),
     StandardDocs({
       summary:
         'Confirm set password with token and email, sets the password and logs in the admin',
