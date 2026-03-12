@@ -42,7 +42,7 @@ export class Articles extends BaseModel {
 
   @AllowNull(false)
   @Column(DataType.TEXT)
-  content: string;
+  declare content: string;
 
   @AllowNull(false)
   @Default(false)

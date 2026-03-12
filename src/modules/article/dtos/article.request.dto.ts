@@ -12,11 +12,6 @@ import { ArticleCategory } from '../../../shared/enums/article.enum';
 import { AtLeastOneFieldValidator } from '../../../shared/validators/at-least-one-field.validator';
 
 export class CreateArticleRequestBody {
-  @ApiProperty({ example: 'John Smith' })
-  @IsString()
-  @IsNotEmpty()
-  public author_name: string;
-
   @ApiProperty({ example: 'Article content here...' })
   @IsString()
   @IsNotEmpty()
@@ -53,7 +48,7 @@ export class CreateArticleRequestBody {
 }
 
 export class UpdateArticleRequestBody extends PartialType(
-  OmitType(CreateArticleRequestBody, ['author_name'] as const),
+  CreateArticleRequestBody,
 ) {
   @ApiProperty()
   @IsBoolean()
