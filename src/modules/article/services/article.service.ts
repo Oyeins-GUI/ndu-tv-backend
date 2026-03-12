@@ -137,6 +137,12 @@ export class ArticleService implements IArticleService {
           reason: RESPONSE_MESSAGES.Auth.Failure.Forbidden,
         });
 
+      if (data.is_approved !== undefined && !isSuperAdmin) {
+        throw new ForbiddenException({
+          reason: RESPONSE_MESSAGES.Auth.Failure.Forbidden,
+        });
+      }
+
       const updated = await this.articleRepository.updateByModel(article, data);
       return new ArticleDto(updated);
     } catch (error) {

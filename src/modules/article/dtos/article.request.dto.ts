@@ -55,6 +55,11 @@ export class CreateArticleRequestBody {
 export class UpdateArticleRequestBody extends PartialType(
   OmitType(CreateArticleRequestBody, ['author_name'] as const),
 ) {
+  @ApiProperty()
+  @IsBoolean()
+  @IsOptional()
+  public is_approved: boolean;
+
   @Validate(AtLeastOneFieldValidator)
   public __self__: any;
 }

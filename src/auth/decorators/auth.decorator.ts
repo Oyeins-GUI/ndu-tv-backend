@@ -45,6 +45,7 @@ export function RefreshTokenEndpoint() {
 
 export function MeEndpoint() {
   return applyDecorators(
+    HttpCode(HttpStatus.OK),
     StandardDocs({
       summary: 'Checks current user session',
       successMessage: RESPONSE_MESSAGES.Auth.Success.LoggedIn,

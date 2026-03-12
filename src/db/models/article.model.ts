@@ -41,7 +41,7 @@ export class Articles extends BaseModel {
   declare image_url: string;
 
   @AllowNull(false)
-  @Column(DataType.STRING)
+  @Column(DataType.TEXT)
   content: string;
 
   @AllowNull(false)
