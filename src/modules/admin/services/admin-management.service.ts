@@ -134,6 +134,7 @@ export class AdminManagementService implements IAdminManagementService {
         to: admin.email,
         subject: TEMPLATE_SUBJECTS.activateAccount,
         context: {
+          logo_url: env.LOGO_URL,
           app_name: env.APP_NAME,
           name: admin.name,
           role: role.role,
