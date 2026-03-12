@@ -11,7 +11,7 @@ export class NansExecutiveDto {
 
   public image_url: string;
 
-  public position: string;
+  public position?: string;
 
   public year: string;
 
@@ -21,7 +21,9 @@ export class NansExecutiveDto {
     this.id = model.id;
     this.name = model.name;
     this.image_url = model.image_url;
-    this.position = model.position.position;
+
+    if (model.position) this.position = model.position.position;
+
     this.year = model.year;
     this.exec_type = model.exec_type.toString();
   }

@@ -106,7 +106,7 @@ export class ArticleService implements IArticleService {
         ...rest,
         author_name: admin.name,
         admin_id,
-        is_approved: false,
+        is_approved: data.is_featured ?? false,
         is_featured: false,
       });
 

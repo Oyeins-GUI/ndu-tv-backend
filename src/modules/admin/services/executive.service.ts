@@ -66,7 +66,12 @@ export class ExecutiveService implements IExecutiveService {
           reason: RESPONSE_MESSAGES.NansExecutive.Failure.AlreadyExisting,
         });
       const executive = await this.nansExecutiveRepository.create(data);
-      return new NansExecutiveDto(executive);
+
+      const reloaded = await this.nansExecutiveRepository.reload(executive, {
+        relations: ['position'],
+      });
+
+      return new NansExecutiveDto(reloaded);
     } catch (error) {
       this.logger.logServiceError(this.addExecutive.name, error, { data });
       throw error;
@@ -91,6 +96,7 @@ export class ExecutiveService implements IExecutiveService {
       const exectutives = await this.nansExecutiveRepository.findManyBy(
         _filters,
         {
+          relations: ['position'],
           page: filters.page,
           limit: filters.limit,
         },

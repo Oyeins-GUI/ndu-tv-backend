@@ -12,6 +12,12 @@ export class ArticleResponseBody {
   public admin_id: string;
 
   @ApiProperty({
+    example: 'd290f1ee-6c54-4b01-90e6-d701748f0851',
+    description: 'UUID of the article',
+  })
+  public id: string;
+
+  @ApiProperty({
     example: 'Article content here...',
     description: 'Full article content',
   })

@@ -52,11 +52,19 @@ export class AuthController {
       refreshToken: number;
     },
   ): void {
+    // const cookieOptions = {
+    //   httpOnly: true,
+    //   secure: env.NODE_ENV === 'production',
+    //   sameSite:
+    //     env.NODE_ENV === 'production' ? ('none' as const) : ('lax' as const),
+    // };
+
     const cookieOptions = {
       httpOnly: true,
       secure: env.NODE_ENV === 'production',
       sameSite:
         env.NODE_ENV === 'production' ? ('none' as const) : ('lax' as const),
+      domain: env.NODE_ENV === 'production' ? '.nanszoneb.org' : undefined,
     };
 
     res.cookie(COOKIE_CONSTANTS.accessToken, tokens.access_token, {

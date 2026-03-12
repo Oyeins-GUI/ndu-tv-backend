@@ -42,7 +42,7 @@ export class NansExecutiveResponseBody {
     example: 'President',
     description: 'Title or position in student government',
   })
-  public position: string;
+  public position?: string;
 
   @ApiProperty({
     example: 'https://cdn.ndutv.ng/executives/john-smith.jpg',

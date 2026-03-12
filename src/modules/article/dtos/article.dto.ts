@@ -1,6 +1,8 @@
 import { Articles } from '../../../db/models/article.model';
 
 export class ArticleDto {
+  public id: string;
+
   public author_name: string;
 
   public admin_id: string;
@@ -18,6 +20,7 @@ export class ArticleDto {
   public is_approved: boolean;
 
   constructor(model: Articles) {
+    this.id = model.id;
     this.author_name = model.author_name;
     this.admin_id = model.admin_id;
     this.content = model.content;

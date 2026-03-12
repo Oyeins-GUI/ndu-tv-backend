@@ -6,6 +6,7 @@ import {
   IsEnum,
   IsBoolean,
   Validate,
+  IsOptional,
 } from 'class-validator';
 import { ArticleCategory } from '../../../shared/enums/article.enum';
 import { AtLeastOneFieldValidator } from '../../../shared/validators/at-least-one-field.validator';
@@ -30,6 +31,15 @@ export class CreateArticleRequestBody {
   @IsString()
   @IsNotEmpty()
   public title: string;
+
+  @ApiProperty({
+    example: false,
+    description: 'article featured status',
+    type: 'boolean',
+  })
+  @IsBoolean()
+  @IsOptional()
+  public is_featured: boolean;
 
   @ApiProperty({ example: 'sports', enum: ArticleCategory })
   @IsEnum(ArticleCategory)
