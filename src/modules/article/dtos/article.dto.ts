@@ -21,6 +21,8 @@ export class ArticleDto {
 
   public created_at: string;
 
+  public category: string;
+
   constructor(model: Articles) {
     this.id = model.id;
     this.author_name = model.author_name;
@@ -32,6 +34,7 @@ export class ArticleDto {
     this.is_approved = model.is_approved;
     this.is_featured = model.is_featured;
     this.created_at = model.created_at.toDateString();
+    this.category = model.category;
   }
 
   static fromEntities(models: Articles[]): ArticleDto[] {
