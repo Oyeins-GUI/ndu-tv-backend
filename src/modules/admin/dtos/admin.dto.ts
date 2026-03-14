@@ -1,6 +1,8 @@
 import { Admin } from '../../../db/models/admins.model';
 
 export class AdminDto {
+  public id: string;
+
   public name: string;
 
   public email: string;
@@ -14,6 +16,8 @@ export class AdminDto {
   constructor(model: Admin) {
     this.name = model.name;
     this.email = model.email;
+
+    this.id = model.id;
 
     this.last_login_at = model.last_login_at;
 

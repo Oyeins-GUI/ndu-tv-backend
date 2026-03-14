@@ -33,7 +33,7 @@ export class ArticleDto {
     this.image_url = model.image_url;
     this.is_approved = model.is_approved;
     this.is_featured = model.is_featured;
-    this.created_at = model.created_at.toDateString();
+    this.created_at = model.created_at.toISOString();
     this.category = model.category;
   }
 

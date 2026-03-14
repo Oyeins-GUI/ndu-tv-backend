@@ -30,12 +30,12 @@ import { ExecType } from '../../shared/enums/execs.enum';
 })
 export class NansExecutive extends BaseModel {
   @AllowNull(false)
-  @Column(DataType.STRING(100))
+  @Column(DataType.STRING(500))
   declare name: string;
 
   @AllowNull(false)
   @Unique
-  @Column(DataType.STRING(100))
+  @Column(DataType.STRING(500))
   declare image_url: string;
 
   @AllowNull(false)

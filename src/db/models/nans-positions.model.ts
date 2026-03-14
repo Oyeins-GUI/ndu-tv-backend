@@ -4,7 +4,7 @@ import { BaseModel } from './base.model';
 @Table({ tableName: 'nans_positions' })
 export class NansPosition extends BaseModel {
   @AllowNull(false)
-  @Column(DataType.STRING(20))
+  @Column(DataType.STRING(100))
   declare position: string; // e.g., 'PRO', 'PRES', 'VP'
 
   @AllowNull(false)
