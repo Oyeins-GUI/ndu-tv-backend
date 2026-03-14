@@ -25,6 +25,11 @@ import { ExecType } from '../../shared/enums/execs.enum';
       name: 'unique_position_year_exec_type',
       unique: true,
       fields: ['year', 'position_id', 'exec_type'],
+      where: [
+        {
+          deleted_at: null,
+        },
+      ],
     },
   ],
 })
